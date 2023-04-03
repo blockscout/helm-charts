@@ -1,0 +1,53 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/pganalyze/collector
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: stable
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+api:
+  key: ""
+  systemId: ""
+
+db:
+  host:
+  name: # "db1,db2,db3"
+  username:
+  password:
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
