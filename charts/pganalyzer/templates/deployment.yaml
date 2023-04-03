@@ -31,19 +31,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: PGA_API_KEY
-              value: {{ .Values.api.key }}
-            - name: PGA_API_SYSTEM_ID
-              value: {{ .Values.api.systemId }}
-            - name: DB_HOST
-              value: {{ .Values.db.host }}
-            - name: DB_NAME
-              value: {{ .Values.db.name }}
-            - name: DB_USERNAME
-              value: {{ .Values.db.username }}
-            - name: DB_PASSWORD
-              value: {{ .Values.db.password }}
+          envFrom:
+              - secretRef:
+                  name: {{ include "pganalyzer.fullname" . }}-env
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
