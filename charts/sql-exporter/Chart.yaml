@@ -1,5 +1,5 @@
 name: sql-exporter
-version: 0.0.1
+version: 0.1.0
 appVersion: 0.0.1
 description: Prometheus exporter which allows collecting metrics from database queries, at specified time intervals
 apiVersion: v1
