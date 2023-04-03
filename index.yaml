@@ -3,6 +3,16 @@ entries:
   pganalyzer:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2023-04-03T08:26:07.736995952Z"
+    description: A Helm chart for Kubernetes
+    digest: aef733865f7d3128fea5768b6a03fbbe0cd08b63145e15cafbfa7559e8ef940f
+    name: pganalyzer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.3.1/pganalyzer-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-04-03T08:18:45.055608769Z"
     description: A Helm chart for Kubernetes
     digest: 40c6177125fae57df9d341451a3fc73db4108f513594e421c3c63f18b89131af
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
     version: 0.2.1
-generated: "2023-04-03T08:18:45.055625871Z"
+generated: "2023-04-03T08:26:07.737009053Z"
