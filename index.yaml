@@ -41,4 +41,15 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
     version: 0.2.1
-generated: "2023-04-03T08:26:07.737009053Z"
+  sql-exporter:
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2023-04-03T09:16:59.947999895Z"
+    description: Prometheus exporter which allows collecting metrics from database
+      queries, at specified time intervals
+    digest: 3b70b6bb32e0f1b003e47f6abdecc49892978bc0a9a5e7f725f1d24d626a7025
+    name: sql-exporter
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/sql-exporter-0.0.1/sql-exporter-0.0.1.tgz
+    version: 0.0.1
+generated: "2023-04-03T09:16:59.948017896Z"
