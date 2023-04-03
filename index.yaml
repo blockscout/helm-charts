@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  pganalyzer:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-04-03T06:02:11.590176828Z"
+    description: A Helm chart for Kubernetes
+    digest: 84133a379a684d959eefc3a70651823ec28f6116ba52152a7cc8e1ee36d97b9a
+    name: pganalyzer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
+    version: 0.2.1
+generated: "2023-04-03T06:02:11.59018383Z"
