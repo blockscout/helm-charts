@@ -1,0 +1,82 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/blockscout/eth-rpc-exporter
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  # Comma-separated list of RPC nodes to monitor
+  rpcUrl: "http://localhost:8545"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 999
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 999
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+serviceMonitor:
+  # Enable prometheus service monitor
+  enabled: true
+  interval: 60
+  path: /metrics
+  timeout: 30
+
+prometheusRule:
+  #Add prometheus rules
+  enabled: true
+  rules:
+    - alert: RPC node down
+      expr: eth_rpc_up == 0
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        description: RPC node down
+        summary: RPC node {{ "{{ $labels.endpoint }}" }} is down
+    - alert: RPC out of sync
+      expr: time() - eth_rpc_latest_block_timestamp > 300
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        description: RPC node is out of sync - latest block was more than 5 minutes ago
+        summary: No new blocks on RPC {{ "{{ $labels.endpoint }}" }} for the last {{ "{{ time() - eth_rpc_latest_block_timestamp }}" }} seconds
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

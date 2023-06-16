@@ -1,0 +1,20 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "eth-rpc-exporter.fullname" . }}
+  labels:
+    {{- include "eth-rpc-exporter.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - interval: "{{ .Values.serviceMonitor.interval }}s"
+    scrapeTimeout: "{{ .Values.serviceMonitor.timeout }}s"
+    path: "{{ .Values.serviceMonitor.path }}"
+    targetPort: http
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eth-rpc-exporter.fullname" . }}
+{{- end }}
