@@ -65,7 +65,7 @@ prometheusRule:
         severity: warning
       annotations:
         description: RPC node down
-        summary: RPC node {{ "{{ $labels.endpoint }}" }} is down
+        summary: RPC node {{ $labels.node }} is down
     - alert: RPC out of sync
       expr: time() - eth_rpc_latest_block_timestamp > 300
       for: 1m
@@ -73,7 +73,7 @@ prometheusRule:
         severity: warning
       annotations:
         description: RPC node is out of sync - latest block was more than 5 minutes ago
-        summary: No new blocks on RPC {{ "{{ $labels.endpoint }}" }} for the last {{ "{{ time() - eth_rpc_latest_block_timestamp }}" }} seconds
+        summary: No new blocks on RPC {{ $labels.node }} for more than 5 minutes
 
 nodeSelector: {}
 
