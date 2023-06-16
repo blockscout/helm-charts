@@ -41,7 +41,7 @@ spec:
             - name: METRICS_CHECK_INTERVAL
               value: {{ .Values.serviceMonitor.interval }}
             - name: CONNECT_TIMEOUT
-              value: {{ .Value.config.connectionTimeout }}
+              value: {{ .Values.config.connectionTimeout }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
