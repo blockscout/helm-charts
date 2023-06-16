@@ -37,11 +37,11 @@ spec:
             - name: METRICS_PATH
               value: {{ .Values.serviceMonitor.path }}
             - name: METRICS_PORT
-              value: {{ .Values.service.port }}
+              value: {{ .Values.service.port | quote }}
             - name: METRICS_CHECK_INTERVAL
-              value: {{ .Values.serviceMonitor.interval }}
+              value: {{ .Values.serviceMonitor.interval | quote }}
             - name: CONNECT_TIMEOUT
-              value: {{ .Values.config.connectionTimeout }}
+              value: {{ .Values.config.connectionTimeout | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

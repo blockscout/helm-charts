@@ -65,17 +65,19 @@ prometheusRule:
       for: 5m
       labels:
         severity: warning
+        service: "eth-rpc-exporter"
       annotations:
-        description: RPC node down
-        summary: RPC node {{ $labels.node }} is down
+        description: RPC node {{ $labels.node }} down
+        summary: RPC node is down
     - alert: RPC out of sync
       expr: time() - eth_rpc_latest_block_timestamp > 300
       for: 1m
       labels:
         severity: warning
+        service: "eth-rpc-exporter"
       annotations:
-        description: RPC node is out of sync - latest block was more than 5 minutes ago
-        summary: No new blocks on RPC {{ $labels.node }} for more than 5 minutes
+        description: RPC node {{ $labels.node }} is out of sync - latest block was more than 5 minutes ago
+        summary: No new blocks on RPC for more than 5 minutes
 
 nodeSelector: {}
 
