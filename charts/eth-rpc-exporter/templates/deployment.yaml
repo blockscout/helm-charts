@@ -34,6 +34,14 @@ spec:
           env:
             - name: RPC_URL
               value: {{ .Values.config.rpcUrl }}
+            - name: METRICS_PATH
+              value: {{ .Values.serviceMonitor.path }}
+            - name: METRICS_PORT
+              value: {{ .Values.service.port }}
+            - name: METRICS_CHECK_INTERVAL
+              value: {{ .Values.serviceMonitor.interval }}
+            - name: CONNECT_TIMEOUT
+              value: {{ .Value.config.connectionTimeout }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

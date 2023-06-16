@@ -12,6 +12,8 @@ fullnameOverride: ""
 config:
   # Comma-separated list of RPC nodes to monitor
   rpcUrl: "http://localhost:8545"
+  # RPC node connection timeout
+  connectionTimeout: "10"
 
 serviceAccount:
   # Specifies whether a service account should be created
