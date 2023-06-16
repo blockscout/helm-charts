@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   eth-rpc-exporter:
   - apiVersion: v2
+    appVersion: 0.2.1
+    created: "2023-06-16T18:57:04.077486617Z"
+    description: A Helm chart for Kubernetes
+    digest: ed959f6dfded90dfdcaf2ab3e9582e08fb5d3d3c478fdc1e4476bdbe9cb00db8
+    name: eth-rpc-exporter
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/eth-rpc-exporter-0.2.1/eth-rpc-exporter-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
     appVersion: 0.2.0
     created: "2023-06-16T15:43:57.437470925Z"
     description: A Helm chart for Kubernetes
@@ -83,4 +93,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/sql-exporter-0.0.1/sql-exporter-0.0.1.tgz
     version: 0.0.1
-generated: "2023-06-16T15:43:57.437488025Z"
+generated: "2023-06-16T18:57:04.077508317Z"
