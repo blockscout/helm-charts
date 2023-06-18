@@ -70,7 +70,7 @@ prometheusRule:
         description: RPC node {{ $labels.node }} down
         summary: RPC node is down
     - alert: RPC out of sync
-      expr: time() - eth_rpc_latest_block_timestamp > 300
+      expr: time() - eth_rpc_latest_block_timestamp > 300 AND eth_rpc_up == 1
       for: 3m
       labels:
         severity: warning
