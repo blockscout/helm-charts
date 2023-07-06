@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   eth-rpc-exporter:
   - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-07-06T10:07:20.542414734Z"
+    description: A Helm chart for Kubernetes
+    digest: 2fc7d585edaceebb29a23ab2da68673869db8352bf8b4ed8bf627b2dc815964f
+    name: eth-rpc-exporter
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/eth-rpc-exporter-1.0.0/eth-rpc-exporter-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 0.2.4
     created: "2023-06-18T14:42:28.640366623Z"
     description: A Helm chart for Kubernetes
@@ -144,4 +154,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-03T15:21:04.374831024Z"
+generated: "2023-07-06T10:07:20.542449035Z"
