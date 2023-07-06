@@ -10,8 +10,11 @@ nameOverride: ""
 fullnameOverride: ""
 
 config:
-  # Comma-separated list of RPC nodes to monitor
-  rpcUrl: "http://localhost:8545"
+  rpcEndpoints:
+    - name: "localhost"
+      url: "http://localhost:8545"
+      username: "user"
+      password: "password"
   # RPC node connection timeout
   connectionTimeout: "10"
 
@@ -67,7 +70,7 @@ prometheusRule:
         severity: warning
         service: "eth-rpc-exporter"
       annotations:
-        description: RPC node {{ $labels.node }} down
+        description: RPC node {{ $labels.name }} (URL - {{ $labels.node }}) down
         summary: RPC node is down
     - alert: RPC out of sync
       expr: time() - eth_rpc_latest_block_timestamp > 300 AND eth_rpc_up == 1
@@ -76,7 +79,7 @@ prometheusRule:
         severity: warning
         service: "eth-rpc-exporter"
       annotations:
-        description: RPC node {{ $labels.node }} is out of sync - latest block was more than 5 minutes ago
+        description: RPC node {{ $labels.name }} (URL - {{ $labels.node }}) is out of sync - latest block was more than 5 minutes ago
         summary: No new blocks on RPC for more than 5 minutes
 
 nodeSelector: {}

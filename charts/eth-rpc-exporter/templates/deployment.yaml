@@ -11,10 +11,11 @@ spec:
       {{- include "eth-rpc-exporter.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "eth-rpc-exporter.selectorLabels" . | nindent 8 }}
     spec:
@@ -27,13 +28,14 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+           - --config
+           - /app/config.json
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: RPC_URL
-              value: {{ .Values.config.rpcUrl }}
             - name: METRICS_PATH
               value: {{ .Values.serviceMonitor.path }}
             - name: METRICS_PORT
@@ -46,6 +48,10 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.json
+              subPath: config.json
           livenessProbe:
             httpGet:
               path: /
@@ -68,3 +74,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: config
+          secret:
+            secretName: {{ include "eth-rpc-exporter.fullname" . }}-config

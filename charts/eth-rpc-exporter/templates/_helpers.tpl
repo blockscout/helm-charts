@@ -60,3 +60,9 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+{{- define "eth-rpc-exporter.config" -}}
+{
+  "rpc_endpoints":
+    {{- toPrettyJson .Values.config.rpcEndpoints | nindent 4 }}
+}
+{{- end }}
