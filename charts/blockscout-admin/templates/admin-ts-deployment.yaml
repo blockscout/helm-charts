@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-ts-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.adminTs.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: admin-ts-{{ include "blockscout-admin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.adminTs.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/admin-ts-secret.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: admin-ts-{{ include "blockscout-admin.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-admin.serviceAccountName" . }}
+      containers:
+        - name: {{ .Release.Name }}-admin-ts
+          image: "{{ .Values.adminTs.image.repository }}:{{ .Values.adminTs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.adminTs.image.pullPolicy }}
+          env:
+            - name: NETWORKS_CONFIG_PATH
+              value: /app/config/networks.json
+            - name: ADMIN_RS_HOST
+              {{- if .Values.adminRs.ingress.enabled }}
+              value: https://{{ (first .Values.adminRs.ingress.hosts).host }}
+              {{- else }}
+              value: http://admin-rs-{{ include "blockscout-admin.fullname" . }}:{{ .Values.adminRs.service.port }}
+              {{- end }}
+            - name: CONTRACTS_INFO_HOST
+              value: http://contracts-info-{{ include "blockscout-admin.fullname" . }}:{{ .Values.contractsInfo.service.port }}
+          {{- range .Values.adminTs.environment }}
+            - name: {{ .name }}
+              value: {{ .value }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: admin-ts-{{ include "blockscout-admin.fullname" . }}-env
+          ports:
+            - name: http
+              containerPort: {{ .Values.adminTs.service.targetPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /admin
+              port: {{ .Values.adminTs.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.readinessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /admin
+              port: {{ .Values.adminTs.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.livenessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/networks.json
+              subPath: networks.json
+          resources:
+            {{- toYaml .Values.adminTs.resources | nindent 12 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "blockscout-admin.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---

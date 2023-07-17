@@ -1,0 +1,59 @@
+{{- if .Values.tokenInfoExtractor.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: token-info-extractor-{{ include "blockscout-admin.fullname" . }}
+spec:
+  schedule: {{ .Values.tokenInfoExtractor.schedule | quote }}
+  concurrencyPolicy: "Forbid"
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      completions: 1
+      parallelism: 1
+      template:
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ .Release.Name }}-token-info-extractor
+              image: "{{ .Values.tokenInfoExtractor.image.repository }}:{{ .Values.tokenInfoExtractor.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: Always
+              env:
+                - name: TOKEN_INFO_EXTRACTOR__CONTRACTS_INFO__URL
+                  value: http://contracts-info-{{ include "blockscout-admin.fullname" . }}:{{ .Values.contractsInfo.service.port }}
+                {{- range .Values.tokenInfoExtractor.environment }}
+                - name: {{ .name }}
+                  value: {{ .value | quote }}
+                {{- end }}
+              envFrom:
+                - secretRef:
+                    name: token-info-extractor-{{ include "blockscout-admin.fullname" . }}-env
+              resources:
+              {{- toYaml .Values.tokenInfoExtractor.resources | nindent 16 }}
+              volumeMounts:
+              - name: config
+                mountPath: /app/config/networks.json
+                subPath: networks.json
+          volumes:
+            - configMap:
+                name: token-info-{{ include "blockscout-admin.fullname" . }}-config
+                defaultMode: 0777
+              name: config
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+---
+{{- end}}

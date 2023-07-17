@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "blockscout-admin.fullname" . }}-config
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+data:
+  networks.json: |
+    {
+        "networks": {
+            {{- $len := len .Values.config.network }}
+            {{- range $i, $value := .Values.config.network }}
+            "{{ $value.id }}": {
+                "url": "{{ $value.url }}",
+                "label": "{{ $value.label }}"
+            }{{- if ne (sub $len 1) $i }},{{- end }}
+          {{- end }}
+        }
+    }

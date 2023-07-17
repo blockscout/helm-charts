@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contracts-info-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.contractsInfo.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contracts-info-{{ include "blockscout-admin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.contractsInfo.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/contracts-info-secret.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: contracts-info-{{ include "blockscout-admin.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Release.Name }}-contracts-info
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.contractsInfo.image.repository }}:{{ .Values.contractsInfo.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.contractsInfo.image.pullPolicy }}
+          env:
+            - name: CONTRACTS_INFO__CHAINS_CONFIG_PATH
+              value: /app/config/networks.json
+            - name: CONTRACTS_INFO__API_KEYS__adminjs__LEVEL
+              value: admin_service
+            - name: CONTRACTS_INFO__API_KEYS__extractor1__LEVEL
+              value: extractor
+          {{- range .Values.contractsInfo.environment }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: contracts-info-{{ include "blockscout-admin.fullname" . }}-env
+          ports:
+            - name: http
+              containerPort: {{ .Values.contractsInfo.service.targetPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.contractsInfo.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.readinessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.contractsInfo.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.livenessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/networks.json
+              subPath: networks.json
+          resources:
+            {{- toYaml .Values.contractsInfo.resources | nindent 12 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "blockscout-admin.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---

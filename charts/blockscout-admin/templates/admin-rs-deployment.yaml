@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-rs-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.adminRs.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: admin-rs-{{ include "blockscout-admin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.adminRs.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/admin-rs-secret.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: admin-rs-{{ include "blockscout-admin.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Release.Name }}-admin-rs
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.adminRs.image.repository }}:{{ .Values.adminRs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.adminRs.image.pullPolicy }}
+          env:
+            - name: ADMIN_RS__CONTRACTS_INFO_ADDR
+              value: http://contracts-info-{{ include "blockscout-admin.fullname" . }}:{{ .Values.contractsInfo.service.port }}
+            - name: ADMIN_RS__CHAINS_CONFIG_PATH
+              value: /app/config/networks.json
+          {{- range .Values.adminRs.environment }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: admin-rs-{{ include "blockscout-admin.fullname" . }}-env
+          ports:
+            - name: http
+              containerPort: {{ .Values.adminRs.service.targetPort }}
+              protocol: TCP
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.adminRs.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.readinessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.adminRs.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.livenessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/networks.json
+              subPath: networks.json
+          resources:
+            {{- toYaml .Values.adminRs.resources | nindent 12 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "blockscout-admin.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---

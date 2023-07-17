@@ -1,0 +1,201 @@
+adminRs:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/blockscout/admin-rs
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8050
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  environment: {}
+    #- name: SOME_ENV
+    #  value: value
+  envFromSecret: {}
+    #- name: SOME_SECRET_ENV
+    #  value: secret_value
+  config:
+    databaseUrl: #postgres://user:password@hostname/database_name
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+adminTs:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/blockscout/admin-ts
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  environment: {}
+    #- name: SOME_ENV
+    #  value: value
+  envFromSecret: {}
+    #- name: SOME_SECRET_ENV
+    #  value: secret_value
+  resources:
+    limits:
+      memory: "2Gi"
+      cpu: "500m"
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+
+contractsInfo:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/blockscout/contracts-info
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8050
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  environment: {}
+    #- name: SOME_ENV
+    #  value: value
+  envFromSecret: {}
+    #- name: SOME_SECRET_ENV
+    #  value: secret_value
+  config:
+    databaseUrl: #postgres://user:password@hostname/database_name
+    apiKeys:
+      adminjs:
+      extractor1:
+  resource:
+    limits:
+      memory: "256Mi"
+      cpu: "100m"
+    requests:
+      memory: "96Mi"
+      cpu: "50m"
+
+tokenInfoExtractor:
+  enabled: false
+  image:
+    repository: ghcr.io/blockscout/token-info-extractor
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  schedule: "0 20 * * *"
+  environment: {}
+    #- name: SOME_ENV
+    #  value: value
+  envFromSecret: {}
+    #- name: SOME_SECRET_ENV
+    #  value: secret_value
+  config:
+    databaseUrl: #postgres://user:password@hostname/database_name
+  resources:
+    limits:
+      memory: "256Mi"
+      cpu: "250m"
+    requests:
+      memory: "96Mi"
+      cpu: "100m"
+
+livenessProbe:
+  params:
+    initialDelaySeconds: 100
+    periodSeconds: 100
+    timeoutSeconds: 30
+readinessProbe:
+  params:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 60
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Network config to add
+config:
+  network:
+    #- name:
+    #  label:
+    #  url:
+    #  id:
+    #  apiKey:
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-ts-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.adminTs.service.type }}
+  ports:
+    - port: {{ .Values.adminTs.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: admin-ts-{{ include "blockscout-admin.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

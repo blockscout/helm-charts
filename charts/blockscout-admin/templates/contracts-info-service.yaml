@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: contracts-info-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.contractsInfo.service.type }}
+  ports:
+    - port: {{ .Values.contractsInfo.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: contracts-info-{{ include "blockscout-admin.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
