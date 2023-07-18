@@ -12,6 +12,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/blockscout-admin-0.1.0/blockscout-admin-0.1.0.tgz
     version: 0.1.0
+  cloudflare-tunnel:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-07-18T13:35:57.530578632Z"
+    description: A Helm chart for Cloudflare tunnel
+    digest: f24839b9a7528e9f60db79aef8c7ae00fd1a827b127a62d118ac09e25eb0a171
+    name: cloudflare-tunnel
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/cloudflare-tunnel-1.0.0/cloudflare-tunnel-1.0.0.tgz
+    version: 1.0.0
   eth-rpc-exporter:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -166,4 +177,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-17T10:50:18.395600727Z"
+generated: "2023-07-18T13:35:57.530697035Z"
