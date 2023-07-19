@@ -1,0 +1,118 @@
+replicaCount: 1
+
+image:
+  repository: metabase/metabase
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.46.6.1-latest-patch"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 3000
+
+database:
+  # Database type (h2 / postgres), default: h2
+  type: h2
+  # encryptionKey: << YOUR ENCRYPTION KEY >>
+  ## Only need when you use mysql / postgres
+  # host:
+  # port:
+  # dbname:
+  # username:
+  # password:
+  ## Alternatively, use a connection URI for full configurability. Example for SSL enabled Postgres.
+  # connectionURI: postgres://user:password@host:port/database?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+  ## If a secret with the database credentials already exists, use the following values:
+  # existingSecret:
+  # existingSecretUsernameKey:
+  # existingSecretPasswordKey:
+  # existingSecretConnectionURIKey:
+
+# A custom log4j.properties file can be provided using a multiline YAML string.
+# See https://github.com/metabase/metabase/blob/master/resources/log4j.properties
+#
+# log4jProperties:
+
+timezone: UTC
+
+jetty:
+#  maxThreads: 254
+#  minThreads: 8
+#  maxQueued: -1
+#  maxIdleTime: 60000
+
+password:
+  # Changing Metabase password complexity:
+  # weak: no character constraints
+  # normal: at least 1 digit (default)
+  # strong: minimum 8 characters w/ 2 lowercase, 2 uppercase, 1 digit, and 1 special character
+  complexity: normal
+  length: 12
+
+emojiLogging: true
+# javaOpts:
+# pluginsDirectory:
+# siteUrl:
+
+session: {}
+  # maxSessionAge:
+  # sessionCookies:
+
+livenessProbe:
+  initialDelaySeconds: 120
+  timeoutSeconds: 30
+  failureThreshold: 6
+
+readinessProbe:
+  initialDelaySeconds: 30
+  timeoutSeconds: 3
+  periodSeconds: 5
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 1
+  #   memory: 4Gi
+  # requests:
+  #   cpu: 500m
+  #   memory: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
