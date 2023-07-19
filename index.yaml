@@ -104,6 +104,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/eth-rpc-exporter-0.1.1/eth-rpc-exporter-0.1.1.tgz
     version: 0.1.1
+  metabase:
+  - apiVersion: v2
+    appVersion: 0.46.6
+    created: "2023-07-19T18:50:21.163538191Z"
+    description: A Helm chart for Metabase Application
+    digest: 4916ce6033d0fa404b148c5500bb4d5ee09570988188b80e8254e2f523d3cceb
+    name: metabase
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/metabase-1.0.0/metabase-1.0.0.tgz
+    version: 1.0.0
   pganalyzer:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -177,4 +188,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-18T13:35:57.530697035Z"
+generated: "2023-07-19T18:50:21.163570091Z"
