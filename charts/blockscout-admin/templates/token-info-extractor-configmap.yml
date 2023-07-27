@@ -11,8 +11,8 @@ data:
       "networks": {
         {{- $len := len .Values.config.network }}
         {{- range $i, $value := .Values.config.network }}
-        "{{ .name }}": {
-          "chain_id": {{ .id }}
+        "{{ .id }}": {
+          "default_chain_name": "{{ .name }}"
         }{{- if ne (sub $len 1) $i }},{{- end }}
        {{- end }}
       }
