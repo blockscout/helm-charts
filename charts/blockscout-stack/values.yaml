@@ -1,0 +1,239 @@
+nameOverride: ""
+fullnameOverride: ""
+
+blockscout:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: blockscout/blockscout
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  imagePullSecrets: []
+
+  init:
+    enabled: true
+    command:
+      - /bin/sh
+    args:
+      - -c
+      - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"
+  env: []
+    # NAME: VALUE
+
+  command:
+    - /bin/sh
+  args:
+    - -c
+    - bin/blockscout start
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+  terminationGracePeriodSeconds: 300
+
+  livenessProbe:
+    enabled: true
+    path: /api/v1/health/liveness
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  readinessProbe:
+    enabled: true
+    path: /api/v1/health/readiness
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 60
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hostname: chart-example.local
+    tls:
+      enabled: false
+    paths:
+      - path: /
+        pathType: Prefix
+
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+frontend:
+  enabled: true
+
+  image:
+    repository: ghcr.io/blockscout/frontend
+    tag: latest
+    imagePullPolicy: IfNotPresent
+
+  replicaCount: 2
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hostname: chart-example.local
+    tls:
+      enabled: false
+    paths:
+      - path: /
+        pathType: Exact
+      - path: /_next
+      - path: /node-api
+      - path: /apps
+      - path: /account
+      - path: /accounts
+      - path: /static
+      - path: /auth/profile
+      - path: /auth/unverified-email
+      - path: /txs
+      - path: /tx
+      - path: /blocks
+      - path: /block
+      - path: /login
+      - path: /address
+      - path: /stats
+      - path: /search-results
+      - path: /token
+      - path: /tokens
+      - path: /visualize
+      - path: /api-docs
+      - path: /csv-export
+      - path: /verified-contracts
+      - path: /graphiql
+      - path: /withdrawals
+      - path: /l2-output-roots
+      - path: /l2-txn-batches
+      - path: /l2-withdrawals
+      - path: /l2-deposits
+
+  resources:
+    limits:
+      memory: "384Mi"
+      cpu: 200m
+    requests:
+      memory: "384Mi"
+      cpu: 200m
+
+  livenessProbe:
+    enabled: true
+    path: /api/healthz
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  readinessProbe:
+    enabled: true
+    path: /api/healthz
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 30
+
+  env: []
+    # NAME: VALUE
+
+stats:
+  enabled: false
+  image:
+    repository: ghcr.io/blockscout/stats
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  replicasCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+    metricsPort: 6060
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  # enable ingress
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hostname: chart-example-stats.local
+    tls:
+      enabled: false
+    paths:
+      - path: /
+        pathType: Prefix
+
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: 250m
+    requests:
+      memory: 512Mi
+      cpu: 250m
+
+  files:
+    enabled: false
+    list: {}
+      # file.txt: |
+      #   test
+    mountPath: /tmp/path
+
+  # probes
+  livenessProbe:
+    enabled: false
+    path: /health
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  readinessProbe:
+    enabled: false
+    path: /health
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 60
+
+  env: []
+    # DATABASE_URL: postgresql://<user>:<pass>@postgres:5432/<db>
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

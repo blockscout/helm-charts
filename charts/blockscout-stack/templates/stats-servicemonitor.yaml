@@ -1,0 +1,14 @@
+{{- if .Values.stats.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-stats
+spec:
+  endpoints:
+  - scrapeTimeout: 10s
+    port: http-metrics
+    path: /metrics
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-stack.fullname" . }}-stats-svc
+{{- end }}

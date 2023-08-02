@@ -1,0 +1,18 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-frontend-svc
+  labels:
+    app: {{ .Release.Name }}-frontend-svc
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.frontend.service.type }}
+  ports:
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Release.Name }}-frontend
+{{- end }}

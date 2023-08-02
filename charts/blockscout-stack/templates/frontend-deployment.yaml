@@ -1,0 +1,88 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-frontend
+  labels:
+    app: {{ .Release.Name }}-frontend
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-frontend
+  template:
+    metadata:
+      {{- if eq .Values.frontend.image.pullPolicy "Always" }}
+      annotations:
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-frontend
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.frontend.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-frontend
+          securityContext:
+            {{- toYaml .Values.frontend.securityContext | nindent 12 }}
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.frontend.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.stats.files.enabled }}
+          volumeMounts:
+            {{- range $key, $value := .Values.stats.files.list }}
+            - mountPath: {{ $.Values.stats.files.mountPath }}/{{ $key }}
+              name: stats-cm
+              subPath: {{ $key }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.frontend.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.frontend.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.frontend.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.frontend.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.frontend.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.frontend.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

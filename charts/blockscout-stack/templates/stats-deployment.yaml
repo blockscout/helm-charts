@@ -1,0 +1,90 @@
+{{- if .Values.stats.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout
+  labels:
+    app: {{ .Release.Name }}-stats
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.stats.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-stats
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-stats
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.stats.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-stats
+          securityContext:
+            {{- toYaml .Values.stats.securityContext | nindent 12 }}
+          image: "{{ .Values.stats.image.repository }}:{{ .Values.stats.image.tag }}"
+          resources:
+            {{- toYaml .Values.stats.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.stats.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8050
+              protocol: TCP
+            - name: http-metrics
+              containerPort: 6060
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.stats.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.stats.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.stats.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.stats.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.stats.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.stats.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.stats.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- if .Values.stats.files.enabled }}
+      volumes:
+        - configMap:
+            name: stats-cm
+            defaultMode: 0777
+          name: stats-cm
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

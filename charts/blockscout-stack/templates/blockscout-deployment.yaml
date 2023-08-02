@@ -1,0 +1,107 @@
+{{- if .Values.blockscout.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout
+  labels:
+    app: {{ .Release.Name }}-blockscout
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.blockscout.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-blockscout
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-blockscout
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}
+      {{- if .Values.blockscout.init.enabled }}
+      initContainers:
+        - name: init-migrations
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
+          resources:
+            {{- toYaml .Values.blockscout.resources | nindent 12 }}
+          {{- with .Values.blockscout.init.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.blockscout.init.args }}
+          args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          env:
+            {{- range $key, $value := .Values.blockscout.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-blockscout
+          securityContext:
+            {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
+          resources:
+            {{- toYaml .Values.blockscout.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
+          {{- with .Values.blockscout.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.blockscout.args }}
+          args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.blockscout.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.blockscout.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.blockscout.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.blockscout.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.blockscout.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.blockscout.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.blockscout.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.blockscout.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

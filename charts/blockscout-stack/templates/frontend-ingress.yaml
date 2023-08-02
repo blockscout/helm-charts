@@ -1,0 +1,59 @@
+{{- if .Values.frontend.enabled }}
+{{- if .Values.frontend.ingress.enabled }}
+{{- $fullName := include "blockscout-stack.fullname" . -}}
+{{- $svcPort := .Values.frontend.service.port -}}
+{{- if and .Values.frontend.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-frontend-ingress
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.frontend.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.frontend.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.frontend.ingress.className }}
+  {{- end }}
+  {{- if .Values.frontend.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.frontend.ingress.hostname | quote }}
+      secretName: {{ $fullName }}-frontend-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.frontend.ingress.hostname | quote }}
+      http:
+        paths:
+          {{- range .Values.frontend.ingress.paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- else }}
+            pathType: Prefix
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-frontend-svc
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}-frontend-svc
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end }}
+{{- end }}
+{{- end }}
