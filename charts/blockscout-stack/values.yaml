@@ -1,6 +1,8 @@
 nameOverride: ""
 fullnameOverride: ""
 
+imagePullSecrets: []
+
 blockscout:
   enabled: true
   replicaCount: 1
@@ -9,8 +11,6 @@ blockscout:
     repository: blockscout/blockscout
     pullPolicy: IfNotPresent
     tag: "latest"
-
-  imagePullSecrets: []
 
   init:
     enabled: true
