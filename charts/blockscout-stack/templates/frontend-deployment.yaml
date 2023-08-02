@@ -41,10 +41,10 @@ spec:
               containerPort: 3000
               protocol: TCP
           env:
-            {{- range $key, $value := .Values.frontend.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+          {{- range $key, $value := .Values.frontend.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
           {{- if .Values.stats.files.enabled }}
           volumeMounts:
             {{- range $key, $value := .Values.stats.files.list }}

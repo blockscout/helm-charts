@@ -41,10 +41,10 @@ spec:
           args: {{ . | toYaml | nindent 12 }}
           {{- end }}
           env:
-            {{- range $key, $value := .Values.blockscout.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+          {{- range $key, $value := .Values.blockscout.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}-blockscout
@@ -65,10 +65,10 @@ spec:
               containerPort: 4000
               protocol: TCP
           env:
-            {{- range $key, $value := .Values.blockscout.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+          {{- range $key, $value := .Values.blockscout.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
           {{- if .Values.blockscout.readinessProbe.enabled }}
           readinessProbe:
             httpGet:

@@ -44,10 +44,10 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
-            {{- range $key, $value := .Values.stats.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+          {{- range $key, $value := .Values.stats.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
           {{- if .Values.stats.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
