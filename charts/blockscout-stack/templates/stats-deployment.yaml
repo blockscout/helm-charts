@@ -13,9 +13,9 @@ spec:
       app: {{ .Release.Name }}-stats
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- if eq .Values.stats.image.pullPolicy "Always" }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
       labels:
         app: {{ .Release.Name }}-stats

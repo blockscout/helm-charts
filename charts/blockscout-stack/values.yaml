@@ -79,7 +79,7 @@ frontend:
   image:
     repository: ghcr.io/blockscout/frontend
     tag: latest
-    imagePullPolicy: IfNotPresent
+    pullPolicy: IfNotPresent
 
   replicaCount: 2
 
