@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout-stack.fullname" . }}-blockscout
+  name: {{ include "blockscout-stack.fullname" . }}-stats
   labels:
     app: {{ .Release.Name }}-stats
     {{- include "blockscout-stack.labels" . | nindent 4 }}
