@@ -48,6 +48,9 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "blockscout-stack.fullname" . }}-stats-env
           {{- if .Values.stats.readinessProbe.enabled }}
           readinessProbe:
             httpGet:

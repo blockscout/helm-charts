@@ -3,6 +3,18 @@ fullnameOverride: ""
 
 imagePullSecrets: []
 
+config:
+  network:
+    id: 1
+    name: Ether
+    shortname: Ether
+    currency:
+      name: Ether
+      symbol: ETH
+      decimals: 18
+  account:
+    enabled: false
+  testnet: false
 blockscout:
   enabled: true
   replicaCount: 1
@@ -20,6 +32,8 @@ blockscout:
       - -c
       - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"
   env: []
+    # NAME: VALUE
+  envFromSecret: []
     # NAME: VALUE
 
   command:
@@ -157,6 +171,8 @@ frontend:
 
   env: []
     # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
 
 stats:
   enabled: false
@@ -221,8 +237,9 @@ stats:
       timeoutSeconds: 60
 
   env: []
-    # DATABASE_URL: postgresql://<user>:<pass>@postgres:5432/<db>
-
+    # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

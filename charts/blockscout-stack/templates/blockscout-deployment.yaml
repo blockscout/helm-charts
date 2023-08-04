@@ -41,10 +41,37 @@ spec:
           args: {{ . | toYaml | nindent 12 }}
           {{- end }}
           env:
+          - name: PORT
+            value: "4000"
+          - name: CHAIN_ID
+            value: {{ .Values.config.network.id | quote }}
+          {{- if .Values.config.network.currency.symbol | quote }}
+          - name: COIN
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
+          {{- if .Values.config.account.enabled }}
+          - name: ACCOUNT_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.config.testnet }}
+          - name: SHOW_TESTNET_LABEL
+            value: "true"
+          {{- end }}
+          {{- if .Values.frontend.enabled }}
+          - name: API_V2_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.blockscout.ingress.enabled }}
+          - name: BLOCKSCOUT_HOST
+            value: {{ .Values.blockscout.ingress.hostname | quote }}
+          {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}-blockscout
@@ -65,10 +92,37 @@ spec:
               containerPort: 4000
               protocol: TCP
           env:
+          - name: PORT
+            value: "4000"
+          - name: CHAIN_ID
+            value: {{ .Values.config.network.id | quote }}
+          {{- if .Values.config.network.currency.symbol | quote }}
+          - name: COIN
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
+          {{- if .Values.config.account.enabled }}
+          - name: ACCOUNT_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.config.testnet }}
+          - name: SHOW_TESTNET_LABEL
+            value: "true"
+          {{- end }}
+          {{- if .Values.frontend.enabled }}
+          - name: API_V2_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.blockscout.ingress.enabled }}
+          - name: BLOCKSCOUT_HOST
+            value: {{ .Values.blockscout.ingress.hostname | quote }}
+          {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
           {{- if .Values.blockscout.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
