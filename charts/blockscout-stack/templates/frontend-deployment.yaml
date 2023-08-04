@@ -73,7 +73,7 @@ spec:
           {{- end }}
           {{- if .Values.stats.ingress.enabled }}
           - name: NEXT_PUBLIC_STATS_API_HOST
-            value: https://{{ .Values.stats.ingress.hostname | quote }}
+            value: "https://{{ .Values.stats.ingress.hostname }}"
           {{- end }}
           {{- range $key, $value := .Values.frontend.env }}
           - name: {{ $key }}
