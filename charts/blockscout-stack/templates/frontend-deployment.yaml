@@ -13,8 +13,9 @@ spec:
       app: {{ .Release.Name }}-frontend
   template:
     metadata:
-      {{- if eq .Values.frontend.image.pullPolicy "Always" }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/frontend-secret.yaml") . | sha256sum }}
+      {{- if eq .Values.frontend.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
       labels:
