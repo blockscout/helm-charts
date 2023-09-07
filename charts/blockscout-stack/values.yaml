@@ -244,7 +244,7 @@ stats:
   ## Configure ingress resource that allow you to access the stats installation.
   ## ref: http://kubernetes.io/docs/user-guide/ingress/
   ##
-    ingress:
+  ingress:
     enabled: false
     className: ""
     annotations: {}
