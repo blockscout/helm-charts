@@ -1,8 +1,10 @@
-{{- if .Values.blockscout.enabled }}
+{{- if and .Values.blockscout.enabled .Values.config.prometheus.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-blockscout-svm
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   endpoints:
   - scrapeTimeout: 10s
