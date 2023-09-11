@@ -111,7 +111,7 @@ blockscout:
     tls:
       enabled: false
     paths:
-      - path: /
+      - path: /api
         pathType: Prefix
 
   resources:
@@ -157,35 +157,6 @@ frontend:
       enabled: false
     paths:
       - path: /
-        pathType: Exact
-      - path: /_next
-      - path: /node-api
-      - path: /apps
-      - path: /account
-      - path: /accounts
-      - path: /static
-      - path: /auth/profile
-      - path: /auth/unverified-email
-      - path: /txs
-      - path: /tx
-      - path: /blocks
-      - path: /block
-      - path: /login
-      - path: /address
-      - path: /stats
-      - path: /search-results
-      - path: /token
-      - path: /tokens
-      - path: /visualize
-      - path: /api-docs
-      - path: /csv-export
-      - path: /verified-contracts
-      - path: /graphiql
-      - path: /withdrawals
-      - path: /l2-output-roots
-      - path: /l2-txn-batches
-      - path: /l2-withdrawals
-      - path: /l2-deposits
 
   resources:
     limits:
