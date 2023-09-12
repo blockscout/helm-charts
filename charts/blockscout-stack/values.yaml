@@ -113,6 +113,8 @@ blockscout:
     paths:
       - path: /api
         pathType: Prefix
+      - path: /socket
+        pathType: Prefix
 
   resources:
     limits:
