@@ -1,5 +1,17 @@
 # ChangeLog
 
+## 1.1.2
+
+### Fixes
+
+- Fixing path to /sitemap.xml
+
+## 1.1.1
+
+### Fixes
+
+- Fixing path to /socket
+
 ## 1.1.0
 
 ### Features

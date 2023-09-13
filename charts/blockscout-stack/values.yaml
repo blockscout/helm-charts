@@ -115,6 +115,8 @@ blockscout:
         pathType: Prefix
       - path: /socket
         pathType: Prefix
+      - path: /sitemap.xml
+        pathType: Prefix
 
   resources:
     limits:
