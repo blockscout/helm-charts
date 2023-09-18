@@ -117,6 +117,12 @@ blockscout:
         pathType: Prefix
       - path: /sitemap.xml
         pathType: Prefix
+      - path: /auth/auth0
+        pathType: Exact
+      - path: /auth/auth0/callback
+        pathType: Exact
+      - path: /auth/logout
+        pathType: Exact
 
   resources:
     limits:

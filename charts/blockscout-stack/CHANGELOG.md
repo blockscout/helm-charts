@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.1.3
+
+### Fixes
+
+- Fixing path for auth
+
 ## 1.1.2
 
 ### Fixes
