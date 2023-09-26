@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.1.4
+
+### Fixes
+
+- Adjust default frontend resource
+- Increase default servicemonitor timeout
+
 ## 1.1.3
 
 ### Fixes

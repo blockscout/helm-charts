@@ -168,13 +168,13 @@ frontend:
     paths:
       - path: /
 
-  resources:
+    resources:
     limits:
-      memory: "384Mi"
-      cpu: 200m
+      memory: "1Gi"
+      cpu: "500m"
     requests:
-      memory: "384Mi"
-      cpu: 200m
+      memory: "256Mi"
+      cpu: "250m"
   ## Liveness probe
   ##
   livenessProbe:
