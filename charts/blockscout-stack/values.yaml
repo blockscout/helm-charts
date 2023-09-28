@@ -168,7 +168,7 @@ frontend:
     paths:
       - path: /
 
-    resources:
+  resources:
     limits:
       memory: "1Gi"
       cpu: "500m"
