@@ -45,6 +45,10 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
+          {{- if .Values.config.network.currency.symbol }}
+          - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
           {{- range $key, $value := .Values.stats.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}

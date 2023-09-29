@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.2.0
+
+### Feature
+
+- Stats currency symbol now is passed from ```config.network.currency.symbol``` (Stats version 1.4.1 and above required)
+
 ## 1.1.4
 
 ### Fixes
