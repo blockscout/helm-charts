@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "graph-node.fullname" . }}
+  labels:
+    {{- include "graph-node.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "graph-node.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "graph-node.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "graph-node.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: ipfs
+            value: {{ .Values.config.ipfs | quote }}
+          - name: ethereum
+            value: {{ .Values.config.ethereum | quote }}
+          - name: postgres_host
+            value: {{ .Values.config.postgres.host | quote }}
+          - name: postgres_port
+            value: {{ .Values.config.postgres.port | quote }}
+          - name: postgres_db
+            value: {{ .Values.config.postgres.db | quote }}
+          {{- if not .Values.config.postgres.existingSecret }}
+          - name: postgres_user
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "graph-node.fullname" . }}-db
+                key: username
+          - name: postgres_pass
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "graph-node.fullname" . }}-db
+                key: password
+          {{- else }}
+          - name: postgres_user
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.config.postgres.existingSecret }}
+                key: {{ .Values.config.postgres.existingSecretUsernameKey }}
+          - name: postgres_pass
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.config.postgres.existingSecret }}
+                key: {{ .Values.config.postgres.existingSecretPasswordKey }}
+          {{- end }}
+          {{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: websocket
+              containerPort: 8001
+              protocol: TCP
+            - name: admin
+              containerPort: 8020
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
