@@ -287,6 +287,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/eth-rpc-exporter-0.1.1/eth-rpc-exporter-0.1.1.tgz
     version: 0.1.1
+  graph-node:
+  - apiVersion: v2
+    appVersion: 0.32.0
+    created: "2023-10-13T14:06:11.950768824Z"
+    description: A Helm chart for Kubernetes to run graph-node
+    digest: c3006d225104fc4e6826b8a3b92aa7048790504e7a960e2ef2534bce985a5c7c
+    name: graph-node
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/graph-node-0.1.0/graph-node-0.1.0.tgz
+    version: 0.1.0
   metabase:
   - apiVersion: v2
     appVersion: 0.46.6
@@ -371,4 +382,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-29T08:34:21.377749425Z"
+generated: "2023-10-13T14:06:11.950954528Z"
