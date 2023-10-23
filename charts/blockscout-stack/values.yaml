@@ -190,7 +190,7 @@ frontend:
     enabled: true
     path: /api/healthz
     params:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 30
       periodSeconds: 10
       timeoutSeconds: 30
   ## Frontend ENV vars
