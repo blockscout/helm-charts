@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.3.0
+
+### Feature
+
+- Update blockscout app to 5.3.0
+- Decrease blockscout frontend initialDelaySeconds to 30
+
 ## 1.2.0
 
 ### Feature
