@@ -24,6 +24,8 @@ config:
       name: Ether
       symbol: ETH
       decimals: 18
+      # if network uses dual token model like gnosis (in most case it should be set to false)
+      dualToken: false
   account:
     enabled: false
   testnet: false

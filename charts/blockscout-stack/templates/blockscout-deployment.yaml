@@ -49,6 +49,10 @@ spec:
           {{- if .Values.config.network.currency.symbol | quote }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- if not .Values.config.network.currency.dualToken }}
+          - name: COIN_NAME
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.config.account.enabled }}
           - name: ACCOUNT_ENABLED
@@ -100,6 +104,10 @@ spec:
           {{- if .Values.config.network.currency.symbol | quote }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- if not .Values.config.network.currency.dualToken }}
+          - name: COIN_NAME
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.config.account.enabled }}
           - name: ACCOUNT_ENABLED
