@@ -46,13 +46,11 @@ spec:
             value: "4000"
           - name: CHAIN_ID
             value: {{ .Values.config.network.id | quote }}
-          {{- if .Values.config.network.currency.symbol | quote }}
+          {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
-          {{- if not .Values.config.network.currency.dualToken }}
           - name: COIN_NAME
             value: {{ .Values.config.network.currency.symbol | quote }}
-          {{- end }}
           {{- end }}
           {{- if .Values.config.account.enabled }}
           - name: ACCOUNT_ENABLED
@@ -101,13 +99,11 @@ spec:
             value: "4000"
           - name: CHAIN_ID
             value: {{ .Values.config.network.id | quote }}
-          {{- if .Values.config.network.currency.symbol | quote }}
+          {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
-          {{- if not .Values.config.network.currency.dualToken }}
           - name: COIN_NAME
             value: {{ .Values.config.network.currency.symbol | quote }}
-          {{- end }}
           {{- end }}
           {{- if .Values.config.account.enabled }}
           - name: ACCOUNT_ENABLED

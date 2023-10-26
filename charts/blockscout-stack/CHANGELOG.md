@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.3.2
+
+### Fixes
+
+- Dual token condition for gnosis chain
+
 ## 1.3.1
 
 ### Feature

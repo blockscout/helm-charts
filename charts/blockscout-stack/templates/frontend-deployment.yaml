@@ -50,7 +50,7 @@ spec:
             value: {{ .Values.config.network.shortname | quote }}
           - name: NEXT_PUBLIC_NETWORK_CURRENCY_NAME
             value: {{ .Values.config.network.currency.name | quote }}
-          {{- if .Values.config.network.currency.symbol | quote }}
+          {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
