@@ -3,7 +3,7 @@ replicas: 1
 
 image:
   repository: adonato/query-exporter
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # tag: <default to chart version>
 
 ## Additional labels and annotations for the deployment resource
