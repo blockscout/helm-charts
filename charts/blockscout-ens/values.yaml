@@ -18,24 +18,22 @@ global:
 
 bens:
   image:
+    repository: ghcr.io/blockscout/bens
     pullPolicy: Always
-    _default: ghcr.io/blockscout/bens:main
-  replicas:
-    app: 1
-  docker:
-    port: 80
-    targetPort: 
-    metricsPort: 
+    tag: main
+  replicaCount: 1
   ingress:
   # enable ingress
     enabled: true
     annotations: {}
+    paths:
+      - path: /
+        pathType: Prefix
     # enable https
     tls:
       enabled: true
       createSecret: true
-    host:
-      _default: bens-test.services.blockscout.com
+    hostname: chart-example.local
   resources:
     limits:
       memory:
@@ -47,9 +45,17 @@ bens:
         _default: "0.5Gi"
       cpu:
         _default: "0.25"
-  env: []
+  env:
     # NAME: VALUE
-  ##
+    ##
+    RUST_LOG:
+      _default: info
+    BENS__SERVER__HTTP__ADDR:
+      _default: 0.0.0.0:8050
+    BENS__TRACING__FORMAT:
+      _default: json
+    BENS__METRICS__ENABLED:
+      _default: 'true'
   envFromSecret: []
     # NAME: VALUE
   ##
@@ -57,7 +63,7 @@ bens:
     - /bin/sh
   args:
     - -c
-    - echo
+    - echo message
   podAnnotations: {}
 
   podSecurityContext: {}
@@ -87,7 +93,12 @@ bens:
 
   service:
     type: ClusterIP
-    port: 80
+
+  serviceMonitor:
+    portName: metrics
+    path: /metrics 
+    enabled: true
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
