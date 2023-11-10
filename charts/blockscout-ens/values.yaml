@@ -1,0 +1,104 @@
+# Default values for blockscout-ens.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Provide a name in place of blockscout-ens for `app:` labels
+##
+nameOverride: ""
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+imagePullSecrets: []
+
+global:
+  env: testing
+
+bens:
+  image:
+    pullPolicy: Always
+    _default: ghcr.io/blockscout/bens:main
+  replicas:
+    app: 1
+  docker:
+    port: 80
+    targetPort: 
+    metricsPort: 
+  ingress:
+  # enable ingress
+    enabled: true
+    annotations: {}
+    # enable https
+    tls:
+      enabled: true
+      createSecret: true
+    host:
+      _default: bens-test.services.blockscout.com
+  resources:
+    limits:
+      memory:
+        _default: "0.5Gi"
+      cpu:
+        _default: "0.25"
+    requests:
+      memory:
+        _default: "0.5Gi"
+      cpu:
+        _default: "0.25"
+  env: []
+    # NAME: VALUE
+  ##
+  envFromSecret: []
+    # NAME: VALUE
+  ##
+  command:
+    - /bin/sh
+  args:
+    - -c
+    - echo
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  ## SecurityContext holds pod-level security attributes and common container settings.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  securityContext: {}
+  terminationGracePeriodSeconds: 300
+  ## Liveness probe
+  ##
+  livenessProbe:
+    enabled: true
+    path: /api/v1/health/liveness
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  ## Readiness probe
+  ##
+  readinessProbe:
+    enabled: true
+    path: /api/v1/health/readiness
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 60
+
+  service:
+    type: ClusterIP
+    port: 80
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
