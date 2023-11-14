@@ -22,48 +22,42 @@ bens:
     pullPolicy: Always
     tag: main
   replicaCount: 1
-  ingress:
-  # enable ingress
+
+  ingress: 
     enabled: true
+    className: ""
     annotations: {}
+    hostname: chart-example.local
     paths:
       - path: /
-        pathType: Prefix
-    # enable https
+        pathType: ImplementationSpecific
     tls:
-      enabled: true
-      createSecret: true
-    hostname: chart-example.local
+      enabled: false
   resources:
     limits:
-      memory:
-        _default: "0.5Gi"
-      cpu:
-        _default: "0.25"
+      memory: 0.5Gi
+      cpu: 0.25
     requests:
-      memory:
-        _default: "0.5Gi"
-      cpu:
-        _default: "0.25"
+      memory: 0.5Gi
+      cpu: 0.25
+
+
+  postgres:
+    existingSecret:
+      enabled: true
+      secretname: user.server-postgresql.credentials.postgresql.acid.zalan.do
   env:
     # NAME: VALUE
     ##
-    RUST_LOG:
-      _default: info
-    BENS__SERVER__HTTP__ADDR:
-      _default: 0.0.0.0:8050
-    BENS__TRACING__FORMAT:
-      _default: json
-    BENS__METRICS__ENABLED:
-      _default: 'true'
-  envFromSecret: []
-    # NAME: VALUE
-  ##
-  command:
-    - /bin/sh
-  args:
-    - -c
-    - echo message
+    BENS__BLOCKSCOUT__NETWORKS__5__URL: https://eth-goerli.blockscout.com/
+    BENS__DATABASE__CONNECT__KV__DBNAME: dbname
+    BENS__DATABASE__CONNECT__KV__HOST: postgresql
+    BENS__DATABASE__CONNECT__KV__PORT: 5432
+    RUST_LOG: info
+    BENS__SERVER__HTTP__ADDR: 0.0.0.0:8050
+    BENS__TRACING__FORMAT: json
+    BENS__METRICS__ENABLED: 'false'
+
   podAnnotations: {}
 
   podSecurityContext: {}
@@ -71,25 +65,25 @@ bens:
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ##
   securityContext: {}
-  terminationGracePeriodSeconds: 300
+  terminationGracePeriodSeconds: 60
   ## Liveness probe
   ##
   livenessProbe:
     enabled: true
-    path: /api/v1/health/liveness
+    path: /health
     params:
-      initialDelaySeconds: 100
-      periodSeconds: 100
-      timeoutSeconds: 30
+      initialDelaySeconds: 30
+      periodSeconds: 60
+      timeoutSeconds: 5
   ## Readiness probe
   ##
   readinessProbe:
     enabled: true
-    path: /api/v1/health/readiness
+    path: /health
     params:
-      initialDelaySeconds: 60
-      periodSeconds: 10
-      timeoutSeconds: 60
+      initialDelaySeconds: 30
+      periodSeconds: 30
+      timeoutSeconds: 5
 
   service:
     type: ClusterIP
