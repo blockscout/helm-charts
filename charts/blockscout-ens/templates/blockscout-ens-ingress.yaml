@@ -15,7 +15,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}-bens-ingress
+  name: {{ $fullName }}-ingress
   labels:
     {{- include "blockscout-ens.labels" . | nindent 4 }}
   {{- with .Values.bens.ingress.annotations }}
@@ -30,7 +30,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.bens.ingress.hostname | quote }}
-      secretName: {{ $fullName }}-bens-tls
+      secretName: {{ $fullName }}-tls
   {{- end }}
   rules:
     - host: {{ .Values.bens.ingress.hostname | quote }}
@@ -44,11 +44,11 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}-bens-svc
+                name: {{ $fullName }}-svc
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}-bens-svc
+              serviceName: {{ $fullName }}-svc
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}

@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "blockscout-ens.fullname" . }}-bens-svm
+  name: {{ include "blockscout-ens.fullname" . }}-svm
   labels:
     {{- include "blockscout-ens.labels" . | nindent 4 }}
 spec:
@@ -12,5 +12,5 @@ spec:
     path: {{ .Values.bens.serviceMonitor.path }}
   selector:
     matchLabels:
-      app: {{ include "blockscout-ens.fullname" . }}-bens-svc
+      app: {{ include "blockscout-ens.fullname" . }}-svc
 {{- end }}

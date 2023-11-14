@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout-ens.fullname" . }}-bens
+  name: {{ include "blockscout-ens.fullname" . }}
   labels:
-    app: {{ .Release.Name }}-bens
+    app: {{ .Release.Name }}
     {{- include "blockscout-ens.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.bens.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-ens
+      app: {{ .Release.Name }}
   template:
     metadata:
       annotations:
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-blockscout
+        app: {{ .Release.Name }}
         {{- include "blockscout-ens.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -30,7 +30,7 @@ spec:
         {{- toYaml .Values.bens.podSecurityContext | nindent 8 }}
 
       containers:
-        - name: {{ .Chart.Name }}-bens
+        - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.bens.securityContext | nindent 12 }}
           image: "{{ .Values.bens.image.repository }}:{{ .Values.bens.image.tag }}"
@@ -47,7 +47,6 @@ spec:
             - name: http
               containerPort: 8050
               protocol: TCP
-          ports:
             - name: metrics
               containerPort: 6060
               protocol: TCP
@@ -56,9 +55,21 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- if .Values.bens.postgres.existingSecret.enabled }}
+          - name: BENS__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bens.postgres.existingSecret.secretname }}
+                key: username
+          - name: BENS__DATABASE__CONNECT__KV__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bens.postgres.existingSecret.secretname }}
+                key: password
+          {{- end }}
           envFrom:
             - secretRef:
-                name: {{ include "blockscout-ens.fullname" . }}-bens-env
+                name: {{ include "blockscout-ens.fullname" . }}-env
           {{- if .Values.bens.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
