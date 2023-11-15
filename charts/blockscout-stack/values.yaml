@@ -112,6 +112,7 @@ blockscout:
     hostname: chart-example.local
     tls:
       enabled: false
+      #secretName:
     paths:
       - path: /api
         pathType: Prefix
@@ -167,6 +168,7 @@ frontend:
     hostname: chart-example.local
     tls:
       enabled: false
+      #secretName:
     paths:
       - path: /
 
@@ -234,6 +236,7 @@ stats:
     hostname: chart-example-stats.local
     tls:
       enabled: false
+      #secretName:
     paths:
       - path: /
         pathType: Prefix
