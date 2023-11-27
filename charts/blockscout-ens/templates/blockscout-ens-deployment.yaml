@@ -51,21 +51,44 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
+          - name: BENS__SERVER__HTTP__ADDR
+            value: '0.0.0.0:8050'
+          {{- if .Values.bens.config.logLevel }}
+          - name: RUST_LOG
+            value: {{- .Values.bens.config.logLevel }}
+          {{- end }}
+          {{- if .Values.bens.config.metricsEnabled }}
+          - name: BENS__METRICS__ENABLED
+            value: {{- .Values.bens.config.metricsEnabled }}
+          {{- end }}
+          {{- if .Values.bens.config.tracingFormat }}
+          - name: BENS__TRACING__FORMAT
+            value: {{- .Values.bens.config.tracingFormat }}
+          {{- end }}
           {{- range $key, $value := .Values.bens.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
-          {{- if .Values.bens.postgres.existingSecret.enabled }}
+          {{- if .Values.bens.config.databaseUrl }}
+          - name: BENS__DATABASE__URL
+            value: {{ .Values.bens.config.databaseUrl }}
+          {{- else if .Values.bens.config.databaseName  }}
           - name: BENS__DATABASE__CONNECT__KV__USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.bens.postgres.existingSecret.secretname }}
-                key: username
+                name: {{ .Values.bens.config.databaseCredsSecretName }}
+                key: {{ .Values.bens.config.databaseUserSecretKey }}
           - name: BENS__DATABASE__CONNECT__KV__PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.bens.postgres.existingSecret.secretname }}
-                key: password
+                name: {{ .Values.bens.config.databaseCredsSecretName }}
+                key: {{ .Values.bens.config.databasePasswordSecretKey }}
+          - name: BENS__DATABASE__CONNECT__KV__DBNAME
+            value: {{ .Values.bens.config.databaseName }}
+          - name: BENS__DATABASE__CONNECT__KV__HOST
+            value: {{ .Values.bens.config.databaseHost }}
+          - name: BENS__DATABASE__CONNECT__KV__PORT
+            value: {{ .Values.bens.config.databasePort }}
           {{- end }}
           envFrom:
             - secretRef:

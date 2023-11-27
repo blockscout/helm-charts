@@ -41,22 +41,23 @@ bens:
       memory: 0.5Gi
       cpu: 0.25
 
+  config:
+    logLevel: info
+    metricsEnabled: 'false'
+    tracingFormat: json
+    databaseUrl: #postgres://user:password@hostname/database_name
+    # OR
+    databaseName: dbname
+    databaseHost: postgresql
+    databasePort: 5432
+    databaseCredsSecretName: user.server-postgresql.credentials.postgresql.acid.zalan.do
+    databaseUserSecretKey: username
+    databasePasswordSecretKey: password
 
-  postgres:
-    existingSecret:
-      enabled: true
-      secretname: user.server-postgresql.credentials.postgresql.acid.zalan.do
   env:
     # NAME: VALUE
     ##
     BENS__BLOCKSCOUT__NETWORKS__5__URL: https://eth-goerli.blockscout.com/
-    BENS__DATABASE__CONNECT__KV__DBNAME: dbname
-    BENS__DATABASE__CONNECT__KV__HOST: postgresql
-    BENS__DATABASE__CONNECT__KV__PORT: 5432
-    RUST_LOG: info
-    BENS__SERVER__HTTP__ADDR: 0.0.0.0:8050
-    BENS__TRACING__FORMAT: json
-    BENS__METRICS__ENABLED: 'false'
 
   podAnnotations: {}
 
