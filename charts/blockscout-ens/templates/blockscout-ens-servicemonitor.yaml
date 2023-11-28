@@ -1,0 +1,16 @@
+{{- if .Values.bens.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-ens.fullname" . }}-svm
+  labels:
+    {{- include "blockscout-ens.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: {{ .Values.bens.serviceMonitor.portName }}
+    path: {{ .Values.bens.serviceMonitor.path }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-ens.fullname" . }}-svc
+{{- end }}

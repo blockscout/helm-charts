@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-ens.fullname" . }}
+  labels:
+    app: {{ .Release.Name }}
+    {{- include "blockscout-ens.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.bens.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/blockscout-ens-secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}
+        {{- include "blockscout-ens.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-ens.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.bens.podSecurityContext | nindent 8 }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.bens.securityContext | nindent 12 }}
+          image: "{{ .Values.bens.image.repository }}:{{ .Values.bens.image.tag }}"
+          resources:
+            {{- toYaml .Values.bens.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.bens.image.pullPolicy }}
+          {{- with .Values.bens.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.bens.args }}
+          args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8050
+              protocol: TCP
+            - name: metrics
+              containerPort: 6060
+              protocol: TCP
+          env:
+          - name: BENS__SERVER__HTTP__ADDR
+            value: '0.0.0.0:8050'
+          {{- if .Values.bens.config.logLevel }}
+          - name: RUST_LOG
+            value: {{- .Values.bens.config.logLevel }}
+          {{- end }}
+          {{- if .Values.bens.config.metricsEnabled }}
+          - name: BENS__METRICS__ENABLED
+            value: {{- .Values.bens.config.metricsEnabled }}
+          {{- end }}
+          {{- if .Values.bens.config.tracingFormat }}
+          - name: BENS__TRACING__FORMAT
+            value: {{- .Values.bens.config.tracingFormat }}
+          {{- end }}
+          {{- range $key, $value := .Values.bens.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.bens.config.databaseUrl }}
+          - name: BENS__DATABASE__URL
+            value: {{ .Values.bens.config.databaseUrl }}
+          {{- else if .Values.bens.config.databaseName  }}
+          - name: BENS__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bens.config.databaseCredsSecretName }}
+                key: {{ .Values.bens.config.databaseUserSecretKey }}
+          - name: BENS__DATABASE__CONNECT__KV__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bens.config.databaseCredsSecretName }}
+                key: {{ .Values.bens.config.databasePasswordSecretKey }}
+          - name: BENS__DATABASE__CONNECT__KV__DBNAME
+            value: {{ .Values.bens.config.databaseName }}
+          - name: BENS__DATABASE__CONNECT__KV__HOST
+            value: {{ .Values.bens.config.databaseHost }}
+          - name: BENS__DATABASE__CONNECT__KV__PORT
+            value: {{ .Values.bens.config.databasePort }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "blockscout-ens.fullname" . }}-env
+          {{- if .Values.bens.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.bens.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.bens.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.bens.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.bens.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.bens.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bens.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
