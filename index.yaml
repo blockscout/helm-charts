@@ -338,6 +338,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/eth-rpc-exporter-0.1.1/eth-rpc-exporter-0.1.1.tgz
     version: 0.1.1
+  eth-tx-summary-api:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-12-06T10:31:36.723367116Z"
+    description: A Helm chart for Kubernetes
+    digest: d86803fcffe46e6349d592e2e59947e06fc113fda0ca083e5ea07f43a7269071
+    name: eth-tx-summary-api
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/eth-tx-summary-api-0.1.0/eth-tx-summary-api-0.1.0.tgz
+    version: 0.1.0
   graph-node:
   - apiVersion: v2
     appVersion: 0.32.0
@@ -453,4 +464,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-28T08:54:41.111130062Z"
+generated: "2023-12-06T10:31:36.723804876Z"
