@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.3.3
+
+### Feature
+
+- Custom secret name for ingress TLS
+
 ## 1.3.2
 
 ### Fixes
