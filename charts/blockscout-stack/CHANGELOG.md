@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.3.4
+
+### Fixes
+
+- Fixed custom TLS secret name reference for frontend and stats ingresses
+
 ## 1.3.3
 
 ### Feature

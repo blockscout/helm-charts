@@ -31,7 +31,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.frontend.ingress.hostname | quote }}
-      secretName: {{ .Values.blockscout.ingress.tls.secretName | default (printf "%s-frontend-tls" $fullName) }}
+      secretName: {{ .Values.frontend.ingress.tls.secretName | default (printf "%s-frontend-tls" $fullName) }}
   {{- end }}
   rules:
     - host: {{ .Values.frontend.ingress.hostname | quote }}
