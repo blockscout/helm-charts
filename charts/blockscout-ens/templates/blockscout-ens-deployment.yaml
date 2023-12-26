@@ -52,18 +52,18 @@ spec:
               protocol: TCP
           env:
             - name: BENS__SERVER__HTTP__ADDR
-              value: {{ .Values.bens.config.serverListenAddr }}
+              value: {{ .Values.bens.config.serverListenAddr | quote }}
             {{- if .Values.bens.config.logLevel }}
             - name: RUST_LOG
-              value: {{ .Values.bens.config.logLevel }}
+              value: {{ .Values.bens.config.logLevel | quote }}
             {{- end }}
             {{- if .Values.bens.config.metricsEnabled }}
             - name: BENS__METRICS__ENABLED
-              value: {{ .Values.bens.config.metricsEnabled }}
+              value: {{ .Values.bens.config.metricsEnabled | quote }}
             {{- end }}
             {{- if .Values.bens.config.tracingFormat }}
             - name: BENS__TRACING__FORMAT
-              value: {{ .Values.bens.config.tracingFormat }}
+              value: {{ .Values.bens.config.tracingFormat | quote }}
             {{- end }}
             {{- range $key, $value := .Values.bens.env }}
             - name: {{ $key }}
@@ -71,7 +71,7 @@ spec:
             {{- end }}
             {{- if .Values.bens.config.databaseUrl }}
             - name: BENS__DATABASE__URL
-              value: {{ .Values.bens.config.databaseUrl }}
+              value: {{ .Values.bens.config.databaseUrl | quote }}
             {{- else if .Values.bens.config.databaseName  }}
             - name: BENS__DATABASE__CONNECT__KV__USER
               valueFrom:
@@ -84,11 +84,11 @@ spec:
                   name: {{ .Values.bens.config.databaseCredsSecretName }}
                   key: {{ .Values.bens.config.databasePasswordSecretKey }}
             - name: BENS__DATABASE__CONNECT__KV__DBNAME
-              value: {{ .Values.bens.config.databaseName }}
+              value: {{ .Values.bens.config.databaseName | quote }}
             - name: BENS__DATABASE__CONNECT__KV__HOST
-              value: {{ .Values.bens.config.databaseHost }}
+              value: {{ .Values.bens.config.databaseHost | quote }}
             - name: BENS__DATABASE__CONNECT__KV__PORT
-              value: {{ .Values.bens.config.databasePort }}
+              value: {{ .Values.bens.config.databasePort | quote }}
             {{- end }}
           envFrom:
             - secretRef:
