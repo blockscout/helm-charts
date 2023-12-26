@@ -57,7 +57,6 @@ bens:
   env:
     # NAME: VALUE
     ##
-    BENS__BLOCKSCOUT__NETWORKS__5__URL: https://eth-goerli.blockscout.com/
 
   podAnnotations: {}
 
