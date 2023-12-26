@@ -52,7 +52,7 @@ spec:
               protocol: TCP
           env:
             - name: BENS__SERVER__HTTP__ADDR
-              value: 0.0.0.0:8050
+              value: {{ .Values.bens.config.serverListenAddr }}
             {{- if .Values.bens.config.logLevel }}
             - name: RUST_LOG
               value: {{ .Values.bens.config.logLevel }}

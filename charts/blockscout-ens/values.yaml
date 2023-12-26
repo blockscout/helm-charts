@@ -42,6 +42,7 @@ bens:
       cpu: 0.25
 
   config:
+    serverListenAddr: '0.0.0.0:8050'
     logLevel: info
     metricsEnabled: 'false'
     tracingFormat: json
