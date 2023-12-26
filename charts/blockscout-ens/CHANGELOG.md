@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.0.2
+
+### Fixes
+
+- Fix env quotation
+
 ## 1.0.1
 
 ### Fixes
