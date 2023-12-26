@@ -37,6 +37,16 @@ entries:
   blockscout-ens:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2023-12-26T15:24:39.367370739Z"
+    description: A Helm chart to deploy Blockscout ens
+    digest: 967aa13c41f8c4f055a5058854b01a13c3ef2469bc5c33a60d25c75b17e75f1c
+    name: blockscout-ens
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-ens-1.0.1/blockscout-ens-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-12-26T11:03:28.886969156Z"
     description: A Helm chart to deploy Blockscout ens
     digest: 3ff26119beacbfeadb0191826a04e40d29664c538bb28cd19d6d3dc3de94dd70
@@ -494,4 +504,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2023-12-26T11:03:28.887056678Z"
+generated: "2023-12-26T15:24:39.367517844Z"
