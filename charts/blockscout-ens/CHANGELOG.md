@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.0.1
+
+### Fixes
+
+- Move BENS__SERVER__HTTP__ADDR value to config
+
 ## 1.0.0
 
 ### Feature
