@@ -281,6 +281,79 @@ stats:
     # NAME: VALUE
   envFromSecret: []
     # NAME: VALUE
+
+userOpsIndexer:
+  enabled: false
+    ## Image parametes
+  ##
+  image:
+    repository: ghcr.io/blockscout/user-ops-indexer
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  replicasCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+    grpc:
+      enabled: true
+      port: 8051
+    metricsPort: 6060
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  ## Configure ingress resource that allow you to access the stats installation.
+  ## ref: http://kubernetes.io/docs/user-guide/ingress/
+  ##
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hostname: chart-example-stats.local
+    tls:
+      enabled: false
+      #secretName:
+    paths:
+      - path: /
+        pathType: Prefix
+
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: 250m
+    requests:
+      memory: 512Mi
+      cpu: 250m
+
+  ## Liveness probe
+  ##
+  livenessProbe:
+    enabled: false
+    path: /health
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  ## Readiness probe
+  ##
+  readinessProbe:
+    enabled: false
+    path: /health
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 60
+  ## Stats ENV vars
+  ## ref: https://github.com/blockscout/blockscout-rs/tree/main/stats#env
+  env: []
+    # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

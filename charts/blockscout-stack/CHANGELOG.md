@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.4.0
+
+### Feature
+
+- Adding user-ops-indexer service
+
 ## 1.3.4
 
 ### Fixes

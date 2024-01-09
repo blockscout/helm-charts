@@ -1,0 +1,16 @@
+{{- if and .Values.userOpsIndexer.enabled .Values.config.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 10s
+    port: http-metrics
+    path: /metrics
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-svc
+{{- end }}

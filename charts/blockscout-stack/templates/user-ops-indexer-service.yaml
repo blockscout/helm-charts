@@ -1,0 +1,41 @@
+{{- if .Values.userOpsIndexer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-svc
+  labels:
+    app: {{ .Release.Name }}-user-ops-indexer-svc
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.userOpsIndexer.service.type }}
+  ports:
+    - port: {{ .Values.userOpsIndexer.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.userOpsIndexer.service.metricsPort }}
+      targetPort: http-metrics
+      protocol: TCP
+      name: http-metrics
+  selector:
+    app: {{ .Release.Name }}-user-ops-indexer
+---
+{{- if .Values.userOpsIndexer.service.grpc.enabled }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-grpc-svc
+  labels:
+    app: {{ .Release.Name }}-user-ops-indexer-svc
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.userOpsIndexer.service.type }}
+  ports:
+    - port: {{ .Values.userOpsIndexer.service.grpc.port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    app: {{ .Release.Name }}-user-ops-indexer
+{{- end }}
+{{- end }}

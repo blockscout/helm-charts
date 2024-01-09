@@ -1,0 +1,106 @@
+{{- if .Values.userOpsIndexer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
+  labels:
+    app: {{ .Release.Name }}-user-ops-indexer
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.userOpsIndexer.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-user-ops-indexer
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/user-ops-indexer-secret.yaml") . | sha256sum }}
+      {{- if eq .Values.userOpsIndexer.image.pullPolicy "Always" }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-user-ops-indexer
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.userOpsIndexer.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-user-ops-indexer
+          securityContext:
+            {{- toYaml .Values.userOpsIndexer.securityContext | nindent 12 }}
+          image: "{{ .Values.userOpsIndexer.image.repository }}:{{ .Values.userOpsIndexer.image.tag }}"
+          resources:
+            {{- toYaml .Values.userOpsIndexer.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.userOpsIndexer.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8050
+              protocol: TCP
+            {{- if .Values.userOpsIndexer.service.grpc.enabled }}
+            - name: grpc
+              containerPort: 8051
+              protocol: TCP
+            {{- end }}
+            - name: http-metrics
+              containerPort: 6060
+              protocol: TCP
+          env:
+          - name: USER_OPS_INDEXER__SERVER__HTTP__ENABLED
+            value: 'true'
+          - name: USER_OPS_INDEXER__SERVER__HTTP__ADDR
+            value: '0.0.0.0:8050'
+          - name: USER_OPS_INDEXER__SERVER__GRPC__ENABLED
+            value: {{ .Values.userOpsIndexer.service.grpc.enabled | quote }}
+          - name: USER_OPS_INDEXER__SERVER__GRPC__ADDR
+            value: '0.0.0.0:8051'
+          - name: USER_OPS_INDEXER__METRICS__ENABLED
+            value: 'true'
+          - name: USER_OPS_INDEXER__METRICS__ADDR
+            value: '0.0.0.0:6060'
+          - name: USER_OPS_INDEXER__METRICS__ROUTE
+            value: '/metrics'
+          {{- range $key, $value := .Values.userOpsIndexer.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-env
+          {{- if .Values.userOpsIndexer.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.userOpsIndexer.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.userOpsIndexer.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.userOpsIndexer.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.userOpsIndexer.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.userOpsIndexer.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
