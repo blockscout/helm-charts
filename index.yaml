@@ -482,6 +482,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
     version: 0.2.1
+  remix-project:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-01-16T16:43:35.336670668Z"
+    description: A Helm chart to run Remix Project
+    digest: a24bb50ee29f6f380c5481a43cfb04c7a780ce8ed46a131237ab67125f6c6ff5
+    name: remix-project
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/remix-project-0.1.0/remix-project-0.1.0.tgz
+    version: 0.1.0
   sql-exporter:
   - apiVersion: v1
     appVersion: 2.9.2
@@ -524,4 +535,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-09T16:22:59.20655543Z"
+generated: "2024-01-16T16:43:35.336791133Z"
