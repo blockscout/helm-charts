@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metadata.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: metadata-{{ include "blockscout-admin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.metadata.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/metadata-secret.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: metadata-{{ include "blockscout-admin.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Release.Name }}-metadata
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.metadata.image.repository }}:{{ .Values.metadata.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
+          env:
+          {{- range .Values.metadata.environment }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: metadata-{{ include "blockscout-admin.fullname" . }}-env
+          ports:
+            - name: http
+              containerPort: {{ .Values.metadata.service.targetPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.metadata.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.readinessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.metadata.service.targetPort }}
+              scheme: HTTP
+            {{- with .Values.livenessProbe.params -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.metadata.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
