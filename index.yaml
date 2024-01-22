@@ -3,6 +3,17 @@ entries:
   blockscout-admin:
   - apiVersion: v2
     appVersion: 1.1.0
+    created: "2024-01-22T15:33:40.543365818Z"
+    description: A Helm chart for Blockscout admin services - admin-rs, admin-ts,
+      contracts-info, metadata, token-info-extractor
+    digest: cf75adcd3ab613a594fce19238f8a2f915473d3c346cba60cdce22bb96b6535c
+    name: blockscout-admin
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-admin-1.1.0/blockscout-admin-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: 1.1.0
     created: "2023-07-27T13:53:17.685410922Z"
     description: A Helm chart for Blockscout admin services - admin-rs, admin-ts,
       contracts-info, token-info-extractor
@@ -535,4 +546,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-16T16:43:35.336791133Z"
+generated: "2024-01-22T15:33:40.543468389Z"
