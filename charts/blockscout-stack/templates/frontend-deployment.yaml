@@ -83,14 +83,6 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "blockscout-stack.fullname" . }}-frontend-env
-          {{- if .Values.stats.files.enabled }}
-          volumeMounts:
-            {{- range $key, $value := .Values.stats.files.list }}
-            - mountPath: {{ $.Values.stats.files.mountPath }}/{{ $key }}
-              name: stats-cm
-              subPath: {{ $key }}
-            {{- end }}
-          {{- end }}
           {{- if .Values.frontend.readinessProbe.enabled }}
           readinessProbe:
             httpGet:

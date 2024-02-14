@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.4.1
+
+### Fixes
+
+- Fixing stats volume attachment
+
 ## 1.4.0
 
 ### Feature
