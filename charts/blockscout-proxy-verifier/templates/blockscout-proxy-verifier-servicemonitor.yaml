@@ -1,0 +1,16 @@
+{{- if .Values.proxyVerifier.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-proxy-verifier.fullname" . }}-svm
+  labels:
+    {{- include "blockscout-proxy-verifier.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: {{ .Values.proxyVerifier.serviceMonitor.portName }}
+    path: {{ .Values.proxyVerifier.serviceMonitor.path }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-proxy-verifier.fullname" . }}-svc
+{{- end }}
