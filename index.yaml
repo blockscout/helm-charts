@@ -96,6 +96,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/blockscout-ens-0.1.0/blockscout-ens-0.1.0.tgz
     version: 0.1.0
+  blockscout-proxy-verifier:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-02-21T11:32:10.265065879Z"
+    description: A Helm chart to deploy Blockscout proxy-verifier
+    digest: d61df6904cd110ebf172043917f1756bb21ea9ad18e8ececc1d74287dbfcba57
+    name: blockscout-proxy-verifier
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-proxy-verifier-1.0.0/blockscout-proxy-verifier-1.0.0.tgz
+    version: 1.0.0
   blockscout-stack:
   - apiVersion: v2
     appVersion: 5.3.0
@@ -566,4 +577,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-14T16:19:21.737870614Z"
+generated: "2024-02-21T11:32:10.265156077Z"
