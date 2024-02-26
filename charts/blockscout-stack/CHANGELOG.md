@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.4.2
+
+### Fixes
+
+- Fixing stats url condition in frontend deployment
+
 ## 1.4.1
 
 ### Fixes
