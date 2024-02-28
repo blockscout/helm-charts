@@ -87,7 +87,7 @@ spec:
       {{- if .Values.stats.files.enabled }}
       volumes:
         - configMap:
-            name: stats-cm
+            name: {{ include "blockscout-stack.fullname" . }}-stats-cm
             defaultMode: 0777
           name: stats-cm
       {{- end }}

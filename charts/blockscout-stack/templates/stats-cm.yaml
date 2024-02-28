@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: stats-cm
+  name: {{ include "blockscout-stack.fullname" . }}-stats-cm
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 data:

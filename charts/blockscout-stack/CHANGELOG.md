@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.4.3
+
+### Fixes
+
+- Making stats configmap name unique
+
 ## 1.4.2
 
 ### Fixes
