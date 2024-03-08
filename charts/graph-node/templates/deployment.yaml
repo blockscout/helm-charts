@@ -86,14 +86,14 @@ spec:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 180
             periodSeconds: 30
             timeoutSeconds: 20
           readinessProbe:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 180
             periodSeconds: 30
             timeoutSeconds: 20
           resources:
