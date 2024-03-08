@@ -464,6 +464,16 @@ entries:
   graph-node:
   - apiVersion: v2
     appVersion: 0.32.0
+    created: "2024-03-08T06:24:22.054291096Z"
+    description: A Helm chart for Kubernetes to run graph-node
+    digest: 94f60f5efa8c0be7c88db9f6499961def789cedab0fa6aa8d17df8d6f85bb202
+    name: graph-node
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/graph-node-0.1.2/graph-node-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 0.32.0
     created: "2023-10-16T11:06:22.326359473Z"
     description: A Helm chart for Kubernetes to run graph-node
     digest: 8e6f6c3f194c4686ad72f908a9e5facc80d49280b161f969e8fa115b6acbefc8
@@ -597,4 +607,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-28T12:53:41.502522108Z"
+generated: "2024-03-08T06:24:22.054405942Z"
