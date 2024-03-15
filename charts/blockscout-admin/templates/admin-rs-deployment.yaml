@@ -39,6 +39,10 @@ spec:
               value: http://contracts-info-{{ include "blockscout-admin.fullname" . }}:{{ .Values.contractsInfo.service.port }}
             - name: ADMIN_RS__CHAINS_CONFIG_PATH
               value: /app/config/networks.json
+            - name: ADMIN_RS__METADATA_ADDR
+              {{- with (index .Values.metadata.ingress.hosts 0) }}
+              value: https://{{ .host }}
+              {{- end }}
           {{- range .Values.adminRs.environment }}
             - name: {{ .name }}
               value: {{ .value | quote }}
