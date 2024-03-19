@@ -60,10 +60,24 @@ blockscout:
   ##
   env: []
     # NAME: VALUE
-  ## Set ENV vars via secret, this can be usefull for DB connection params, api keys, etc.
+  # Refer to an existing Secret/ConfigMap
+  extraEnv: []
+    # - name: DATABASE_URL
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: blockscout-secret
+    #       key: DATABASE_URL
+  ## Set ENV vars via secret, this can be useful for DB connection params, api keys, etc.
   ##
+  # This will create a Secret with the specified data
   envFromSecret: []
     # NAME: VALUE
+  # Refer to an existing Secret/ConfigMap
+  envFrom: []
+    # - secretRef:
+    #     name: blockscout-secret
+    # - configMapRef:
+    #     name: blockscout-config
   ## Command to start blockscout instance
   ##
   command:
@@ -202,8 +216,22 @@ frontend:
   ##
   env: []
     # NAME: VALUE
+  # Refer to an existing Secret/ConfigMap
+  extraEnv: []
+    # - name: FAVICON_GENERATOR_API_KEY
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: blockscout-frontend-secret
+    #       key: FAVICON_GENERATOR_API_KEY
+  # This will create a Secret with the specified data
   envFromSecret: []
     # NAME: VALUE
+  # Refer to an existing Secret/ConfigMap
+  envFrom: []
+    # - secretRef:
+    #     name: blockscout-frontend-secret
+    # - configMapRef:
+    #     name: blockscout-frontend-config
 
 stats:
   enabled: false

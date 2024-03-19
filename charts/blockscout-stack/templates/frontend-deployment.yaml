@@ -80,9 +80,17 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range .Values.frontend.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- if or .Values.frontend.envFromSecret .Values.frontend.envFrom }}
           envFrom:
-            - secretRef:
-                name: {{ include "blockscout-stack.fullname" . }}-frontend-env
+          - secretRef:
+              name: {{ include "blockscout-stack.fullname" . }}-frontend-env
+          {{- range .Values.frontend.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
           {{- if .Values.frontend.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
