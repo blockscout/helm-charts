@@ -40,6 +40,9 @@ blockscout:
   ## Currently only one replica is supported
   ##
   replicaCount: 1
+  ## Currently is recommended to set this to 0, so only one indexer replica is up at any time
+  ##
+  maxSurge: 0
   ## Image parametes
   ##
   image:

@@ -8,6 +8,10 @@ metadata:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.blockscout.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.blockscout.maxSurge }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}-blockscout
