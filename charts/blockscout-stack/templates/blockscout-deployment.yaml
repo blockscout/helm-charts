@@ -72,9 +72,17 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range .Values.blockscout.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
           envFrom:
-            - secretRef:
-                name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          - secretRef:
+              name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- range .Values.blockscout.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}-blockscout
@@ -125,9 +133,17 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range .Values.blockscout.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
           envFrom:
-            - secretRef:
-                name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          - secretRef:
+              name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- range .Values.blockscout.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
           {{- if .Values.blockscout.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
