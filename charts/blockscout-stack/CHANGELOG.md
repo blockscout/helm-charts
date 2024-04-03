@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.4.4
+
+### Feature
+
+- Add `extraEnv` and `envFrom` for backend/frontend to refer to an existing Secret/ConfigMap
+- Create Secrets for backend/frontend only when data is specified
+
 ## 1.4.3
 
 ### Fixes
