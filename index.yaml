@@ -586,6 +586,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/remix-project-0.1.0/remix-project-0.1.0.tgz
     version: 0.1.0
+  smart-guessr:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2024-04-03T08:41:19.986525903Z"
+    description: A Helm chart for Kubernetes
+    digest: 859a76b2b91f51e5e04052cf30c14a6459553cfb73be76ec8a8f89bfa79633d4
+    name: smart-guessr
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/smart-guessr-0.1.0/smart-guessr-0.1.0.tgz
+    version: 0.1.0
   sql-exporter:
   - apiVersion: v1
     appVersion: 2.9.2
@@ -639,4 +650,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-03T08:40:36.303956272Z"
+generated: "2024-04-03T08:41:19.986633744Z"
