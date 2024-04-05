@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.5.0
+
+### Feature
+
+- Add PodMonitor for frontend
+
 ## 1.4.4
 
 ### Feature

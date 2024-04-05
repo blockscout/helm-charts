@@ -1,0 +1,15 @@
+{{- if and .Values.frontend.enabled .Values.config.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-frontend-podmonitor
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  podMetricsEndpoints:
+  - port: http
+    path: /node-api/metrics
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-frontend
+{{- end }}

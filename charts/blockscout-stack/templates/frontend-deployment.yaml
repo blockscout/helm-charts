@@ -76,6 +76,10 @@ spec:
           - name: NEXT_PUBLIC_STATS_API_HOST
             value: "https://{{ .Values.stats.ingress.hostname }}"
           {{- end }}
+          {{- if .Values.config.prometheus.enabled }}
+          - name: PROMETHEUS_METRICS_ENABLED
+            value: "true"
+          {{- end }}
           {{- range $key, $value := .Values.frontend.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
