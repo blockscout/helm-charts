@@ -641,6 +641,16 @@ entries:
   verification-app:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2024-04-29T17:04:12.169334647Z"
+    description: A Helm chart for Kubernetes
+    digest: 41b2ff6f43eea62e97649fa135e340fb6ff3dc121aea168862cfa4c8f38b06fa
+    name: verification-app
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/verification-app-0.1.1/verification-app-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-03-19T08:40:46.167916488Z"
     description: A Helm chart for Kubernetes
     digest: 091d412fde809f91c20278592f9300e4cd1e71d1223b4d3433740b4ef3bb9d02
@@ -660,4 +670,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-05T09:42:57.538761013Z"
+generated: "2024-04-29T17:04:12.169463208Z"
