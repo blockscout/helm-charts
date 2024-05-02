@@ -596,6 +596,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/remix-project-0.1.0/remix-project-0.1.0.tgz
     version: 0.1.0
+  scoutcloud:
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2024-05-02T17:34:15.927364503Z"
+    description: A Helm chart for Kubernetes
+    digest: d1d95b162dd77b854e7754a1d782a98ca54a2d9dc32795c251aa7bfb21ae9fb5
+    name: scoutcloud
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/scoutcloud-0.1.0/scoutcloud-0.1.0.tgz
+    version: 0.1.0
   smart-guessr:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -670,4 +681,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-29T17:04:12.169463208Z"
+generated: "2024-05-02T17:34:15.927598279Z"
