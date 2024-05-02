@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scoutcloud.fullname" . }}
+  labels:
+    {{- include "scoutcloud.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "scoutcloud.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "scoutcloud.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "scoutcloud.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: SCOUTCLOUD__SERVER__HTTP__ADDR
+              value: "0.0.0.0:8050"
+            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__HOST
+              value: {{ .Values.config.database.host | quote }}
+            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__PORT
+              value: {{ .Values.config.database.port | quote }}
+            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "scoutcloud.fullname" .)) }}
+                  key: {{ or .Values.config.database.existingSecretUsernameKey "username" }}
+            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "scoutcloud.fullname" .)) }}
+                  key: {{ or .Values.config.database.existingSecretPasswordKey "password" }}
+            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__DBNAME
+              value: {{ .Values.config.database.dbname | quote }}
+            - name: SCOUTCLOUD__GITHUB__TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-github" (include "scoutcloud.fullname" .) }}
+                  key: "token"
+            - name: SCOUTCLOUD__GITHUB__OWNER
+              value: {{ .Values.config.github.owner | quote }}
+            - name: SCOUTCLOUD__GITHUB__REPO
+              value: {{ .Values.config.github.repo | quote }}
+            - name: SCOUTCLOUD__GITHUB__BRANCH
+              value: {{ .Values.config.github.branch | quote }}
+            - name: SCOUTCLOUD__TRACING__FORMAT
+              value: "json"
+            - name: SCOUTCLOUD__DATABASE__RUN_MIGRATIONS
+              value: "true"
+            - name: RUST_LOG
+              value: {{ .Values.config.logLevel | quote }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
