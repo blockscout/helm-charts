@@ -77,8 +77,10 @@ spec:
           {{- end }}
           {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
           envFrom:
+          {{- if .Values.blockscout.envFromSecret }}
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- end }}
           {{- range .Values.blockscout.envFrom }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
@@ -138,8 +140,10 @@ spec:
           {{- end }}
           {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
           envFrom:
+          {{- if .Values.blockscout.envFromSecret }}
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- end }}
           {{- range .Values.blockscout.envFrom }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
