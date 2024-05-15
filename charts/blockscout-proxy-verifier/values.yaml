@@ -23,7 +23,7 @@ proxyVerifier:
     tag: main
   replicaCount: 1
 
-  ingress: 
+  ingress:
     enabled: false
     className: ""
     annotations: {}
@@ -51,7 +51,7 @@ proxyVerifier:
     # PROXY_VERIFIER_CHAINS__5__NAME: "Eth Goerli"
     # PROXY_VERIFIER_CHAINS__5__api_url: "https://eth-goerli.blockscout.com/"
     # PROXY_VERIFIER_CHAINS__5__sensitive_api_key: ""
-  
+
   podAnnotations: {}
 
   podSecurityContext: {}
@@ -79,12 +79,16 @@ proxyVerifier:
       periodSeconds: 30
       timeoutSeconds: 5
 
+  files:
+    enabled: false
+    list: []
+
   service:
     type: ClusterIP
 
   serviceMonitor:
     portName: metrics
-    path: /metrics 
+    path: /metrics
     enabled: true
 
 serviceAccount:

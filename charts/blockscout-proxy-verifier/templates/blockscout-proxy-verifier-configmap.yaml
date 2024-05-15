@@ -1,0 +1,14 @@
+{{- if .Values.proxyVerifier.files.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "blockscout-proxy-verifier.fullname" . }}-configmap
+  labels:
+    app: {{ .Release.Name }}
+    {{- include "blockscout-proxy-verifier.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.proxyVerifier.files.list }}
+  {{ $key }}: {{ toYaml $value | indent 2 }}
+  {{- end }}
+{{- end }}

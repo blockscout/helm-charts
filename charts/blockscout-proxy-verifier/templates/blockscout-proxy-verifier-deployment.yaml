@@ -53,10 +53,20 @@ spec:
             {{- range $key, $value := .Values.proxyVerifier.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
-            {{- end }}          
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ include "blockscout-proxy-verifier.fullname" . }}-env
+          {{- if .Values.proxyVerifier.files.enabled }}
+          {{- $fullName := include "blockscout-proxy-verifier.fullname" . }}
+          {{- $mountPath := .Values.proxyVerifier.files.mountPath }}
+          volumeMounts:
+            {{- range $key, $value := .Values.proxyVerifier.files.list }}
+            - mountPath: {{ $mountPath }}/{{ $key }}
+              name: {{ $fullName }}-configmap
+              subPath: {{ $key }}
+            {{- end }}
+          {{- end }}
           {{- if .Values.proxyVerifier.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
@@ -77,6 +87,13 @@ spec:
             {{- . | toYaml | nindent 12 }}
             {{- end }}
           {{- end }}
+      {{- if .Values.proxyVerifier.files.enabled }}
+      volumes:
+        - configMap:
+            name: {{ include "blockscout-proxy-verifier.fullname" . }}-configmap
+            defaultMode: 0777
+          name: {{ include "blockscout-proxy-verifier.fullname" . }}-configmap
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
