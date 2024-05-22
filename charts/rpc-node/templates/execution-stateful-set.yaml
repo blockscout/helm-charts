@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "rpc-node.fullname" . }}-execution
+  labels:
+    app: {{ .Release.Name }}-execution
+    {{- include "rpc-node.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "rpc-node.fullname" . }}-execution
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-execution
+      {{- include "rpc-node.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+  {{- if .Values.execution.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: execution-data
+    spec:
+      accessModes:
+      {{- range .Values.execution.persistence.accessModes }}
+        - {{ . | quote }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.execution.persistence.size | quote }}
+    {{- if .Values.execution.persistence.storageClass }}
+    {{- if (eq "-" .Values.execution.persistence.storageClass) }}
+      storageClassName: ""
+    {{- else }}
+      storageClassName: "{{ .Values.execution.persistence.storageClass }}"
+    {{- end }}
+    {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with .Values.execution.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-execution
+        {{- include "rpc-node.labels" . | nindent 8 }}
+        {{- with .Values.execution.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "rpc-node.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.execution.podSecurityContext | nindent 8 }}
+      containers:
+        - name: execution
+          securityContext:
+            {{- toYaml .Values.execution.securityContext | nindent 12 }}
+          image: "{{ .Values.execution.image.repository }}:{{ .Values.execution.image.tag }}"
+          imagePullPolicy: {{ .Values.execution.image.pullPolicy }}
+          {{- with .Values.execution.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.execution.args }}
+          args: {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.execution.env }}
+          env:
+          {{- range $key, $value := .Values.execution.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.execution.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "rpc-node.fullname" . }}-execution-env
+          {{- range .Values.execution.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
+          ports:
+            {{- range .Values.execution.service.cluster.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}
+            {{- end }}
+            {{- range .Values.execution.service.node.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.execution.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.execution.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.execution.resources | nindent 12 }}
+          {{- if or .Values.execution.persistence.enabled .Values.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.execution.persistence.enabled }}
+            - name:  execution-data
+              mountPath: /data
+            {{- end }}
+          {{- with .Values.execution.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+      {{- with .Values.execution.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 300
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
