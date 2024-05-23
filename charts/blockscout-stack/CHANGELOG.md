@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.5.1
+
+### Fixes
+
+- Do not refer to `envFromSecret` when not defined for backend/frontend
+
 ## 1.5.0
 
 ### Feature

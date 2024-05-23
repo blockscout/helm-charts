@@ -89,8 +89,10 @@ spec:
           {{- end }}
           {{- if or .Values.frontend.envFromSecret .Values.frontend.envFrom }}
           envFrom:
+          {{- if .Values.frontend.envFromSecret }}
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-frontend-env
+          {{- end }}
           {{- range .Values.frontend.envFrom }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
