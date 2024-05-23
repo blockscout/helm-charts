@@ -585,6 +585,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
     version: 0.2.1
+  redstone-mud:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2024-05-23T07:48:53.739755212Z"
+    description: A Helm chart for Redstone MUD service
+    digest: 5a30153c505e172a9e1eadb27b839410e5b926cc6544cd15091ef34f57940a6d
+    name: redstone-mud
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/redstone-mud-0.1.0/redstone-mud-0.1.0.tgz
+    version: 0.1.0
   remix-project:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -702,4 +713,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-05-22T17:00:51.963825729Z"
+generated: "2024-05-23T07:48:53.739891506Z"
