@@ -37,6 +37,7 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.execution.ingress.hosts }}
+    {{- $port := .port }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -50,10 +51,10 @@ spec:
               service:
                 name: {{ $fullName }}-execution-cluster
                 port:
-                  number: {{ .port }}
+                  number: {{ $port }}
               {{- else }}
               serviceName: {{ $fullName }}-execution-cluster
-              servicePort: {{ .port }}
+              servicePort: {{ $port }}
               {{- end }}
           {{- end }}
     {{- end }}

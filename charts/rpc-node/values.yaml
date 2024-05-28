@@ -80,8 +80,7 @@ execution:
         paths:
           - path: /
             pathType: ImplementationSpecific
-        port:
-          - 8545
+        port: 8545
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
