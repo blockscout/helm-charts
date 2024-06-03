@@ -1,0 +1,15 @@
+{{- if and .Values.execution.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "rpc-node.fullname" . }}-execution-podmonitor
+  labels:
+     {{- include "rpc-node.labels" . | nindent 4 }}
+spec:
+  podMetricsEndpoints:
+  - port: {{ .Values.execution.prometheus.port }}
+    path: {{ .Values.execution.prometheus.path }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-execution
+{{- end }}

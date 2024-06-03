@@ -60,6 +60,9 @@ execution:
         - name: auth-rpc
           port: 8551
           protocol: TCP
+        #- name: metrics
+        #  port: 6060
+        #  protocol: TCP
     node:
       ports:
         - name: p2p-tcp
@@ -96,6 +99,9 @@ execution:
     - --http.api="eth,debug,net,trace,txpool,web3,erigon"
     - --ws
     - --ws.compression
+    #- --metrics
+    #- --metrics.addr=0.0.0.0
+    #- --metrics.port=6060
 
   env: []
     # NAME: VALUE
@@ -128,6 +134,11 @@ execution:
     initialDelaySeconds: 30
     periodSeconds: 30
     timeoutSeconds: 15
+
+  prometheus:
+    enabled: false
+    port: metrics
+    path: /debug/metrics/prometheus
 
   # Additional volumes on the output Deployment definition.
   volumes: []
