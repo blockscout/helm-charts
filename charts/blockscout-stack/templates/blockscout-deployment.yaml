@@ -7,7 +7,11 @@ metadata:
     app: {{ .Release.Name }}-blockscout
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
+  {{- if .Values.blockscout.separateApi.enabled }}
+  replicas: {{ .Values.blockscout.separateApi.replicaCount }}
+  {{- else }}
   replicas: {{ .Values.blockscout.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}-blockscout
@@ -29,7 +33,7 @@ spec:
       serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}
-      {{- if .Values.blockscout.init.enabled }}
+      {{- if and .Values.blockscout.init.enabled (not .Values.blockscout.separateApi.enabled) }}
       initContainers:
         - name: init-migrations
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
@@ -90,9 +94,17 @@ spec:
         - name: {{ .Chart.Name }}-blockscout
           securityContext:
             {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
+          {{- if .Values.blockscout.separateApi.enabled }}
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}-api"
+          {{- else }}
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
+          {{- end }}
           resources:
+          {{- if .Values.blockscout.separateApi.enabled }}
+            {{- toYaml .Values.blockscout.separateApi.resources | nindent 12 }}
+          {{- else}}
             {{- toYaml .Values.blockscout.resources | nindent 12 }}
+          {{- end }}
           imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
           {{- with .Values.blockscout.command }}
           command:  {{ . | toYaml | nindent 12 }}
@@ -130,6 +142,12 @@ spec:
           {{- if .Values.blockscout.ingress.enabled }}
           - name: BLOCKSCOUT_HOST
             value: {{ .Values.blockscout.ingress.hostname | quote }}
+          {{- end }}
+          {{- if .Values.blockscout.separateApi.enabled }}
+          - name: DISABLE_INDEXER
+            value: "true"
+          - name: DISABLE_WEBAPP
+            value: "true"
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
@@ -183,4 +201,122 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+{{- if .Values.blockscout.separateApi.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
+  labels:
+    app: {{ .Release.Name }}-blockscout-indexer
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.blockscout.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-blockscout-indexer
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Name }}-blockscout-indexer
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-blockscout
+          securityContext:
+            {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}-indexer"
+          resources:
+            {{- toYaml .Values.blockscout.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
+          {{- with .Values.blockscout.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.blockscout.args }}
+          args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          env:
+          - name: PORT
+            value: "4000"
+          - name: CHAIN_ID
+            value: {{ .Values.config.network.id | quote }}
+          - name: DISABLE_WEBAPP
+            value: "true"
+          - name: API_V1_READ_METHODS_DISABLED
+            value: "true"
+          - name: API_V1_WRITE_METHODS_DISABLED
+            value: "true"
+          {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
+          - name: COIN
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
+          {{- range $key, $value := .Values.blockscout.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range .Values.blockscout.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
+          envFrom:
+          {{- if .Values.blockscout.envFromSecret }}
+          - secretRef:
+              name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- end }}
+          {{- range .Values.blockscout.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.blockscout.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.blockscout.readinessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.blockscout.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.blockscout.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.blockscout.livenessProbe.path }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.blockscout.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.blockscout.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
 {{- end }}

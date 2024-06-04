@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.0
+
+### Features
+
+- Adding possibility to run separate api and indexer deployment. More information on this can be found [here](https://docs.blockscout.com/for-developers/information-and-settings/separate-indexer-web-app-and-api). The minimum required backend version is 6.6.0
+
 ## 1.5.1
 
 ### Fixes

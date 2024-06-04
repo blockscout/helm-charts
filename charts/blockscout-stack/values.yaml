@@ -29,6 +29,7 @@ config:
   account:
     enabled: false
   testnet: false
+
   ## If set to true will create service monitors for blockscout and stats
   ##
   prometheus:
@@ -37,7 +38,7 @@ config:
 ##
 blockscout:
   enabled: true
-  ## Currently only one replica is supported
+  ## Replica count for indexer (if separate api is not used this replica count for deployment containing both indexer and api). Currently only one replica is supported
   ##
   replicaCount: 1
   ## Image parametes
@@ -55,6 +56,18 @@ blockscout:
     args:
       - -c
       - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"
+  ## Run API service as separate deployment
+  ##
+  separateApi:
+    enabled: false
+    replicaCount: 2
+    resources:
+      limits:
+        cpu: 1
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
   ## Blockscout ENV vars
   ## ref: https://docs.blockscout.com/for-developers/information-and-settings/env-variables
   ##
@@ -143,11 +156,11 @@ blockscout:
 
   resources:
     limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
       cpu: 1
       memory: 2Gi
-    requests:
-      cpu: 500m
-      memory: 1Gi
 ## Configuration options for frontend
 ##
 frontend:

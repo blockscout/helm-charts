@@ -1,0 +1,92 @@
+{{- if .Values.blockscout.separateApi.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-migrations
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: blockscout-migrations
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
+          imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
+          {{- with .Values.blockscout.init.command }}
+          command:  {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.blockscout.init.args }}
+          args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+          env:
+          - name: PORT
+            value: "4000"
+          - name: CHAIN_ID
+            value: {{ .Values.config.network.id | quote }}
+          {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
+          - name: COIN
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          - name: COIN_NAME
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          {{- end }}
+          {{- if .Values.config.account.enabled }}
+          - name: ACCOUNT_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.config.testnet }}
+          - name: SHOW_TESTNET_LABEL
+            value: "true"
+          {{- end }}
+          {{- if .Values.frontend.enabled }}
+          - name: API_V2_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.blockscout.ingress.enabled }}
+          - name: BLOCKSCOUT_HOST
+            value: {{ .Values.blockscout.ingress.hostname | quote }}
+          {{- end }}
+          {{- if .Values.blockscout.separateApi.enabled }}
+          - name: DISABLE_INDEXER
+            value: "true"
+          - name: DISABLE_WEBAPP
+            value: "true"
+          {{- end }}
+          {{- range $key, $value := .Values.blockscout.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range .Values.blockscout.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- if or .Values.blockscout.envFromSecret .Values.blockscout.envFrom }}
+          envFrom:
+          {{- if .Values.blockscout.envFromSecret }}
+          - secretRef:
+              name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+          {{- end }}
+          {{- range .Values.blockscout.envFrom }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
+      restartPolicy: OnFailure
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.blockscout.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  backoffLimit: 4
+{{- end }}
