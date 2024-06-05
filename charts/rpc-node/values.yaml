@@ -89,19 +89,20 @@ execution:
     #    hosts:
     #      - chart-example.local
   command:
-  args:
-    - --http
-    - --http.addr="0.0.0.0"
-    - --http.port="8545"
-    - --http.compression
-    - --http.vhosts="*"
-    - --http.corsdomain="*"
-    - --http.api="eth,debug,net,trace,txpool,web3,erigon"
-    - --ws
-    - --ws.compression
+  args: []
+    #- --http
+    #- --http.addr="0.0.0.0"
+    #- --http.port="8545"
+    #- --http.compression
+    #- --http.vhosts="*"
+    #- --http.corsdomain="*"
+    #- --http.api="eth,debug,net,trace,txpool,web3,erigon"
+    #- --ws
+    #- --ws.compression
     #- --metrics
     #- --metrics.addr=0.0.0.0
     #- --metrics.port=6060
+  extraArgs: []
 
   env: []
     # NAME: VALUE
@@ -139,6 +140,115 @@ execution:
     enabled: false
     port: metrics
     path: /debug/metrics/prometheus
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+consensus:
+  enabled: false
+  image:
+    repository: sigp/lighthouse
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  persistence:
+    enabled: false
+    # storageClass: "-"
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    annotations: {}
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    cluster:
+      ports:
+        - name: rpc
+          port: 5052
+          protocol: TCP
+    node:
+      ports:
+        - name: p2p-tcp
+          port: 9909
+          protocol: TCP
+        - name: p2p-udp
+          port: 9909
+          protocol: UDP
+
+  command: "lighthouse bn"
+  args: []
+    #- --network
+    #- mainnet
+    #- --checkpoint-sync-url
+    #- https://mainnet.checkpoint.sigp.io
+    #- --execution-endpoint
+    #- http://{{ include "rpc-node.fullname" . }}-execution-cluster:8551
+    #- --execution-jwt
+    #- /jwtsecret
+    #- --disable-deposit-contract-sync
+    #- --listen-address
+    #- 0.0.0.0
+    #- --port
+    #- 9909
+    #- --http
+    #- --http-address
+    #- 0.0.0.0
+  extraArgs: []
+
+  env: []
+    # NAME: VALUE
+  # This will create a Secret with the specified data
+  envFromSecret: []
+    # NAME: VALUE
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: rpc
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 15
+  readinessProbe:
+    httpGet:
+      path: /
+      port: rpc
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 15
 
   # Additional volumes on the output Deployment definition.
   volumes: []

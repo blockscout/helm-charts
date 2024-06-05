@@ -1,49 +1,50 @@
+{{- if .Values.consensus.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "rpc-node.fullname" . }}-execution
+  name: {{ include "rpc-node.fullname" . }}-consensus
   labels:
-    app: {{ .Release.Name }}-execution
+    app: {{ .Release.Name }}-consensus
     {{- include "rpc-node.labels" . | nindent 4 }}
 spec:
   replicas: 1
-  serviceName: {{ include "rpc-node.fullname" . }}-execution
+  serviceName: {{ include "rpc-node.fullname" . }}-consensus
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-execution
+      app: {{ .Release.Name }}-consensus
       {{- include "rpc-node.selectorLabels" . | nindent 6 }}
   updateStrategy:
     type: {{ .Values.updateStrategy }}
-  {{- if .Values.execution.persistence.enabled }}
+  {{- if .Values.consensus.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
-      name: execution-data
+      name: consensus-data
     spec:
       accessModes:
-      {{- range .Values.execution.persistence.accessModes }}
+      {{- range .Values.consensus.persistence.accessModes }}
         - {{ . | quote }}
       {{- end }}
       resources:
         requests:
-          storage: {{ .Values.execution.persistence.size | quote }}
-    {{- if .Values.execution.persistence.storageClass }}
-    {{- if (eq "-" .Values.execution.persistence.storageClass) }}
+          storage: {{ .Values.consensus.persistence.size | quote }}
+    {{- if .Values.consensus.persistence.storageClass }}
+    {{- if (eq "-" .Values.consensus.persistence.storageClass) }}
       storageClassName: ""
     {{- else }}
-      storageClassName: "{{ .Values.execution.persistence.storageClass }}"
+      storageClassName: "{{ .Values.consensus.persistence.storageClass }}"
     {{- end }}
     {{- end }}
   {{- end }}
   template:
     metadata:
-      {{- with .Values.execution.podAnnotations }}
+      {{- with .Values.consensus.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-execution
+        app: {{ .Release.Name }}-consensus
         {{- include "rpc-node.labels" . | nindent 8 }}
-        {{- with .Values.execution.podLabels }}
+        {{- with .Values.consensus.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -53,62 +54,62 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "rpc-node.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.execution.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.consensus.podSecurityContext | nindent 8 }}
       containers:
-        - name: execution
+        - name: consensus
           securityContext:
-            {{- toYaml .Values.execution.securityContext | nindent 12 }}
-          image: "{{ .Values.execution.image.repository }}:{{ .Values.execution.image.tag }}"
-          imagePullPolicy: {{ .Values.execution.image.pullPolicy }}
-          {{- with .Values.execution.command }}
+            {{- toYaml .Values.consensus.securityContext | nindent 12 }}
+          image: "{{ .Values.consensus.image.repository }}:{{ .Values.consensus.image.tag }}"
+          imagePullPolicy: {{ .Values.consensus.image.pullPolicy }}
+          {{- with .Values.consensus.command }}
           command:  {{ . | toYaml | nindent 12 }}
           {{- end }}
-          {{- with (concat .Values.execution.args .Values.execution.extraArgs) }}
+          {{- with (concat .Values.consensus.args .Values.consensus.extraArgs) }}
           args: {{ toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.execution.env }}
+          {{- if .Values.consensus.env }}
           env:
-          {{- range $key, $value := .Values.execution.env }}
+          {{- range $key, $value := .Values.consensus.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
           {{- end }}
-          {{- if .Values.execution.envFromSecret }}
+          {{- if .Values.consensus.envFromSecret }}
           envFrom:
           - secretRef:
-              name: {{ include "rpc-node.fullname" . }}-execution-env
-          {{- range .Values.execution.envFrom }}
+              name: {{ include "rpc-node.fullname" . }}-consensus-env
+          {{- range .Values.consensus.envFrom }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
           {{- end }}
           ports:
-            {{- range .Values.execution.service.cluster.ports }}
+            {{- range .Values.consensus.service.cluster.ports }}
             - name: {{ .name }}
               containerPort: {{ .port }}
               protocol: {{ .protocol }}
             {{- end }}
-            {{- range .Values.execution.service.node.ports }}
+            {{- range .Values.consensus.service.node.ports }}
             - name: {{ .name }}
               containerPort: {{ .port }}
               protocol: {{ .protocol }}
             {{- end }}
           livenessProbe:
-            {{- toYaml .Values.execution.livenessProbe | nindent 12 }}
+            {{- toYaml .Values.consensus.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.execution.readinessProbe | nindent 12 }}
+            {{- toYaml .Values.consensus.readinessProbe | nindent 12 }}
           resources:
-            {{- toYaml .Values.execution.resources | nindent 12 }}
-          {{- if or .Values.execution.persistence.enabled .Values.volumeMounts }}
+            {{- toYaml .Values.consensus.resources | nindent 12 }}
+          {{- if or .Values.consensus.persistence.enabled .Values.volumeMounts }}
           volumeMounts:
-            {{- if .Values.execution.persistence.enabled }}
-            - name:  execution-data
+            {{- if .Values.consensus.persistence.enabled }}
+            - name:  consensus-data
               mountPath: /data
             {{- end }}
-          {{- with .Values.execution.volumeMounts }}
+          {{- with .Values.consensus.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- end }}
-      {{- with .Values.execution.volumes }}
+      {{- with .Values.consensus.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -125,3 +126,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
