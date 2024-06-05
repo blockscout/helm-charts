@@ -1,0 +1,19 @@
+{{- if .Values.metrics.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "eth-tx-summary-api.fullname" . }}
+  labels:
+    {{- include "eth-tx-summary-api.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: metrics
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eth-tx-summary-api.fullname" . }}
+{{- end }}

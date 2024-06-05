@@ -76,6 +76,12 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+metrics:
+  enabled: false
+  port: 9105
+  prometheus:
+    enabled: false
+
 # Additional volumes on the output Deployment definition.
 volumes: []
 # - name: foo
