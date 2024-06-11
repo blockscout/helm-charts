@@ -39,6 +39,7 @@ execution:
       - ReadWriteOnce
     size: 10Gi
     annotations: {}
+    mountPath: /data
 
   securityContext: {}
     # capabilities:
@@ -174,6 +175,7 @@ consensus:
       - ReadWriteOnce
     size: 10Gi
     annotations: {}
+    mountPath: /data
 
   securityContext: {}
     # capabilities:

@@ -103,7 +103,7 @@ spec:
           volumeMounts:
             {{- if .Values.consensus.persistence.enabled }}
             - name:  consensus-data
-              mountPath: /data
+              mountPath: {{ .Values.consensus.persistence.mountPath }}
             {{- end }}
           {{- with .Values.consensus.volumeMounts }}
             {{- toYaml . | nindent 12 }}

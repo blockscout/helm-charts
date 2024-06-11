@@ -102,7 +102,7 @@ spec:
           volumeMounts:
             {{- if .Values.execution.persistence.enabled }}
             - name:  execution-data
-              mountPath: /data
+              mountPath: {{ .Values.execution.persistence.mountPath }}
             {{- end }}
           {{- with .Values.execution.volumeMounts }}
             {{- toYaml . | nindent 12 }}
