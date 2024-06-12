@@ -20,6 +20,11 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
+config:
+  jwtsecret:
+    enabled: false
+    value: ""
+
 execution:
   image:
     repository: ethereum/client-go
