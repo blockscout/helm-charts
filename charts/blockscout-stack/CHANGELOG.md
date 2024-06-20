@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.1
+
+### Features
+
+- Expose new backend ingress path - public metrics
+
 ## 1.6.0
 
 ### Features
