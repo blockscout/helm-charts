@@ -1,0 +1,16 @@
+{{- if .Values.config.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: contracts-info-{{ include "blockscout-admin.fullname" . }}
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: metrics
+    path: {{ .Values.config.prometheus.path }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contracts-info-{{ include "blockscout-admin.name" . }}-svc
+{{- end }}

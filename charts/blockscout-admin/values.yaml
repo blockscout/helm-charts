@@ -228,6 +228,10 @@ securityContext:
 
 # Network config to add
 config:
+  prometheus:
+    enabled: false
+    port: 6060
+    path: /metrics
   network:
     #- name:
     #  label:

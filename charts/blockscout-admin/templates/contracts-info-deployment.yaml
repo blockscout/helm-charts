@@ -41,6 +41,10 @@ spec:
               value: admin_service
             - name: CONTRACTS_INFO__API_KEYS__extractor1__LEVEL
               value: extractor
+            {{- if .Values.config.prometheus.enabled }}
+            - name: CONTRACTS_INFO__METRICS__ENABLED
+              value: 'true'
+          {{- end }}
           {{- range .Values.contractsInfo.environment }}
             - name: {{ .name }}
               value: {{ .value | quote }}
@@ -52,6 +56,11 @@ spec:
             - name: http
               containerPort: {{ .Values.contractsInfo.service.targetPort }}
               protocol: TCP
+            {{- if .Values.config.prometheus.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.config.prometheus.port }}
+              protocol: TCP
+            {{- end }}
           readinessProbe:
             httpGet:
               path: /health

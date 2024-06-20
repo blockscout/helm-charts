@@ -43,6 +43,10 @@ spec:
               {{- with (index .Values.metadata.ingress.hosts 0) }}
               value: https://{{ .host }}
               {{- end }}
+          {{- if .Values.config.prometheus.enabled }}
+            - name: ADMIN_RS__METRICS__ENABLED
+              value: 'true'
+          {{- end }}
           {{- range .Values.adminRs.environment }}
             - name: {{ .name }}
               value: {{ .value | quote }}
@@ -54,6 +58,11 @@ spec:
             - name: http
               containerPort: {{ .Values.adminRs.service.targetPort }}
               protocol: TCP
+            {{- if .Values.config.prometheus.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.config.prometheus.port }}
+              protocol: TCP
+            {{- end }}
           {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:

@@ -35,6 +35,10 @@ spec:
           image: "{{ .Values.metadata.image.repository }}:{{ .Values.metadata.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
           env:
+          {{- if .Values.config.prometheus.enabled }}
+            - name: METADATA__METRICS__ENABLED
+              value: 'true'
+          {{- end }}
           {{- range .Values.metadata.environment }}
             - name: {{ .name }}
               value: {{ .value | quote }}
@@ -46,6 +50,11 @@ spec:
             - name: http
               containerPort: {{ .Values.metadata.service.targetPort }}
               protocol: TCP
+            {{- if .Values.config.prometheus.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.config.prometheus.port }}
+              protocol: TCP
+            {{- end }}
           readinessProbe:
             httpGet:
               path: /health
