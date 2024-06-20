@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "blockscout-proxy-verifier.fullname" . }}-svc
   labels:
-    app: {{ .Release.Name }}-svc
+    app: {{ include "blockscout-proxy-verifier.fullname" . }}-svc
     {{- include "blockscout-proxy-verifier.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.proxyVerifier.service.type }}
@@ -13,7 +13,7 @@ spec:
       protocol: TCP
       name: http
     - port: 6060
-      targetPort: http
+      targetPort: metrics
       protocol: TCP
       name: metrics
   selector:

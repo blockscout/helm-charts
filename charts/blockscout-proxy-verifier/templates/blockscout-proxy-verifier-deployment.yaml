@@ -50,6 +50,10 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
+            {{- if .Values.proxyVerifier.serviceMonitor.enabled }}
+            - name: PROXY_VERIFIER__METRICS__ENABLED
+              value: 'true'
+            {{- end }}
             {{- range $key, $value := .Values.proxyVerifier.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
