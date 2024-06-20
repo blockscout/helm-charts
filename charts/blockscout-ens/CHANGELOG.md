@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.0.3
+
+### Fixes
+
+- Fix for metrics port
+
 ## 1.0.2
 
 ### Fixes
@@ -31,4 +37,3 @@
 ## 0.1.0
 
 - Initial release
-
