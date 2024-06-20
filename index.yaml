@@ -721,6 +721,16 @@ entries:
   scoutcloud:
   - apiVersion: v2
     appVersion: 0.1.1
+    created: "2024-06-20T05:27:22.777510848Z"
+    description: A Helm chart for Kubernetes
+    digest: 010687bc42b5ffa93902c04c10367c96ed15eaa33c0205107e371723fd7acde3
+    name: scoutcloud
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/scoutcloud-0.1.1/scoutcloud-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.1
     created: "2024-05-02T17:34:15.927364503Z"
     description: A Helm chart for Kubernetes
     digest: d1d95b162dd77b854e7754a1d782a98ca54a2d9dc32795c251aa7bfb21ae9fb5
@@ -803,4 +813,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-06-17T15:17:00.387066154Z"
+generated: "2024-06-20T05:27:22.77766193Z"
