@@ -147,6 +147,8 @@ blockscout:
         pathType: Prefix
       - path: /sitemap.xml
         pathType: Prefix
+      - path: /public-metrics
+        pathType: Prefix
       - path: /auth/auth0
         pathType: Exact
       - path: /auth/auth0/callback
