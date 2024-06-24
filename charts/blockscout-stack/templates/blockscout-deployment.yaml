@@ -143,6 +143,18 @@ spec:
           - name: BLOCKSCOUT_HOST
             value: {{ .Values.blockscout.ingress.hostname | quote }}
           {{- end }}
+          {{- if .Values.config.nameService.enabled }}
+          - name: MICROSERVICE_BENS_ENABLED
+            value: 'true'
+          - name: MICROSERVICE_BENS_URL
+            value: {{ .Values.config.nameService.url }}
+          {{- end }}
+          {{- if .Values.userOpsIndexer.enabled }}
+          - name: MICROSERVICE_ACCOUNT_ABSTRACTION_ENABLED
+            value: 'true'
+          - name: MICROSERVICE_ACCOUNT_ABSTRACTION_URL
+            value: "https://{{ .Values.userOpsIndexer.ingress.hostname }}"
+          {{- end }}
           {{- if .Values.blockscout.separateApi.enabled }}
           - name: DISABLE_INDEXER
             value: "true"

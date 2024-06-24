@@ -29,6 +29,9 @@ config:
   account:
     enabled: false
   testnet: false
+  nameService:
+    enabled: false
+    url: ""
 
   ## If set to true will create service monitors for blockscout and stats
   ##

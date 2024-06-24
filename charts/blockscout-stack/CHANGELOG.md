@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.2
+
+### Features
+
+- Adding services (name service, user-ops) configuration to .config section
+
 ## 1.6.1
 
 ### Features
