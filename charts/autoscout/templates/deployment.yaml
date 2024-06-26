@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "scoutcloud.fullname" . }}
+  name: {{ include "autoscout.fullname" . }}
   labels:
-    {{- include "scoutcloud.labels" . | nindent 4 }}
+    {{- include "autoscout.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "scoutcloud.selectorLabels" . | nindent 6 }}
+      {{- include "autoscout.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -20,7 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "scoutcloud.labels" . | nindent 8 }}
+        {{- include "autoscout.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -29,7 +29,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "scoutcloud.serviceAccountName" . }}
+      serviceAccountName: {{ include "autoscout.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -43,38 +43,38 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-            - name: SCOUTCLOUD__SERVER__HTTP__ADDR
+            - name: AUTOSCOUT__SERVER__HTTP__ADDR
               value: "0.0.0.0:8050"
-            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__HOST
+            - name: AUTOSCOUT__DATABASE__CONNECT__KV__HOST
               value: {{ .Values.config.database.host | quote }}
-            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__PORT
+            - name: AUTOSCOUT__DATABASE__CONNECT__KV__PORT
               value: {{ .Values.config.database.port | quote }}
-            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__USER
+            - name: AUTOSCOUT__DATABASE__CONNECT__KV__USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "scoutcloud.fullname" .)) }}
+                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "autoscout.fullname" .)) }}
                   key: {{ or .Values.config.database.existingSecretUsernameKey "username" }}
-            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__PASSWORD
+            - name: AUTOSCOUT__DATABASE__CONNECT__KV__PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "scoutcloud.fullname" .)) }}
+                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "autoscout.fullname" .)) }}
                   key: {{ or .Values.config.database.existingSecretPasswordKey "password" }}
-            - name: SCOUTCLOUD__DATABASE__CONNECT__KV__DBNAME
+            - name: AUTOSCOUT__DATABASE__CONNECT__KV__DBNAME
               value: {{ .Values.config.database.dbname | quote }}
-            - name: SCOUTCLOUD__GITHUB__TOKEN
+            - name: AUTOSCOUT__GITHUB__TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ printf "%s-github" (include "scoutcloud.fullname" .) }}
+                  name: {{ printf "%s-github" (include "autoscout.fullname" .) }}
                   key: "token"
-            - name: SCOUTCLOUD__GITHUB__OWNER
+            - name: AUTOSCOUT__GITHUB__OWNER
               value: {{ .Values.config.github.owner | quote }}
-            - name: SCOUTCLOUD__GITHUB__REPO
+            - name: AUTOSCOUT__GITHUB__REPO
               value: {{ .Values.config.github.repo | quote }}
-            - name: SCOUTCLOUD__GITHUB__BRANCH
+            - name: AUTOSCOUT__GITHUB__BRANCH
               value: {{ .Values.config.github.branch | quote }}
-            - name: SCOUTCLOUD__TRACING__FORMAT
+            - name: AUTOSCOUT__TRACING__FORMAT
               value: "json"
-            - name: SCOUTCLOUD__DATABASE__RUN_MIGRATIONS
+            - name: AUTOSCOUT__DATABASE__RUN_MIGRATIONS
               value: "true"
             - name: RUST_LOG
               value: {{ .Values.config.logLevel | quote }}
