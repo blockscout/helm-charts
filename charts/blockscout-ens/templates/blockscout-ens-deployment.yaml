@@ -53,6 +53,8 @@ spec:
           env:
             - name: BENS__SERVER__HTTP__ADDR
               value: {{ .Values.bens.config.serverListenAddr | quote }}
+            - name: BENS__CONFIG
+              value: '/app/config/config.json'
             {{- if .Values.bens.config.logLevel }}
             - name: RUST_LOG
               value: {{ .Values.bens.config.logLevel | quote }}
@@ -113,6 +115,13 @@ spec:
             {{- . | toYaml | nindent 12 }}
             {{- end }}
           {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "blockscout-ens.fullname" . }}-config
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
