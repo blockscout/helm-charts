@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ include "autoscout.fullname" . }}
   labels:
+    app: {{ include "autoscout.fullname" . }}
     {{- include "autoscout.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
@@ -12,4 +13,5 @@ spec:
       protocol: TCP
       name: http
   selector:
+    app: {{ include "autoscout.fullname" . }}
     {{- include "autoscout.selectorLabels" . | nindent 4 }}

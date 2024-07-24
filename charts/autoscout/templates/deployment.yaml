@@ -3,11 +3,13 @@ kind: Deployment
 metadata:
   name: {{ include "autoscout.fullname" . }}
   labels:
+    app: {{ include "autoscout.fullname" . }}
     {{- include "autoscout.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
+      app: {{ include "autoscout.fullname" . }}
       {{- include "autoscout.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -20,6 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app: {{ include "autoscout.fullname" . }}
         {{- include "autoscout.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
