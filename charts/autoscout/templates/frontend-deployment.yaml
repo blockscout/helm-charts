@@ -41,6 +41,11 @@ spec:
             {{- toYaml .Values.frontend.securityContext | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          env:
+            {{- with (first .Values.ingress.hosts) }}
+            - name: NEXT_PUBLIC_API_ORIGIN
+              value: {{ .host }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}
