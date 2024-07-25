@@ -3,6 +3,16 @@ entries:
   autoscout:
   - apiVersion: v2
     appVersion: 0.1.2
+    created: "2024-07-25T05:54:23.347368359Z"
+    description: A Helm chart for Kubernetes
+    digest: 28570f67e74cc618b31f0509e34d42e84df93bfc77ed8597100417a1391222fe
+    name: autoscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/autoscout-0.2.1/autoscout-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 0.1.2
     created: "2024-07-24T09:18:17.296283856Z"
     description: A Helm chart for Kubernetes
     digest: 1b61c8695238f01cfdcfeaf7646028e660161dbed350cd3c3bacf8b2120ec918
@@ -895,4 +905,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-24T09:18:17.29644Z"
+generated: "2024-07-25T05:54:23.347518017Z"
