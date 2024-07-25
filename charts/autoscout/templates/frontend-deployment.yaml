@@ -44,7 +44,7 @@ spec:
           env:
             {{- with (first .Values.ingress.hosts) }}
             - name: NEXT_PUBLIC_API_ORIGIN
-              value: {{ .host }}
+              value: https://{{ .host }}
             {{- end }}
           ports:
             - name: http
