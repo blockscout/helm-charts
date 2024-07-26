@@ -99,7 +99,7 @@ spec:
             {{- toYaml .Values.consensus.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.consensus.resources | nindent 12 }}
-          {{- if or .Values.consensus.persistence.enabled .Values.consensus.volumeMounts .Values.config.jwtsecret.enabled }}
+          {{- if or .Values.consensus.persistence.enabled .Values.consensus.volumeMounts .Values.config.jwtsecret.enabled .Values.consensus.configFiles.enabled }}
           volumeMounts:
             {{- if .Values.consensus.persistence.enabled }}
             - name:  consensus-data
@@ -110,17 +110,26 @@ spec:
               mountPath: /app/config/jwtsecret
               subPath: jwtsecret
             {{- end }}
+            {{- if .Values.consensus.configFiles.enabled }}
+            - name: configfiles
+              mountPath: {{ .Values.consensus.configFiles.mountPath }}
+            {{- end }}
           {{- with .Values.consensus.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- end }}
-      {{- if or .Values.consensus.volumes .Values.config.jwtsecret.enabled }}
+      {{- if or .Values.consensus.volumes .Values.config.jwtsecret.enabled .Values.consensus.configFiles.enabled }}
       volumes:
       {{- if .Values.config.jwtsecret.enabled }}
         - name: jwtsecret
           secret:
             secretName: {{ include "rpc-node.fullname" . }}-jwtsecret
       {{- end }}
+      {{- if .Values.consensus.configFiles.enabled }}
+        - name: configfiles
+          configMap:
+            name: {{ include "rpc-node.fullname" . }}-consensus-files
+        {{- end }}
       {{- with .Values.consensus.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

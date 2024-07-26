@@ -1,0 +1,11 @@
+{{- if .Values.execution.configFiles.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rpc-node.fullname" . }}-execution-files
+data:
+  {{- range $key, $value := .Values.execution.configFiles.content }}
+  {{ $key }}: {{ toYaml $value | indent 2 }}
+  {{- end }}
+{{- end }}

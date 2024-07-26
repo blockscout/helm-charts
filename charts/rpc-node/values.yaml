@@ -147,6 +147,12 @@ execution:
     port: metrics
     path: /debug/metrics/prometheus
 
+  configFiles:
+    enabled: false
+    #content:
+    #  genesis.json: |-
+    #    ...
+    #mountPath: /app/config
   # Additional volumes on the output Deployment definition.
   volumes: []
   # - name: foo
@@ -273,6 +279,12 @@ consensus:
     periodSeconds: 30
     timeoutSeconds: 15
 
+  configFiles:
+    enabled: false
+    #content:
+    #  genesis.json: |-
+    #    ...
+    #mountPath: /app/config
   # Additional volumes on the output Deployment definition.
   volumes: []
   # - name: foo
