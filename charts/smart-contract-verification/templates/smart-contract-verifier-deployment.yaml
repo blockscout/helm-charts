@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+  labels:
+    app: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.smartContractVerifier.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+      {{- include "smart-contract-verification.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.smartContractVerifier.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+      {{- with .Values.smartContractVerifier.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+        {{- include "smart-contract-verification.labels" . | nindent 8 }}
+        {{- with .Values.smartContractVerifier.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "smart-contract-verification.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.smartContractVerifier.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-smart-contract-verifier
+          securityContext:
+            {{- toYaml .Values.smartContractVerifier.securityContext | nindent 12 }}
+          image: "{{ .Values.smartContractVerifier.image.repository }}:{{ .Values.smartContractVerifier.image.tag }}"
+          imagePullPolicy: {{ .Values.smartContractVerifier.image.pullPolicy }}
+          env:
+          - name: SMART_CONTRACT_VERIFIER__SERVER__HTTP__ADDR
+            value: "0.0.0.0:{{ .Values.smartContractVerifier.service.port }}"
+          {{- if .Values.smartContractVerifier.grpc.enabled }}
+          - name: SMART_CONTRACT_VERIFIER__SERVER__GRPC__ENABLED
+            value: 'true'
+          - name: SMART_CONTRACT_VERIFIER__SERVER__GRPC__ADDR
+            value: 0.0.0.0:{{ .Values.smartContractVerifier.grpc.port }}
+          {{- end }}
+          {{- if .Values.metrics.enabled }}
+          - name: SMART_CONTRACT_VERIFIER__METRICS__ENABLED
+            value: 'true'
+          - name: SMART_CONTRACT_VERIFIER__METRICS__ADDR
+            value: 0.0.0.0:{{ .Values.metrics.port }}
+          - name: SMART_CONTRACT_VERIFIER__METRICS__ROUTE
+            value: /metrics
+          {{- end }}
+          {{- range $key, $value := .Values.smartContractVerifier.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if or .Values.smartContractVerifier.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier-env
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.smartContractVerifier.service.port }}
+              protocol: TCP
+            {{- if .Values.smartContractVerifier.grpc.enabled }}
+            - name: grpc
+              containerPort: {{ .Values.smartContractVerifier.grpc.port }}
+              protocol: TCP
+            {{- end}}
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.smartContractVerifier.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.smartContractVerifier.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.smartContractVerifier.resources | nindent 12 }}
+          {{- with .Values.smartContractVerifier.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.smartContractVerifier.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

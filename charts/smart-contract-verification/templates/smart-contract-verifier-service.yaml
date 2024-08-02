@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+  labels:
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.smartContractVerifier.service.type }}
+  ports:
+    - port: {{ .Values.smartContractVerifier.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.smartContractVerifier.grpc.enabled }}
+    - port: {{ .Values.smartContractVerifier.grpc.port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+    {{- end}}
+    {{- if .Values.metrics.enabled }}
+    - port: {{ .Values.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    app: {{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier
+    {{- include "smart-contract-verification.selectorLabels" . | nindent 4 }}

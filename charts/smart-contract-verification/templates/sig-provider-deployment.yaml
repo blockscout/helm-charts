@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "smart-contract-verification.fullname" . }}-sig-provider
+  labels:
+    app: {{ include "smart-contract-verification.fullname" . }}-sig-provider
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.sigProvider.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "smart-contract-verification.fullname" . }}-sig-provider
+      {{- include "smart-contract-verification.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.sigProvider.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+      {{- with .Values.sigProvider.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "smart-contract-verification.fullname" . }}-sig-provider
+        {{- include "smart-contract-verification.labels" . | nindent 8 }}
+        {{- with .Values.sigProvider.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "smart-contract-verification.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.sigProvider.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-sig-provider
+          securityContext:
+            {{- toYaml .Values.sigProvider.securityContext | nindent 12 }}
+          image: "{{ .Values.sigProvider.image.repository }}:{{ .Values.sigProvider.image.tag }}"
+          imagePullPolicy: {{ .Values.sigProvider.image.pullPolicy }}
+          env:
+          - name: SIG_PROVIDER__SERVER__HTTP__ADDR
+            value: "0.0.0.0:{{ .Values.sigProvider.service.port }}"
+          {{- if .Values.metrics.enabled }}
+          - name: SIG_PROVIDER__METRICS__ENABLED
+            value: 'true'
+          {{- end }}
+          {{- if .Values.ethBytecodeDb.enabled }}
+          - name: SIG_PROVIDER__SOURCES__ETH_BYTECODE_DB__ENABLED
+            value: 'true'
+          - name: SIG_PROVIDER__SOURCES__ETH_BYTECODE_DB__URL
+            value: http://{{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db:{{ .Values.ethBytecodeDb.service.port }}
+          {{- end }}
+          {{- range $key, $value := .Values.sigProvider.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.sigProvider.service.port }}
+              protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.sigProvider.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.sigProvider.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.sigProvider.resources | nindent 12 }}
+          {{- with .Values.sigProvider.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.sigProvider.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

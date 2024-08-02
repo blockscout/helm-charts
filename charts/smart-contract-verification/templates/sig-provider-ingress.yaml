@@ -1,0 +1,51 @@
+{{- if .Values.sigProvider.ingress.enabled -}}
+{{- $fullName := include "smart-contract-verification.fullname" . -}}
+{{- $svcPort := .Values.sigProvider.service.port -}}
+{{- if and .Values.sigProvider.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.sigProvider.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.sigProvider.ingress.annotations "kubernetes.io/ingress.class" .Values.sigProvider.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-sig-provider
+  labels:
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+  {{- with .Values.sigProvider.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.sigProvider.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.sigProvider.ingress.className }}
+  {{- end }}
+  {{- if .Values.sigProvider.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.sigProvider.ingress.hostname | quote }}
+      secretName: {{ $fullName }}-sig-provider-ingress-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.sigProvider.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-sig-provider
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}-sig-provider
+              servicePort: {{ $svcPort }}
+              {{- end }}
+{{- end }}

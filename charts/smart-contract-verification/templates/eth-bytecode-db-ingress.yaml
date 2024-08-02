@@ -1,0 +1,51 @@
+{{- if .Values.ethBytecodeDb.ingress.enabled -}}
+{{- $fullName := include "smart-contract-verification.fullname" . -}}
+{{- $svcPort := .Values.ethBytecodeDb.service.port -}}
+{{- if and .Values.ethBytecodeDb.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ethBytecodeDb.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ethBytecodeDb.ingress.annotations "kubernetes.io/ingress.class" .Values.ethBytecodeDb.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-eth-bytecode-db
+  labels:
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+  {{- with .Values.ethBytecodeDb.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.ethBytecodeDb.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ethBytecodeDb.ingress.className }}
+  {{- end }}
+  {{- if .Values.ethBytecodeDb.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ethBytecodeDb.ingress.hostname | quote }}
+      secretName: {{ $fullName }}-eth-bytecode-db-ingress-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.ethBytecodeDb.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-eth-bytecode-db
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}-eth-bytecode-db
+              servicePort: {{ $svcPort }}
+              {{- end }}
+{{- end }}

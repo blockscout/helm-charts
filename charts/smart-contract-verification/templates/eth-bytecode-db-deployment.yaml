@@ -1,0 +1,99 @@
+{{- if .Values.ethBytecodeDb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
+  labels:
+    app: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
+    {{- include "smart-contract-verification.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ethBytecodeDb.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
+      {{- include "smart-contract-verification.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.ethBytecodeDb.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+      {{- with .Values.ethBytecodeDb.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
+        {{- include "smart-contract-verification.labels" . | nindent 8 }}
+        {{- with .Values.ethBytecodeDb.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "smart-contract-verification.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.ethBytecodeDb.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-eth-bytecode-db
+          securityContext:
+            {{- toYaml .Values.ethBytecodeDb.securityContext | nindent 12 }}
+          image: "{{ .Values.ethBytecodeDb.image.repository }}:{{ .Values.ethBytecodeDb.image.tag }}"
+          imagePullPolicy: {{ .Values.ethBytecodeDb.image.pullPolicy }}
+          env:
+          - name: ETH_BYTECODE_DB__SERVER__HTTP__ADDR
+            value: "0.0.0.0:{{ .Values.ethBytecodeDb.service.port }}"
+          - name: ETH_BYTECODE_DB__VERIFIER__HTTP_URL
+            value: http://{{ include "smart-contract-verification.fullname" . }}-smart-contract-verifier:{{ .Values.smartContractVerifier.service.port }}
+          {{- if .Values.metrics.enabled }}
+          - name: ETH_BYTECODE_DB__METRICS__ENABLED
+            value: 'true'
+          - name: ETH_BYTECODE_DB__METRICS__ADDR
+            value: 0.0.0.0:{{ .Values.metrics.port }}
+          {{- end }}
+          {{- range $key, $value := .Values.ethBytecodeDb.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if or .Values.ethBytecodeDb.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db-env
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ethBytecodeDb.service.port }}
+              protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.ethBytecodeDb.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.ethBytecodeDb.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.ethBytecodeDb.resources | nindent 12 }}
+          {{- with .Values.ethBytecodeDb.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.ethBytecodeDb.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
