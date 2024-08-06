@@ -113,6 +113,7 @@ spec:
             {{- if .Values.consensus.configFiles.enabled }}
             - name: configfiles
               mountPath: {{ .Values.consensus.configFiles.mountPath }}
+              defaultMode: 0777
             {{- end }}
           {{- with .Values.consensus.volumeMounts }}
             {{- toYaml . | nindent 12 }}
