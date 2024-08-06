@@ -752,6 +752,16 @@ entries:
   rpc-node:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2024-08-06T19:48:51.271148564Z"
+    description: A Helm chart for RPC node and consensus
+    digest: 7e693d217d0745933ab0e71d5d5e1ea8466bf96caf0526c764d472098fe904aa
+    name: rpc-node
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/rpc-node-0.4.1/rpc-node-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-07-26T10:51:35.560908757Z"
     description: A Helm chart for RPC node and consensus
     digest: 96bd71cfa5ccdcc2827404354b3f89f9da3b9e9985789e89c74ed1f63cf7a251
@@ -947,4 +957,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-02T06:22:19.013500106Z"
+generated: "2024-08-06T19:48:51.271315124Z"
