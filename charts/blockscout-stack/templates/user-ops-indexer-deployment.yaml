@@ -68,6 +68,9 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range .Values.userOpsIndexer.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
           envFrom:
             - secretRef:
                 name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-env
