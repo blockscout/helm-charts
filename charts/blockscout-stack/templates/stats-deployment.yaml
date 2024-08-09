@@ -53,6 +53,9 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range .Values.stats.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
           envFrom:
             - secretRef:
                 name: {{ include "blockscout-stack.fullname" . }}-stats-env

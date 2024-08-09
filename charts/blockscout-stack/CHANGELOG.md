@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 1.6.3
+
+### Feature
+
+- Adding extraEnv for user-ops indexer and stats services deployments
+
+### Fixes
+
+- Fixed a typo in stats and user-ops indexer, where ```replicaCount``` was named ```replicasCount``` and was thus marked as undefined.
+
 ## 1.6.2
 
 ### Features

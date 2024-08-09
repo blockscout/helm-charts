@@ -260,7 +260,7 @@ stats:
     tag: latest
     pullPolicy: IfNotPresent
 
-  replicasCount: 1
+  replicaCount: 1
   service:
     type: ClusterIP
     port: 80
@@ -327,6 +327,12 @@ stats:
     # NAME: VALUE
   envFromSecret: []
     # NAME: VALUE
+  extraEnv: []
+    # - name: STATS__DB_URL
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: blockscout-stats-secret
+    #       key: STATS__DB_URL
 
 userOpsIndexer:
   enabled: false
@@ -337,7 +343,7 @@ userOpsIndexer:
     tag: latest
     pullPolicy: IfNotPresent
 
-  replicasCount: 1
+  replicaCount: 1
   service:
     type: ClusterIP
     port: 80
@@ -399,6 +405,12 @@ userOpsIndexer:
     # NAME: VALUE
   envFromSecret: []
     # NAME: VALUE
+  extraEnv: []
+    # - name: USER_OPS_INDEXER__DATABASE__CONNECT__URL
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: blockscout-userops-indexer-secret
+    #       key: USER_OPS_INDEXER__DATABASE__CONNECT__URL
 
 serviceAccount:
   # Specifies whether a service account should be created
