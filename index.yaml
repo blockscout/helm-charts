@@ -213,6 +213,16 @@ entries:
   blockscout-stack:
   - apiVersion: v2
     appVersion: 6.7.0
+    created: "2024-08-09T11:17:54.438954444Z"
+    description: A Helm chart to deploy Blockscout stack
+    digest: b58dccab54387cdb3369b1c012e1384f4faefeb497265a5a3cce99493d283353
+    name: blockscout-stack
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-stack-1.6.3/blockscout-stack-1.6.3.tgz
+    version: 1.6.3
+  - apiVersion: v2
+    appVersion: 6.7.0
     created: "2024-06-24T09:55:18.471646917Z"
     description: A Helm chart to deploy Blockscout stack
     digest: cdb7d2b60e977fbdf4c19f37ecaf3aaf27d41160908fa424dc5767b0317c0e21
@@ -957,4 +967,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-06T19:48:51.271315124Z"
+generated: "2024-08-09T11:17:54.439402059Z"
