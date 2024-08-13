@@ -46,6 +46,15 @@ spec:
             - name: NEXT_PUBLIC_API_ORIGIN
               value: https://{{ .host }}
             {{- end }}
+            - name: NEXT_PUBLIC_AUTH0_DOMAIN
+              value: {{ .Values.config.auth0.domain | quote }}
+            - name: NEXT_PUBLIC_AUTH0_AUDIENCE
+              value: {{ .Values.config.auth0.audience | quote }}
+            - name: NEXT_PUBLIC_AUTH0_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-auth0" (include "autoscout.fullname" .) }}
+                  key: "client_id"
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}
