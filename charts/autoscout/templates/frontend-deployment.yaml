@@ -55,6 +55,18 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-auth0" (include "autoscout.fullname" .) }}
                   key: "client_id"
+            - name: AUTH0_MANAGEMENT_API_AUDIENCE
+              value: {{ .Values.config.auth0.management.audience | quote }}
+            - name: AUTH0_MANAGEMENT_API_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-auth0" (include "autoscout.fullname" .) }}
+                  key: "management_client_id"
+            - name: AUTH0_MANAGEMENT_API_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-auth0" (include "autoscout.fullname" .) }}
+                  key: "management_secret"
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}

@@ -36,6 +36,10 @@ config:
     domain: ""
     client_id: ""
     audience: ""
+    management:
+      client_id: ""
+      secret: ""
+      audience: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
