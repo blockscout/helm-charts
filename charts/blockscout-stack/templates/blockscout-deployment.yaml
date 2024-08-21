@@ -117,6 +117,13 @@ spec:
               containerPort: 4000
               protocol: TCP
           env:
+          {{- if .Values.blockscout.separateApi.enabled }}
+          - name: MODE
+            value: "api"
+          {{- else }}
+          - name: MODE
+            value: "all"
+          {{- end }}
           - name: PORT
             value: "4000"
           - name: CHAIN_ID
@@ -264,6 +271,8 @@ spec:
               containerPort: 4000
               protocol: TCP
           env:
+          - name: MODE
+          - value: "indexer"
           - name: PORT
             value: "4000"
           - name: CHAIN_ID
