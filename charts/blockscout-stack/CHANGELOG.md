@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.4
+
+### Feature
+
+- Adding MODE env variable for backend to distinguish API/indexer applications.
+
 ## 1.6.3
 
 ### Feature
