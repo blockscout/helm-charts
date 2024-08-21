@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.5
+
+### Fix
+
+- Fixing setting MODE env variable for indexer application.
+
 ## 1.6.4
 
 ### Feature
