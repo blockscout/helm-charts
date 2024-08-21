@@ -272,7 +272,7 @@ spec:
               protocol: TCP
           env:
           - name: MODE
-          - value: "indexer"
+            value: "indexer"
           - name: PORT
             value: "4000"
           - name: CHAIN_ID
