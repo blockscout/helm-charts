@@ -118,10 +118,10 @@ spec:
               protocol: TCP
           env:
           {{- if .Values.blockscout.separateApi.enabled }}
-          - name: MODE
+          - name: APPLICATION_MODE
             value: "api"
           {{- else }}
-          - name: MODE
+          - name: APPLICATION_MODE
             value: "all"
           {{- end }}
           - name: PORT
@@ -271,7 +271,7 @@ spec:
               containerPort: 4000
               protocol: TCP
           env:
-          - name: MODE
+          - name: APPLICATION_MODE
             value: "indexer"
           - name: PORT
             value: "4000"

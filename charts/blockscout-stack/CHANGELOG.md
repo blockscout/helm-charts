@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.6
+
+### Fix
+
+- Replace MODE with APPLICATION_MODE variable.
+
 ## 1.6.5
 
 ### Fix
