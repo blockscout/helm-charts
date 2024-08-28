@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-points.fullname" . }}
+  labels:
+    {{- include "blockscout-points.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "blockscout-points.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "blockscout-points.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-points.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: POINTS_BACKEND__SERVER__HTTP__ENABLED
+            value: 'true'
+          - name: POINTS_BACKEND__SERVER__HTTP__ADDR
+            value: "0.0.0.0:{{ .Values.service.port }}"
+          - name: POINTS_BACKEND__DATABASE__CREATE_DATABASE
+            value: {{ .Values.config.database.createDatabase | quote }}
+          - name: POINTS_BACKEND__DATABASE__RUN_MIGRATIONS
+            value: {{ .Values.config.database.runMigrations | quote }}
+          - name: POINTS_BACKEND__AUTH__ADMIN_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-config
+                key: adminApiKey
+          - name: POINTS_BACKEND__AUTH__SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-config
+                key: jwtSecret
+          {{- if .Values.config.grpc.enabled }}
+          - name: POINTS_BACKEND__SERVER__GRPC__ENABLED
+            value: 'true'
+          - name: POINTS_BACKEND__SERVER__GRPC__ADDR
+            value: 0.0.0.0:{{ .Values.config.grpc.port }}
+          {{- end }}
+          {{- if .Values.metrics.enabled }}
+          - name: POINTS_BACKEND__METRICS__ENABLED
+            value: 'true'
+          {{- end }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__HOST
+            value: {{ .Values.config.database.host | quote }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__PORT
+            value: {{ .Values.config.database.port | quote }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__DBNAME
+            value: {{ .Values.config.database.db | quote }}
+          {{- if not .Values.config.database.existingSecret }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-config
+                key: username
+          - name: postgres_pass
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-config
+                key: password
+          {{- else }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.config.database.existingSecret }}
+                key: {{ .Values.config.database.existingSecretUsernameKey }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.config.database.existingSecret }}
+                key: {{ .Values.config.database.existingSecretPasswordKey }}
+          {{- end }}
+          {{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "blockscout-points.fullname" . }}-env
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            {{- if .Values.config.grpc.enabled }}
+            - name: grpc
+              containerPort: {{ .Values.config.grpc.port }}
+              protocol: TCP
+            {{- end}}
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
