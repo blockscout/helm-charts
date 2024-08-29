@@ -592,6 +592,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/blockscout-stack-0.1.0/blockscout-stack-0.1.0.tgz
     version: 0.1.0
+  chainscout:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-08-29T07:25:56.433624355Z"
+    description: A Helm chart for Kubernetes
+    digest: 106a0fe156f8179cfbfde81f8d34ed769d8faa2f13a9594689dabeb2fb25be07
+    name: chainscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/chainscout-0.1.0/chainscout-0.1.0.tgz
+    version: 0.1.0
   cloudflare-tunnel:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1079,4 +1090,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-28T08:23:36.989419182Z"
+generated: "2024-08-29T07:25:56.433828456Z"
