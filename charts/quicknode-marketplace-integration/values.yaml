@@ -16,6 +16,7 @@ config:
   qnSsoSecret: secret
   jwtSecret: secret
   databaseUrl: postgresql://user:password@postgres:5432/database
+  blockscoutApiKey: secret
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
