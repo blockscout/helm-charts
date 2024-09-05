@@ -10,9 +10,16 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 config:
-  basicAuth:
+  basicAuthRPC:
     username: username
     password: password
+  basicAuthREST:
+    username: username
+    password: password
+  basicAuthINT:
+    username: ""
+    password: ""
+  interpreterURL: ""
   qnSsoSecret: secret
   jwtSecret: secret
   databaseUrl: postgresql://user:password@postgres:5432/database
