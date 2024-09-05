@@ -802,6 +802,16 @@ entries:
   quicknode-marketplace-integration:
   - apiVersion: v2
     appVersion: v0.1.0
+    created: "2024-09-05T10:15:36.818238719Z"
+    description: A Helm chart for Kubernetes
+    digest: d67434585486cb9ea7212ab7012f401c8504910899e5b2ebf9d7ad60390fa5a7
+    name: quicknode-marketplace-integration
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/quicknode-marketplace-integration-0.1.6/quicknode-marketplace-integration-0.1.6.tgz
+    version: 0.1.6
+  - apiVersion: v2
+    appVersion: v0.1.0
     created: "2024-09-04T08:43:16.852092603Z"
     description: A Helm chart for Kubernetes
     digest: 5c64426ee13efe8e89c9218b63b8b8df7c43b783dec372af735ae2a82f29b5fe
@@ -1100,4 +1110,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-04T08:43:16.852325237Z"
+generated: "2024-09-05T10:15:36.818359025Z"
