@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.8
+
+### Fix
+
+- Rollback to 1.6.6 as pre-install hook deletes secret because of bug in helm
+
 ## 1.6.7
 
 ### Fix
