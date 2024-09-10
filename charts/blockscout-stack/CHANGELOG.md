@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.7
+
+### Fix
+
+- Adding hook annotations for blockscout secret to be created with migration job on new installation
+
 ## 1.6.6
 
 ### Fix
