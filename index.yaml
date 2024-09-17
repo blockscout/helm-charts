@@ -1087,6 +1087,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/sql-exporter-0.0.1/sql-exporter-0.0.1.tgz
     version: 0.0.1
+  swapscout:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2024-09-17T09:00:24.543643128Z"
+    description: A Helm chart for Kubernetes
+    digest: 3c59ca808b5b6d5095531303b02fb6b635ad8235f73f2f79f2c93bcfe93b4f71
+    name: swapscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/swapscout-0.1.0/swapscout-0.1.0.tgz
+    version: 0.1.0
   verification-app:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -1130,4 +1141,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-10T18:45:59.019201891Z"
+generated: "2024-09-17T09:00:24.543849492Z"
