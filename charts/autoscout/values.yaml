@@ -40,6 +40,9 @@ config:
       client_id: ""
       secret: ""
       audience: ""
+  coinbase:
+    api_key: ""
+    webhook_secret: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
