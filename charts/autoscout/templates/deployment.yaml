@@ -69,6 +69,16 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-github" (include "autoscout.fullname" .) }}
                   key: "token"
+            - name: AUTOSCOUT__COINBASE__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-coinbase" (include "autoscout.fullname" .) }}
+                  key: "api_key"
+            - name: AUTOSCOUT__COINBASE__WEBHOOK__SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-coinbase" (include "autoscout.fullname" .) }}
+                  key: "webhook_secret"
             - name: AUTOSCOUT__GITHUB__OWNER
               value: {{ .Values.config.github.owner | quote }}
             - name: AUTOSCOUT__GITHUB__REPO
