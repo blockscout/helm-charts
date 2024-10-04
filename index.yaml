@@ -644,6 +644,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/cloudflare-tunnel-1.0.0/cloudflare-tunnel-1.0.0.tgz
     version: 1.0.0
+  da-indexer:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-04T09:49:10.246904473Z"
+    description: A Helm chart for Kubernetes
+    digest: f244a732f3430220d24445705e7c504d8f954c85b67ecc56cb50f6e13db5db13
+    name: da-indexer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/da-indexer-0.1.0/da-indexer-0.1.0.tgz
+    version: 0.1.0
   eth-rpc-exporter:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1161,4 +1172,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-18T16:08:17.832550161Z"
+generated: "2024-10-04T09:49:10.247118773Z"
