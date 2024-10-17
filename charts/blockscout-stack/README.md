@@ -48,4 +48,4 @@ See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_h
 ```console
 helm show values blockscout/blockscout-stack
 ```
-This chart does not contain default values for required ENV variables, before running it you should read carefully docs for [blockscout](https://docs.blockscout.com/for-developers/information-and-settings/env-variables), [frontend](https://github.com/blockscout/frontend/blob/main/docs/ENVS.md) and [stats](https://github.com/blockscout/blockscout-rs/tree/main/stats)
+This chart does not contain default values for required ENV variables, before running it you should read carefully docs for [blockscout](https://docs.blockscout.com/setup/env-variables), [frontend](https://github.com/blockscout/frontend/blob/main/docs/ENVS.md) and [stats](https://github.com/blockscout/blockscout-rs/tree/main/stats)
