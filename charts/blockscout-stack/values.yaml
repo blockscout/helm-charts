@@ -12,8 +12,7 @@ fullnameOverride: ""
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 ##
 imagePullSecrets: []
-## Blockscout configuration options. See frontend Docs
-## ref: https://github.com/blockscout/frontend/blob/main/docs/ENVS.md#blockchain-parameters
+## Blockscout configuration options
 ##
 config:
   network:
@@ -72,7 +71,7 @@ blockscout:
         cpu: 500m
         memory: 1Gi
   ## Blockscout ENV vars
-  ## ref: https://docs.blockscout.com/for-developers/information-and-settings/env-variables
+  ## ref: https://docs.blockscout.com/setup/env-variables
   ##
   env: []
     # NAME: VALUE
