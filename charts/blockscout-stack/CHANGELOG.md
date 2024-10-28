@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.10
+
+### Feature
+
+- Support new stats (2.2.0) with required env
+
 ## 1.6.9
 
 ### Fix
