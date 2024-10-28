@@ -45,6 +45,10 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
+          {{- if semverCompare "~2.2.0" .Values.stats.image.tag }}
+          - name: STATS__BLOCKSCOUT_API_URL
+            value: "https://{{ .Values.blockscout.ingress.hostname }}"
+          {{- end }}
           {{- if .Values.config.network.currency.symbol }}
           - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
             value: {{ .Values.config.network.currency.symbol | quote }}
