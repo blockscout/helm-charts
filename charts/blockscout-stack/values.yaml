@@ -305,7 +305,7 @@ stats:
   ## Liveness probe
   ##
   livenessProbe:
-    enabled: false
+    enabled: true
     path: /health
     params:
       initialDelaySeconds: 100
@@ -314,7 +314,7 @@ stats:
   ## Readiness probe
   ##
   readinessProbe:
-    enabled: false
+    enabled: true
     path: /health
     params:
       initialDelaySeconds: 60
