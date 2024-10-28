@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.9
+
+### Fix
+
+- Enable stats probes by default
+
 ## 1.6.8
 
 ### Fix
