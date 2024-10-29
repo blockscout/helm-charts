@@ -45,7 +45,8 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
-          {{- if semverCompare "~2.2.0" .Values.stats.image.tag }}
+          {{- $tag := .Values.stats.image.tag }}
+          {{- if or (not (regexMatch "^v[0-9]+\\.[0-9]+\\.[0-9]+$" $tag)) ( and (regexMatch "^v[0-9]+\\.[0-9]+\\.[0-9]+$" $tag)  (semverCompare "~2.2.0" $tag)) }}
           - name: STATS__BLOCKSCOUT_API_URL
             value: "https://{{ .Values.blockscout.ingress.hostname }}"
           {{- end }}

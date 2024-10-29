@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.6.11
+
+### Fix
+
+- Stats: Rewrite check for conditional env, allow 'main', and 'latest' tags.
+
 ## 1.6.10
 
 ### Feature
