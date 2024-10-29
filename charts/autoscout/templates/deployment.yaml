@@ -91,6 +91,8 @@ spec:
               value: "true"
             - name: RUST_LOG
               value: {{ .Values.config.logLevel | quote }}
+            - name: AUTOSCOUT__LOKI__HOST
+              value: {{ .Values.config.logLokiHost | quote }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

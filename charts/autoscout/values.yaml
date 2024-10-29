@@ -16,6 +16,7 @@ fullnameOverride: ""
 
 config:
   logLevel: info
+  logLokiHost: http://loki.host:65535
   database:
     # host:
     # port:
