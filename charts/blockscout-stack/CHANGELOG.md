@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.7.0
+
+### Feature
+
+- Whitelist for metrics paths to avoid public access in secure environment
+
 ## 1.6.11
 
 ### Fix
