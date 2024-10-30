@@ -55,5 +55,53 @@ spec:
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
+---
+{{- if .Values.config.prometheus.ingressWhitelist.enabled }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-frontend-metrics-ingress
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.config.prometheus.ingressWhitelist.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.frontend.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.frontend.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.frontend.ingress.className }}
+  {{- end }}
+  {{- if .Values.frontend.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.frontend.ingress.hostname | quote }}
+      secretName: {{ .Values.frontend.ingress.tls.secretName | default (printf "%s-frontend-tls" $fullName) }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.frontend.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: /node-api/metrics
+            pathType: Prefix
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-frontend-svc
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}-frontend-svc
+              servicePort: {{ $svcPort }}
+              {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
