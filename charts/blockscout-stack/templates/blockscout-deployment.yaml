@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-blockscout
   labels:
-    app: {{ .Release.Name }}-blockscout
+    app: {{ include "blockscout-stack.fullname" . }}-blockscout
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   {{- if .Values.blockscout.separateApi.enabled }}
@@ -14,7 +14,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-blockscout
+      app: {{ include "blockscout-stack.fullname" . }}-blockscout
   template:
     metadata:
       annotations:
@@ -23,7 +23,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-blockscout
+        app: {{ include "blockscout-stack.fullname" . }}-blockscout
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -227,13 +227,13 @@ kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
   labels:
-    app: {{ .Release.Name }}-blockscout-indexer
+    app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.blockscout.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-blockscout-indexer
+      app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
   template:
     metadata:
       annotations:
@@ -242,7 +242,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-blockscout-indexer
+        app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}

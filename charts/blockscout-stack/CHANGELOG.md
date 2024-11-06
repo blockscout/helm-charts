@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.7.1
+
+### Fix
+
+- Service selector labels now support fullnameOverride variable instead of Release.Name
+
 ## 1.7.0
 
 ### Feature

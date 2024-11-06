@@ -4,13 +4,13 @@ kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
   labels:
-    app: {{ .Release.Name }}-user-ops-indexer
+    app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.userOpsIndexer.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-user-ops-indexer
+      app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
   template:
     metadata:
       annotations:
@@ -19,7 +19,7 @@ spec:
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-user-ops-indexer
+        app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
