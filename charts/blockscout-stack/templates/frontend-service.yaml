@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-frontend-svc
   labels:
-    app: {{ .Release.Name }}-frontend-svc
+    app: {{ include "blockscout-stack.fullname" . }}-frontend-svc
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.frontend.service.type }}
@@ -14,5 +14,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ .Release.Name }}-frontend
+    app: {{ include "blockscout-stack.fullname" . }}-frontend
 {{- end }}

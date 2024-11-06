@@ -4,13 +4,13 @@ kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-stats
   labels:
-    app: {{ .Release.Name }}-stats
+    app: {{ include "blockscout-stack.fullname" . }}-stats
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.stats.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-stats
+      app: {{ include "blockscout-stack.fullname" . }}-stats
   template:
     metadata:
       annotations:
@@ -19,7 +19,7 @@ spec:
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}-stats
+        app: {{ include "blockscout-stack.fullname" . }}-stats
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}

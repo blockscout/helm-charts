@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-stats-svc
   labels:
-    app: {{ .Release.Name }}-stats-svc
+    app: {{ include "blockscout-stack.fullname" . }}-stats-svc
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.stats.service.type }}
@@ -18,5 +18,5 @@ spec:
       protocol: TCP
       name: http-metrics
   selector:
-    app: {{ .Release.Name }}-stats
+    app: {{ include "blockscout-stack.fullname" . }}-stats
 {{- end }}

@@ -11,5 +11,5 @@ spec:
     path: /node-api/metrics
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-frontend
+      app: {{ include "blockscout-stack.fullname" . }}-frontend
 {{- end }}
