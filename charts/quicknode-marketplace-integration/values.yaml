@@ -19,6 +19,9 @@ config:
   basicAuthINT:
     username: ""
     password: ""
+  basicAuthERPC:
+    username: ""
+    password: ""
   interpreterURL: ""
   qnSsoSecret: secret
   jwtSecret: secret
