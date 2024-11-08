@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.8.0
+
+### Feature
+
+- Custom volume mount for blockscout backend deployment
+
 ## 1.7.1
 
 ### Fix
