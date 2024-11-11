@@ -1,18 +1,8 @@
 # Default values for blockscout-points.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: ghcr.io/blockscout/points
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
-
-imagePullSecrets: []
-nameOverride: ""
 fullnameOverride: ""
+nameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -39,89 +29,178 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 8050
+backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/blockscout/points
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
 
-config:
-  auth:
-    adminApiKey: key
-    jwtSecret: secret
-  database:
-    host: postgres
-    user: username
-    pass: password
-    db: points
-    port: 5432
-    # if DB credentials are stored in existing secret
-    existingSecret:
-    existingSecretUsernameKey:
-    existingSecretPasswordKey:
-    createDatabase: true
-    runMigrations: true
-  grpc:
+  imagePullSecrets: []
+
+  service:
+    type: ClusterIP
+    port: 8050
+
+  config:
+    auth:
+      adminApiKey: key
+      jwtSecret: secret
+    database:
+      host: postgres
+      user: username
+      pass: password
+      db: points
+      port: 5432
+      # if DB credentials are stored in existing secret
+      existingSecret:
+      existingSecretUsernameKey:
+      existingSecretPasswordKey:
+      createDatabase: true
+      runMigrations: true
+    grpc:
+      enabled: false
+      port: 8051
+
+  env: []
+    # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
+
+  ingress:
     enabled: false
-    port: 8051
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
 
-env: []
-  # NAME: VALUE
-envFromSecret: []
-  # NAME: VALUE
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  livenessProbe:
+    httpGet:
+      path: /health?service=
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /health?service=
+      port: http
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 200m
-    memory: 256Mi
-
-livenessProbe:
-  httpGet:
-    path: /health?service=
-    port: http
-readinessProbe:
-  httpGet:
-    path: /health?service=
-    port: http
-
-metrics:
-  enabled: false
-  port: 6060
-  prometheus:
+  metrics:
     enabled: false
+    port: 6060
+    prometheus:
+      enabled: false
 
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
 
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
 
-nodeSelector: {}
+  nodeSelector: {}
 
-tolerations: []
+  tolerations: []
 
-affinity: {}
+  affinity: {}
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/blockscout/blockscout-merits-website
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+
+  imagePullSecrets: []
+
+  service:
+    type: ClusterIP
+    port: 3000
+
+  config:
+
+  env: []
+    # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+  metrics:
+    enabled: false
+    port: 6060
+    prometheus:
+      enabled: false
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
