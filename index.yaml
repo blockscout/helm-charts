@@ -222,6 +222,16 @@ entries:
   blockscout-points:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2024-11-12T14:14:56.847244456Z"
+    description: A Helm chart for Kubernetes
+    digest: 2a00c1b8d4ed9caa7153e190466e33cecbc462b507922c0543b080dba340da0f
+    name: blockscout-points
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-points-0.2.0/blockscout-points-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-08-28T08:23:36.989250006Z"
     description: A Helm chart for Kubernetes
     digest: eef0b3011312dcd506c9e213e7e60fa6b557fce32f80643807cf598909dfe957
@@ -1252,4 +1262,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-08T12:06:03.684942779Z"
+generated: "2024-11-12T14:14:56.847451382Z"
