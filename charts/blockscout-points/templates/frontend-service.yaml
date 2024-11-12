@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-points.fullname" . }}-frontend
+  labels:
+    app: {{ include "blockscout-points.fullname" . }}-frontend
+    {{- include "blockscout-points.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.frontend.service.type }}
+  ports:
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.frontend.metrics.enabled }}
+    - port: {{ .Values.frontend.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    app: {{ include "blockscout-points.fullname" . }}-frontend

@@ -1,0 +1,16 @@
+{{- if and .Values.backend.metrics.enabled .Values.backend.metrics.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-points.fullname" . }}-backend
+  labels:
+    {{- include "blockscout-points.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: metrics
+    path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "blockscout-points.fullname" . }}-backend
+{{- end }}

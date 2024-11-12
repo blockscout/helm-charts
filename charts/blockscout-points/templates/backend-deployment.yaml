@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-points.fullname" . }}-backend
+  labels:
+    app: {{ include "blockscout-points.fullname" . }}-backend
+    {{- include "blockscout-points.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-points.fullname" . }}-backend
+      {{- include "blockscout-points.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.backend.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/backend-secret.yaml") . | sha256sum }}
+      {{- with .Values.backend.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "blockscout-points.fullname" . }}-backend
+        {{- include "blockscout-points.labels" . | nindent 8 }}-backend
+        {{- with .Values.backend.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.backend.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-points.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.backend.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-backend
+          securityContext:
+            {{- toYaml .Values.backend.securityContext | nindent 12 }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          env:
+          - name: POINTS_BACKEND__SERVER__HTTP__ENABLED
+            value: 'true'
+          - name: POINTS_BACKEND__SERVER__HTTP__ADDR
+            value: "0.0.0.0:{{ .Values.backend.service.port }}"
+          - name: POINTS_BACKEND__DATABASE__CREATE_DATABASE
+            value: {{ .Values.backend.config.database.createDatabase | quote }}
+          - name: POINTS_BACKEND__DATABASE__RUN_MIGRATIONS
+            value: {{ .Values.backend.config.database.runMigrations | quote }}
+          - name: POINTS_BACKEND__AUTH__ADMIN_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-backend-config
+                key: adminApiKey
+          - name: POINTS_BACKEND__AUTH__SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-backend-config
+                key: jwtSecret
+          {{- if .Values.backend.config.grpc.enabled }}
+          - name: POINTS_BACKEND__SERVER__GRPC__ENABLED
+            value: 'true'
+          - name: POINTS_BACKEND__SERVER__GRPC__ADDR
+            value: 0.0.0.0:{{ .Values.backend.config.grpc.port }}
+          {{- end }}
+          {{- if .Values.backend.metrics.enabled }}
+          - name: POINTS_BACKEND__METRICS__ENABLED
+            value: 'true'
+          {{- end }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__HOST
+            value: {{ .Values.backend.config.database.host | quote }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__PORT
+            value: {{ .Values.backend.config.database.port | quote }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__DBNAME
+            value: {{ .Values.backend.config.database.db | quote }}
+          {{- if not .Values.backend.config.database.existingSecret }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-backend-config
+                key: username
+          - name: postgres_pass
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-points.fullname" . }}-backend-config
+                key: password
+          {{- else }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backend.config.database.existingSecret }}
+                key: {{ .Values.backend.config.database.existingSecretUsernameKey }}
+          - name: POINTS_BACKEND__DATABASE__CONNECT__KV__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backend.config.database.existingSecret }}
+                key: {{ .Values.backend.config.database.existingSecretPasswordKey }}
+          {{- end }}
+          {{- range $key, $value := .Values.backend.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.backend.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "blockscout-points.fullname" . }}-backend-env
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.backend.service.port }}
+              protocol: TCP
+            {{- if .Values.backend.config.grpc.enabled }}
+            - name: grpc
+              containerPort: {{ .Values.backend.config.grpc.port }}
+              protocol: TCP
+            {{- end}}
+            {{- if .Values.backend.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.backend.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.backend.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.backend.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          {{- with .Values.backend.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.backend.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.backend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.backend.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.backend.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
