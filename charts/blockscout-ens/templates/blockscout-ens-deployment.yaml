@@ -13,7 +13,11 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/blockscout-ens-secret.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/blockscout-ens-secret.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/blockscout-ens-configmap.yaml") . | sha256sum }}
+      {{- if eq .Values.bens.image.pullPolicy "Always" }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

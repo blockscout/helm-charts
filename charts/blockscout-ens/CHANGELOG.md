@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.1.1
+
+### Fixes
+
+- Added configmap checksum dependency to deployment annotations
+
 ## 1.0.3
 
 ### Fixes
