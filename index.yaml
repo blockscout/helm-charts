@@ -889,6 +889,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/metabase-1.0.0/metabase-1.0.0.tgz
     version: 1.0.0
+  multichain-aggregator:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-11-14T17:34:31.923996796Z"
+    description: A Helm chart for Kubernetes
+    digest: d548f5cd0a61c803bff9ff156de45ce89419b0dfb095374db4b82eb020709867
+    name: multichain-aggregator
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/multichain-aggregator-0.1.0/multichain-aggregator-0.1.0.tgz
+    version: 0.1.0
   pganalyzer:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1272,4 +1283,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-13T07:33:42.738503231Z"
+generated: "2024-11-14T17:34:31.924280631Z"
