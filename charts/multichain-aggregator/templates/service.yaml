@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "multichain-aggregator.fullname" . }}
+  labels:
+    {{- include "multichain-aggregator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "multichain-aggregator.selectorLabels" . | nindent 4 }}
