@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.1.2
+
+### Fixes
+
+- Fixing image repository that has been moved
+
 ## 1.1.1
 
 ### Fixes
