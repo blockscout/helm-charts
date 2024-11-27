@@ -36,6 +36,8 @@ spec:
       {{- if and .Values.blockscout.init.enabled (not .Values.blockscout.separateApi.enabled) }}
       initContainers:
         - name: init-migrations
+          securityContext:
+            {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
           resources:
             {{- toYaml .Values.blockscout.resources | nindent 12 }}
