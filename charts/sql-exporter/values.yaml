@@ -4,7 +4,7 @@ replicas: 1
 image:
   repository: adonato/query-exporter
   pullPolicy: Always
-  # tag: <default to chart version>
+  tag: latest
 
 ## Additional labels and annotations for the deployment resource
 ##
