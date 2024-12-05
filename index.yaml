@@ -1200,6 +1200,16 @@ entries:
     version: 0.1.0
   sql-exporter:
   - apiVersion: v1
+    appVersion: 2.10.0
+    created: "2024-12-05T11:51:57.877671345Z"
+    description: Prometheus exporter which allows collecting metrics from database
+      queries, at specified time intervals
+    digest: 96e6a87b71c98e2218f26ff1a889e01672c0047d1e4bc7653606c547fa68c28d
+    name: sql-exporter
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/sql-exporter-0.1.2/sql-exporter-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v1
     appVersion: 2.9.2
     created: "2023-11-06T18:47:18.728960312Z"
     description: Prometheus exporter which allows collecting metrics from database
@@ -1293,4 +1303,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-27T10:32:09.813637008Z"
+generated: "2024-12-05T11:51:57.877925961Z"
