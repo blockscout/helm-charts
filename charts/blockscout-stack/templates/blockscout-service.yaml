@@ -13,6 +13,80 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- if and .Values.blockscout.nftStorage.enabled (not .Values.blockscout.separateApi.enabled) }}
+    - port: 4369
+      targetPort: epmd
+      protocol: TCP
+      name: epmd
+    - port: 9138
+      targetPort: 9138
+      protocol: TCP
+      name: epmd-dyn-1
+    - port: 9139
+      targetPort: 9139
+      protocol: TCP
+      name: epmd-dyn-2
+  {{- end }}
   selector:
     app: {{ include "blockscout-stack.fullname" . }}-blockscout
+---
+{{- if .Values.blockscout.separateApi.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc
+  labels:
+    app: {{ .Release.Name }}-blockscout-indexer-svc
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.blockscout.service.type }}
+  ports:
+    - port: {{ .Values.blockscout.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- if .Values.blockscout.nftStorage.enabled }}
+    - port: 4369
+      targetPort: epmd
+      protocol: TCP
+      name: epmd
+    - port: 9138
+      targetPort: 9138
+      protocol: TCP
+      name: epmd-dyn-1
+    - port: 9139
+      targetPort: 9139
+      protocol: TCP
+      name: epmd-dyn-2
+  {{- end }}
+  selector:
+    app: {{ .Release.Name }}-blockscout-indexer
+{{- end }}
+---
+{{- if .Values.blockscout.nftStorage.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-resizer-svc
+  labels:
+    app: {{ .Release.Name }}-blockscout-resizer-svc
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.blockscout.service.type }}
+  ports:
+    - port: 4369
+      targetPort: epmd
+      protocol: TCP
+      name: epmd
+    - port: 9140
+      targetPort: 9140
+      protocol: TCP
+      name: epmd-dyn-1
+    - port: 9141
+      targetPort: 9141
+      protocol: TCP
+      name: epmd-dyn-2
+  selector:
+    app: {{ .Release.Name }}-blockscout-resizer
+{{- end }}
 {{- end }}
