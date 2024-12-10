@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.9.0
+
+### Feature
+
+- Adding support for NFT storage
+- Adding security context for migration jobs
+
 ## 1.8.0
 
 ### Feature
