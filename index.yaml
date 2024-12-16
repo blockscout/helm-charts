@@ -148,6 +148,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/blockscout-admin-0.1.0/blockscout-admin-0.1.0.tgz
     version: 0.1.0
+  blockscout-allowance:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-12-16T19:00:17.030394231Z"
+    description: A Helm chart for Kubernetes
+    digest: 078171b18720fe1180b84e958e312f8c66208553ff6cab7daef2a87a9b638e45
+    name: blockscout-allowance
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-allowance-0.1.0/blockscout-allowance-0.1.0.tgz
+    version: 0.1.0
   blockscout-ens:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1313,4 +1324,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-12-10T18:03:25.971402617Z"
+generated: "2024-12-16T19:00:17.030576111Z"
