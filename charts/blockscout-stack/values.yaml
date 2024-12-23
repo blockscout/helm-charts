@@ -75,6 +75,21 @@ blockscout:
       requests:
         cpu: 500m
         memory: 1Gi
+  nftStorage:
+    enabled: false
+    cookie: secret
+    bucketHost: xxx.r2.cloudflarestorage.com
+    accessKey: ""
+    secretKey: ""
+    bucketName: nft
+    bucketUrl: https://pub-xxx.r2.dev
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
   ## Blockscout ENV vars
   ## ref: https://docs.blockscout.com/setup/env-variables
   ##

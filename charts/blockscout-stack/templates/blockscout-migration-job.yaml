@@ -12,10 +12,14 @@ metadata:
 spec:
   template:
     spec:
+      securityContext:
+        {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}
       containers:
         - name: blockscout-migrations
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
           imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
           {{- with .Values.blockscout.init.command }}
           command:  {{ . | toYaml | nindent 12 }}
           {{- end }}
