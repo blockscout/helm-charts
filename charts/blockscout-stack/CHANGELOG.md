@@ -1,4 +1,9 @@
 # ChangeLog
+## 1.9.2
+
+### Fix
+
+- Adding ONE missing variable (BLOCKSCOUT_HOST) to indexer pod when running separate from API.
 
 ## 1.9.1
 
