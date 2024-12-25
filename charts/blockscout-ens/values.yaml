@@ -18,7 +18,7 @@ global:
 
 bens:
   image:
-    repository: ghcr.io/blockscout/blockscout-ens
+    repository: ghcr.io/blockscout/bens
     pullPolicy: Always
     tag: main
   replicaCount: 1
