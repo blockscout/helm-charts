@@ -331,6 +331,10 @@ spec:
           - name: SHOW_TESTNET_LABEL
             value: "true"
           {{- end }}
+          {{- if .Values.blockscout.ingress.enabled }}
+          - name: BLOCKSCOUT_HOST
+            value: {{ .Values.blockscout.ingress.hostname | quote }}
+          {{- end }}
           {{- if .Values.config.nameService.enabled }}
           - name: MICROSERVICE_BENS_ENABLED
             value: 'true'
