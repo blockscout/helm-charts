@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.9.1
+
+### Fix
+
+- Adding missing variables to indexer pod when running separate from API.
+
 ## 1.9.0
 
 ### Feature
