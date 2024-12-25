@@ -323,6 +323,10 @@ spec:
             value: "4000"
           - name: CHAIN_ID
             value: {{ .Values.config.network.id | quote }}
+          {{- if .Values.config.account.enabled }}
+          - name: ACCOUNT_ENABLED
+            value: "true"
+          {{- end }}
           - name: DISABLE_WEBAPP
             value: "true"
           - name: API_V1_READ_METHODS_DISABLED
