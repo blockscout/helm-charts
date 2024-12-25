@@ -327,6 +327,22 @@ spec:
           - name: ACCOUNT_ENABLED
             value: "true"
           {{- end }}
+          {{- if .Values.config.testnet }}
+          - name: SHOW_TESTNET_LABEL
+            value: "true"
+          {{- end }}
+          {{- if .Values.config.nameService.enabled }}
+          - name: MICROSERVICE_BENS_ENABLED
+            value: 'true'
+          - name: MICROSERVICE_BENS_URL
+            value: {{ .Values.config.nameService.url }}
+          {{- end }}
+          {{- if .Values.userOpsIndexer.enabled }}
+          - name: MICROSERVICE_ACCOUNT_ABSTRACTION_ENABLED
+            value: 'true'
+          - name: MICROSERVICE_ACCOUNT_ABSTRACTION_URL
+            value: "https://{{ .Values.userOpsIndexer.ingress.hostname }}"
+          {{- end }}
           - name: DISABLE_WEBAPP
             value: "true"
           - name: API_V1_READ_METHODS_DISABLED
@@ -349,6 +365,8 @@ spec:
           {{- end }}
           {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: COIN
+            value: {{ .Values.config.network.currency.symbol | quote }}
+          - name: COIN_NAME
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
