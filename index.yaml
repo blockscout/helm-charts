@@ -949,6 +949,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/graph-node-0.1.0/graph-node-0.1.0.tgz
     version: 0.1.0
+  image-generator:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2024-12-26T09:54:34.928230753Z"
+    description: A Helm chart for Kubernetes
+    digest: 2b64e41eb7fb653967a23ae50160efa5f0c27495a5813e47bc82cdee93f1f680
+    name: image-generator
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/image-generator-0.1.0/image-generator-0.1.0.tgz
+    version: 0.1.0
   metabase:
   - apiVersion: v2
     appVersion: 0.46.6
@@ -1364,4 +1375,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2024-12-25T17:27:24.398728789Z"
+generated: "2024-12-26T09:54:34.928487953Z"
