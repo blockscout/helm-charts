@@ -1,0 +1,59 @@
+{{- if .Values.poolsExtractor.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pools-extractor-{{ include "blockscout-admin.fullname" . }}
+spec:
+  schedule: {{ .Values.poolsExtractor.schedule | quote }}
+  concurrencyPolicy: "Forbid"
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      completions: 1
+      parallelism: 1
+      template:
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ .Release.Name }}-pools-extractor
+              image: "{{ .Values.poolsExtractor.image.repository }}:{{ .Values.poolsExtractor.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: Always
+              env:
+                - name: POOLS_EXTRACTOR__CONTRACTS_INFO__URL
+                  value: http://contracts-info-{{ include "blockscout-admin.fullname" . }}:{{ .Values.contractsInfo.service.port }}
+                {{- range .Values.poolsExtractor.environment }}
+                - name: {{ .name }}
+                  value: {{ .value | quote }}
+                {{- end }}
+              envFrom:
+                - secretRef:
+                    name: pools-extractor-{{ include "blockscout-admin.fullname" . }}-env
+              resources:
+              {{- toYaml .Values.poolsExtractor.resources | nindent 16 }}
+              volumeMounts:
+              - name: config
+                mountPath: /app/config/networks.json
+                subPath: networks.json
+          volumes:
+            - configMap:
+                name: pools-{{ include "blockscout-admin.fullname" . }}-config
+                defaultMode: 0777
+              name: config
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+---
+{{- end}}
