@@ -191,6 +191,27 @@ tokenInfoExtractor:
       memory: "96Mi"
       cpu: "100m"
 
+poolsExtractor:
+  enabled: false
+  image:
+    repository: ghcr.io/blockscout/pools-extractor
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  schedule: "0 0 * * *"
+  environment: {}
+    #- name: SOME_ENV
+    #  value: value
+  envFromSecret: {}
+    #- name: SOME_SECRET_ENV
+    #  value: secret_value
+  resources:
+    limits:
+      memory: "256Mi"
+      cpu: "250m"
+    requests:
+      memory: "96Mi"
+      cpu: "100m"
+
 livenessProbe:
   params:
     initialDelaySeconds: 100
