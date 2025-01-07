@@ -996,6 +996,16 @@ entries:
   pganalyzer:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-01-07T13:34:56.936544416Z"
+    description: A Helm chart for Kubernetes
+    digest: 2b345e3a05ec5ae57c9a58fa2527faa902b9f2d39031631d85fed217843302c9
+    name: pganalyzer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.3.2/pganalyzer-0.3.2.tgz
+    version: 0.3.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-04-03T08:26:07.736995952Z"
     description: A Helm chart for Kubernetes
     digest: aef733865f7d3128fea5768b6a03fbbe0cd08b63145e15cafbfa7559e8ef940f
@@ -1386,4 +1396,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-06T13:34:58.824915539Z"
+generated: "2025-01-07T13:34:56.936734441Z"
