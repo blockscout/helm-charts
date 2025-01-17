@@ -21,7 +21,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.blockscout.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:

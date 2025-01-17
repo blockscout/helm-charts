@@ -17,6 +17,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/frontend-secret.yaml") . | sha256sum }}
+      {{- with .Values.frontend.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if eq .Values.frontend.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
