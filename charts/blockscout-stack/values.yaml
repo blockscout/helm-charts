@@ -201,6 +201,10 @@ blockscout:
   # - name: foo
   #   mountPath: "/etc/foo"
   #   readOnly: true
+  
+  # Additional containers sidecar
+  sidecars: []
+
 ## Configuration options for frontend
 ##
 frontend:

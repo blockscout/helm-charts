@@ -238,6 +238,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+      {{- with .Values.blockscout.sidecars }}
+        {{- toYaml . | nindent 10 }}
+      {{- end }}
       {{- with .Values.blockscout.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
