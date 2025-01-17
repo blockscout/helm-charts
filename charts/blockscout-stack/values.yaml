@@ -120,6 +120,10 @@ blockscout:
   args:
     - -c
     - bin/blockscout start
+
+  ## Annotations to add to blockscout deployment
+  annotations: {}
+
   ## Annotations to add to blockscout pod
   podAnnotations: {}
 
@@ -208,6 +212,11 @@ frontend:
     pullPolicy: IfNotPresent
 
   replicaCount: 2
+
+  ## Annotations to add to frontend deployment
+  ##
+  annotations: {}
+
   ## Annotations to add to frontend pod
   ##
   podAnnotations: {}

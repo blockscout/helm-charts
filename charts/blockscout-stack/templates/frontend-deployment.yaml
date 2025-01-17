@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-frontend
+  annotations: 
+    {{- toYaml .Values.frontend.annotations | nindent 4 }}
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-frontend
     {{- include "blockscout-stack.labels" . | nindent 4 }}
