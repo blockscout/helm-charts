@@ -1396,4 +1396,15 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/yopass-0.1.0/yopass-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-07T13:34:56.936734441Z"
+  zilliqa-validators-indexer:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-01-24T08:21:50.860460434Z"
+    description: A Helm chart for Kubernetes
+    digest: b82e4ab788213118111cafde7d14dc1faf9ddcaba9bc1999919a2e4d0d88fc53
+    name: zilliqa-validators-indexer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-01-24T08:21:50.860669735Z"
