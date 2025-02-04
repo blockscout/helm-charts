@@ -1,4 +1,10 @@
 # ChangeLog
+## 1.9.3
+
+### Fix
+
+- Update health-check path
+
 ## 1.9.2
 
 ### Fix
