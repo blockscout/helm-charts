@@ -827,6 +827,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/da-indexer-0.1.0/da-indexer-0.1.0.tgz
     version: 0.1.0
+  dshackle:
+  - apiVersion: v2
+    appVersion: 0.15.0
+    created: "2025-02-04T08:00:52.306142245Z"
+    description: A Helm chart for Kubernetes
+    digest: 86a3b66101b9de817be7a69e22cba68e8eb96acb84b3a0d0f6015d59f49d3fa3
+    name: dshackle
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/dshackle-0.1.0/dshackle-0.1.0.tgz
+    version: 0.1.0
   eth-rpc-exporter:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1407,4 +1418,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-24T08:21:50.860669735Z"
+generated: "2025-02-04T08:00:52.306389617Z"
