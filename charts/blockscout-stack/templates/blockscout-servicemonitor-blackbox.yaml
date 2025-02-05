@@ -22,7 +22,6 @@ spec:
         replacement: {{ $url }}
       - targetLabel: target
         replacement: {{ include "blockscout-stack.fullname" . }}
-  jobLabel: "{{ $.Release.Name }}"
   namespaceSelector:
     any: true
   selector:
