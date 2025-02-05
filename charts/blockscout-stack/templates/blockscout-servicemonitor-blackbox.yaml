@@ -23,7 +23,10 @@ spec:
       - targetLabel: target
         replacement: {{ include "blockscout-stack.fullname" . }}
   jobLabel: "{{ $.Release.Name }}"
+  namespaceSelector:
+    any: true
   selector:
     matchLabels:
-      app: prometheus-blackbox-exporter
+      app.kubernetes.io/name: prometheus-blackbox-exporter
+      app.kubernetes.io/instance: prometheus-blackbox-exporter
 {{- end }}
