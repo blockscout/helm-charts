@@ -1,4 +1,10 @@
 # ChangeLog
+## 1.8.0
+
+### Feature
+
+- ServiceMonitor for blackbox probing blockscout backend
+
 ## 1.9.2
 
 ### Fix

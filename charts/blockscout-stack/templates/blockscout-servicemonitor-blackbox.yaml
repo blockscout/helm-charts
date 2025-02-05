@@ -1,4 +1,4 @@
-{{- if and .Values.blockscout.enabled .Values.config.prometheus.blackbox.enabled }}
+{{- if and .Values.blockscout.ingress.enabled .Values.config.prometheus.blackbox.enabled }}
 {{- $url := printf "https://%s/api/v1/health" .Values.blockscout.ingress.hostname }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
