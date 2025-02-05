@@ -135,7 +135,7 @@ blockscout:
   ##
   livenessProbe:
     enabled: true
-    path: /api/health/liveness
+    path: /api/v1/health/liveness
     params:
       initialDelaySeconds: 100
       periodSeconds: 100
@@ -144,7 +144,7 @@ blockscout:
   ##
   readinessProbe:
     enabled: true
-    path: /api/health/readiness
+    path: /api/v1/health/readiness
     params:
       initialDelaySeconds: 60
       periodSeconds: 10
