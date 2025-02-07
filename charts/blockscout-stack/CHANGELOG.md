@@ -1,4 +1,11 @@
 # ChangeLog
+## 2.0.0
+
+### Major Update
+
+- App version updated to 7.0.0
+- Breaking change in api healthcheck path
+
 ## 1.10.0
 
 ### Feature
