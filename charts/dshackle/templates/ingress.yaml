@@ -1,0 +1,48 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "dshackle.fullname" . }}
+  labels:
+    {{- include "dshackle.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hostname }}
+        {{- if .Values.ingress.grpc.enabled }}
+        - {{ .Values.ingress.grpc.hostname }}
+        {{- end }}
+      secretName: {{ include "dshackle.fullname" . }}-ingress-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "dshackle.fullname" . }}
+                port:
+                  number: {{ .Values.service.rpcPort }}
+    {{- if .Values.ingress.grpc.enabled }}
+    - host: {{ .Values.ingress.grpc.hostname | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "dshackle.fullname" . }}
+                port:
+                  number: {{ .Values.service.grpcPort }}
+    {{- end }}
+{{- end }}

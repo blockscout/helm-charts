@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dshackle.fullname" . }}-config
+  labels:
+    {{- include "dshackle.labels" . | nindent 4 }}
+data:
+  dshackle.yaml: |-
+    version: v1
+    port: {{ .Values.service.grpcPort }}
+    tls:
+      enabled: false
+    monitoring:
+      enabled: true
+      jvm: false
+      extended: false
+      prometheus:
+        enabled: true
+        bind: 0.0.0.0
+        port: {{ .Values.metrics.port }}
+        path: /metrics
+    {{- if .Values.config.redis.enabled }}
+    cache:
+      redis:
+        enabled: true
+        host: {{ .Values.config.redis.host }}
+        port: {{ .Values.config.redis.port }}
+        db: 0
+    {{- end }}
+    proxy:
+      host: 0.0.0.0
+      port: {{ .Values.service.rpcPort }}
+      routes:
+      {{- range .Values.config.networks }}
+        - id: {{ .id }}
+          blockchain: {{ .blockchain }}
+      {{- end }}
+
+    cluster:
+      upstreams:
+        {{- range $key, $network := .Values.config.networks }}
+        {{- range $network.upstreams }}
+        - id: {{ .id }}
+          blockchain: {{ $network.blockchain }}
+          connection:
+            {{- toYaml .connection | nindent 12 }}
+          methods:
+            enabled:
+              - name: debug_traceBlockByHash
+              - name: debug_traceBlockByNumber
+              - name: debug_traceCall
+              - name: debug_traceTransaction
+              - name: trace_block
+              - name: trace_replayBlockTransactions
+              - name: txpool_content
+        {{- end }}
+        {{- end }}

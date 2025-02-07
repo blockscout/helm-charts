@@ -1,9 +1,9 @@
 # ChangeLog
-## 1.9.3
+## 1.10.0
 
-### Fix
+### Feature
 
-- Update health-check path
+- ServiceMonitor for blackbox probing blockscout backend
 
 ## 1.9.2
 
