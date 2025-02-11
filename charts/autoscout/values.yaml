@@ -44,6 +44,8 @@ config:
   coinbase:
     api_key: ""
     webhook_secret: ""
+  sendgrid:
+    api_key: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

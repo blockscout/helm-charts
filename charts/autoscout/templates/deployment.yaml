@@ -93,6 +93,11 @@ spec:
               value: {{ .Values.config.logLevel | quote }}
             - name: AUTOSCOUT__LOKI__HOST
               value: {{ .Values.config.logLokiHost | quote }}
+            - name: AUTOSCOUT__NOTIFY__SENDGRID__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-sendgrid" (include "autoscout.fullname" .) }}
+                  key: "api_key"
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
