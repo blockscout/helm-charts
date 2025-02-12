@@ -1394,6 +1394,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/swapscout-0.1.0/swapscout-0.1.0.tgz
     version: 0.1.0
+  tracker:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-02-12T10:19:07.712696594Z"
+    description: A Helm chart for Kubernetes
+    digest: 247a9010a6eb8eb0e75e3a0173eddd5b1354ae00aca1615b03466bae3a41facc
+    name: tracker
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/tracker-0.1.0/tracker-0.1.0.tgz
+    version: 0.1.0
   verification-app:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -1448,4 +1459,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-07T08:22:27.475167317Z"
+generated: "2025-02-12T10:19:07.712934328Z"
