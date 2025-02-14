@@ -45,11 +45,8 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
-          {{- $tag := .Values.stats.image.tag }}
-          {{- if or (not (regexMatch "^v[0-9]+\\.[0-9]+\\.[0-9]+$" $tag)) ( and (regexMatch "^v[0-9]+\\.[0-9]+\\.[0-9]+$" $tag)  (semverCompare "~2.2.0" $tag)) }}
           - name: STATS__BLOCKSCOUT_API_URL
             value: "https://{{ .Values.blockscout.ingress.hostname }}"
-          {{- end }}
           {{- if .Values.config.network.currency.symbol }}
           - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
             value: {{ .Values.config.network.currency.symbol | quote }}

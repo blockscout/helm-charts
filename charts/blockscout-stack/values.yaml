@@ -290,7 +290,7 @@ stats:
   ##
   image:
     repository: ghcr.io/blockscout/stats
-    tag: latest
+    tag: v2.4.0
     pullPolicy: IfNotPresent
 
   replicaCount: 1
