@@ -8,7 +8,7 @@ A Helm chart to deploy Blockscout stack ([backend](https://github.com/blockscout
 
 - Kubernetes 1.19+
 - Helm 3+
-- PostgreSQL version 12 to 14
+- PostgreSQL version 12 to 17
 - Redis (if accounts blockscout feature is enabled)
 
 ## Get Helm Repository Info
