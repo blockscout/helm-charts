@@ -1,4 +1,10 @@
 # ChangeLog
+## 1.11.0
+
+### Feature
+
+- Pinned stats version to 2.4 and made `STATS__BLOCKSCOUT_API_URL` env mandatory
+
 ## 1.10.0
 
 ### Feature
