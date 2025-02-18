@@ -2,7 +2,10 @@ name: Pre Release Charts
 
 on:
   workflow_dispatch:
-
+    inputs:
+      skip-existing:
+        type: boolean
+        description: Skip upload if release exists
 jobs:
   release:
     permissions:
@@ -29,5 +32,5 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          CR_SKIP_EXISTING: false
+          CR_SKIP_EXISTING: ${{ github.event.inputs.skip-existing }}
           CR_MAKE_RELEASE_LATEST: false
