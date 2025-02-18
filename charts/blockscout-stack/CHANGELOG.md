@@ -5,8 +5,13 @@
 
 - Updated app version to 7.0.0
 - Changed API healthcheck path (breaking change)
-- Pinned stats version to 2.4 and made `STATS__BLOCKSCOUT_API_URL` env mandatory
 - Update supported Postgresql versions
+
+## 1.11.0
+
+### Feature
+
+- Pinned stats version to 2.4 and made `STATS__BLOCKSCOUT_API_URL` env mandatory
 
 ## 1.10.0
 
