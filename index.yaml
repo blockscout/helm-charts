@@ -1056,6 +1056,16 @@ entries:
   multichain-aggregator:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-02-19T07:34:12.510742058Z"
+    description: A Helm chart for Kubernetes
+    digest: 2a690d7f836e587fd0c91b6b45daa0fd59cf43915ee6f96abc37f91798d71475
+    name: multichain-aggregator
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/multichain-aggregator-0.2.0/multichain-aggregator-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-11-14T17:34:31.923996796Z"
     description: A Helm chart for Kubernetes
     digest: d548f5cd0a61c803bff9ff156de45ce89419b0dfb095374db4b82eb020709867
@@ -1489,4 +1499,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-18T09:36:55.38768125Z"
+generated: "2025-02-19T07:34:12.511048028Z"
