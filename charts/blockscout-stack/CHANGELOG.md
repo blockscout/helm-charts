@@ -1,4 +1,11 @@
 # ChangeLog
+## 2.0.0
+
+### Major Update
+
+- Updated app version to 7.0.0
+- Changed API healthcheck path (breaking change)
+- Update supported Postgresql versions
 
 ## 1.11.1
 

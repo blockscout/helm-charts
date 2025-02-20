@@ -43,7 +43,7 @@ config:
         nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
     blackbox:
       enabled: true
-      path: /api/v1/health
+      path: /api/health
 ## Configuration options for backend
 ##
 blockscout:
@@ -136,7 +136,7 @@ blockscout:
   ##
   livenessProbe:
     enabled: true
-    path: /api/v1/health/liveness
+    path: /api/health/liveness
     params:
       initialDelaySeconds: 100
       periodSeconds: 100
@@ -145,7 +145,7 @@ blockscout:
   ##
   readinessProbe:
     enabled: true
-    path: /api/v1/health/readiness
+    path: /api/health/readiness
     params:
       initialDelaySeconds: 60
       periodSeconds: 10
