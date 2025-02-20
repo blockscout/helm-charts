@@ -7,6 +7,12 @@
 - Changed API healthcheck path (breaking change)
 - Update supported Postgresql versions
 
+## 1.11.1
+
+### Feature
+
+- Health path for blackbox exporter as parameter
+
 ## 1.11.0
 
 ### Feature
