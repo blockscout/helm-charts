@@ -333,6 +333,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/blockscout-proxy-verifier-1.0.0/blockscout-proxy-verifier-1.0.0.tgz
     version: 1.0.0
+  blockscout-revokescout:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-03-03T14:09:49.695315795Z"
+    description: A Helm chart for Kubernetes
+    digest: 1b54563991666bae3ab0e2d98c2d1a14476d0d5cf86863700354b60351a64773
+    name: blockscout-revokescout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-revokescout-1.0.0/blockscout-revokescout-1.0.0.tgz
+    version: 1.0.0
   blockscout-stack:
   - apiVersion: v2
     appVersion: 7.0.0
@@ -1519,4 +1530,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-20T08:37:06.780405469Z"
+generated: "2025-03-03T14:09:49.695519803Z"
