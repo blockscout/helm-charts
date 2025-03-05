@@ -11,6 +11,9 @@ spec:
   - scrapeTimeout: 30s
     port: http
     path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
   selector:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc
@@ -26,6 +29,9 @@ spec:
   - scrapeTimeout: 30s
     port: http
     path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
   selector:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-svc
@@ -41,6 +47,9 @@ spec:
   - scrapeTimeout: 30s
     port: http
     path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
   selector:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-svc
