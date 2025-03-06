@@ -1,4 +1,41 @@
 {{- if and .Values.blockscout.enabled .Values.config.prometheus.enabled }}
+{{- if .Values.blockscout.separateApi.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: http
+    path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-api
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 30s
+    port: http
+    path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-stack.fullname" . }}-blockscout-svc
+{{- else }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -10,7 +47,11 @@ spec:
   - scrapeTimeout: 30s
     port: http
     path: /metrics
+    metricRelabelings:
+      - targetLabel: job
+        replacement: {{ include "blockscout-stack.fullname" . }}
   selector:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-svc
+{{- end }}
 {{- end }}

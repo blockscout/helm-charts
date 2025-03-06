@@ -1,4 +1,10 @@
 # ChangeLog
+## 2.0.1
+
+### Fix
+
+- Fix Monitoring when separateApi is enabled
+
 ## 2.0.0
 
 ### Major Update
