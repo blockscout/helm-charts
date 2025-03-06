@@ -12,4 +12,5 @@ spec:
       protocol: TCP
       name: http
   selector:
+    app: {{ include "multichain-aggregator.fullname" . }}
     {{- include "multichain-aggregator.selectorLabels" . | nindent 4 }}
