@@ -98,6 +98,15 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-sendgrid" (include "autoscout.fullname" .) }}
                   key: "api_key"
+            {{- range $key, $value := .Values.config.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.config.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ include "autoscout.fullname" . }}-env
+          {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
