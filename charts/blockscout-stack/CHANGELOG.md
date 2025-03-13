@@ -1,4 +1,11 @@
 # ChangeLog
+
+## 2.0.2
+
+### Fix
+
+- IPFS Gateway configuration for NFT resizer
+
 ## 2.0.1
 
 ### Fix

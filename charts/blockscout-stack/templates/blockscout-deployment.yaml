@@ -516,6 +516,8 @@ spec:
               value: 'name'
             - name: ERL_AFLAGS
               value: "-kernel inet_dist_listen_min 9140 inet_dist_listen_max 9141"
+            - name: IPFS_GATEWAY_URL
+              value: {{ .Values.blockscout.nftStorage.ipfsGateway | quote }}
           envFrom:
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-blockscout-resizer

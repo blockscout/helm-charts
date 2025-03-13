@@ -86,6 +86,7 @@ blockscout:
     secretKey: ""
     bucketName: nft
     bucketUrl: https://pub-xxx.r2.dev
+    ipfsGateway: https://ipfs.io/ipfs
     resources:
       limits:
         cpu: 2
