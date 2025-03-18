@@ -123,13 +123,27 @@ spec:
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-          {{- if .Values.log4jProperties }}
           volumeMounts:
+            - name: plugins-volume
+              mountPath: /plugins
+          {{- if .Values.log4jProperties }}
             - name: config
               mountPath: /tmp/conf/
           {{- end}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      initContainers:
+        - name: init-download-plugins
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - "-c"
+            - |
+              curl -L https://github.com/ClickHouse/metabase-clickhouse-driver/releases/download/1.53.2/clickhouse.metabase-driver.jar \
+              --output /plugins/clickhouse.metabase-driver.jar
+          volumeMounts:
+            - name: plugins-volume
+              mountPath: /plugins
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -143,6 +157,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        - name: plugins-volume
+          emptyDir: {}
         {{- if .Values.log4jProperties }}
         - name: config
           configMap:
