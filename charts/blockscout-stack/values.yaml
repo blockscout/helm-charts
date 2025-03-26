@@ -172,7 +172,7 @@ blockscout:
       - path: /socket
         pathType: Prefix
       - path: /sitemap.xml
-        pathType: Prefix
+        pathType: ImplementationSpecific
       - path: /public-metrics
         pathType: Prefix
       - path: /auth/auth0

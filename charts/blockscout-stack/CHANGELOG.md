@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 2.0.3
+
+### Fix
+
+- Fixing sitemap.xml ingress pathType to pass NGINX validation
+
 ## 2.0.2
 
 ### Fix
