@@ -40,6 +40,8 @@ spec:
           env:
             - name: MAX_LENGTH
               value: "{{ .Values.config.maxMessage }}"
+            - name: YOPASS_PORT
+              value: "{{ .Values.service.port }}"
           livenessProbe:
             httpGet:
               path: /
