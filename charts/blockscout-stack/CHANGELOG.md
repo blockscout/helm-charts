@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 2.1.1
+
+## Fix
+
+- Adding imagePullSecret to backend migration job
+
 ## 2.1.0
 
 ### Feature
