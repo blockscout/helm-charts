@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 2.1.0
+
+### Feature
+
+- Pointing sitemap.xml to frontend instance as it now served by frontend since 1.38.0
+
 ## 2.0.3
 
 ### Fix
