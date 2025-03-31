@@ -368,6 +368,16 @@ entries:
   blockscout-stack:
   - apiVersion: v2
     appVersion: 7.0.0
+    created: "2025-03-31T15:51:52.258603879Z"
+    description: A Helm chart to deploy Blockscout stack
+    digest: ffbc9e33780e58b207d6525a193620480d39abaf50695685de4631027dca7317
+    name: blockscout-stack
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-stack-2.1.0/blockscout-stack-2.1.0.tgz
+    version: 2.1.0
+  - apiVersion: v2
+    appVersion: 7.0.0
     created: "2025-03-26T11:28:12.10741727Z"
     description: A Helm chart to deploy Blockscout stack
     digest: 5eb008b9b88acf14a698a93b25e6a12d874fa012063ef8211e1c1631592f18c7
@@ -1621,4 +1631,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-26T12:11:51.333151262Z"
+generated: "2025-03-31T15:51:52.259065835Z"
