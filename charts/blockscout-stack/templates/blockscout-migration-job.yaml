@@ -14,6 +14,10 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: blockscout-migrations
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
