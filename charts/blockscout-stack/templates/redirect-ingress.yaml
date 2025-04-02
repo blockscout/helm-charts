@@ -1,0 +1,22 @@
+{{- if and .Values.config.redirect.enabled (eq .Values.frontend.ingress.hostname .Values.blockscout.ingress.hostname) -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-redirect-ingress
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+  annotations:
+    {{- tpl (.Values.config.redirect.ingress.annotations | toYaml) . | nindent 4 }}
+spec:
+  {{- with .Values.config.redirect.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if .Values.config.redirect.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.config.redirect.hostname }}
+      secretName: {{ include "blockscout-stack.fullname" . }}-redirect-ingress-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.config.redirect.hostname | quote }}
+{{- end }}

@@ -31,7 +31,11 @@ spec:
   tls:
     - hosts:
         - {{ .Values.frontend.ingress.hostname | quote }}
+      {{- if eq .Values.frontend.ingress.hostname .Values.blockscout.ingress.hostname}}
+      secretName: {{ .Values.blockscout.ingress.tls.secretName | default (printf "%s-blockscout-tls" $fullName) }}
+      {{- else }}
       secretName: {{ .Values.frontend.ingress.tls.secretName | default (printf "%s-frontend-tls" $fullName) }}
+      {{- end }}
   {{- end }}
   rules:
     - host: {{ .Values.frontend.ingress.hostname | quote }}
@@ -84,7 +88,11 @@ spec:
   tls:
     - hosts:
         - {{ .Values.frontend.ingress.hostname | quote }}
+      {{- if eq .Values.frontend.ingress.hostname .Values.blockscout.ingress.hostname }}
+      secretName: {{ .Values.blockscout.ingress.tls.secretName | default (printf "%s-blockscout-tls" $fullName) }}
+      {{- else }}
       secretName: {{ .Values.frontend.ingress.tls.secretName | default (printf "%s-frontend-tls" $fullName) }}
+      {{- end }}
   {{- end }}
   rules:
     - host: {{ .Values.frontend.ingress.hostname | quote }}
