@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.2.0
+
+## Feature
+
+- Shared certificate for frontend and backend if they run on same domain
+- Adding possibility to redirect to frontend domain from any other domain (Helpfull when moving from one domain to another)
+
 ## 2.1.1
 
 ## Fix

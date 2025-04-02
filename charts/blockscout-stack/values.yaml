@@ -31,7 +31,20 @@ config:
   nameService:
     enabled: false
     url: ""
-
+  ## Creates redirect from additional domain to frontend domain
+  ## Works only if backend and frontend runs on single domain
+  redirect:
+    enabled: false
+    hostname: extra-chart-example.local
+    ingress:
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/server-snippet: |
+          if ($request_uri !~ ^/.well-known/(.*)$) {
+            return 301 $scheme://{{ .Values.frontend.ingress.hostname }}$request_uri;
+          }
+      tls:
+        enabled: true
   ## If set to true will create service monitors for blockscout and stats
   ##
   prometheus:
