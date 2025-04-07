@@ -67,7 +67,7 @@ blockscout:
   ## Image parametes
   ##
   image:
-    repository: blockscout/blockscout
+    repository: ghcr.io/blockscout/blockscout
     pullPolicy: IfNotPresent
     tag: "latest"
   ## Init container configuration (used to run DB migrations)

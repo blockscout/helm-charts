@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.3.0
+
+## Feature
+
+- Change default docker registry for backend image from DockerHub to GH ContainerRegistry
+- Support api-only image removal
+
 ## 2.2.0
 
 ## Feature
