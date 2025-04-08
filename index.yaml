@@ -305,6 +305,16 @@ entries:
   blockscout-points:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2025-04-08T09:35:14.14902958Z"
+    description: A Helm chart for Kubernetes
+    digest: a42a0f1fee9e91d7e7af59ea0d83860327cca40525912de93535bcfe4dbd8fae
+    name: blockscout-points
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-points-0.3.0/blockscout-points-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-11-12T14:14:56.847244456Z"
     description: A Helm chart for Kubernetes
     digest: 2a00c1b8d4ed9caa7153e190466e33cecbc462b507922c0543b080dba340da0f
@@ -1661,4 +1671,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-08T08:33:41.093022884Z"
+generated: "2025-04-08T09:35:14.149297684Z"
