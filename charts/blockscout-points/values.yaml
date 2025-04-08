@@ -204,3 +204,64 @@ frontend:
   tolerations: []
 
   affinity: {}
+
+bot:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: ghcr.io/blockscout/merits-tg-bot
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+
+  imagePullSecrets: []
+
+  service:
+    type: ClusterIP
+    port: 8050
+
+  env: []
+    # NAME: VALUE
+  envFromSecret: []
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  # livenessProbe:
+  #   httpGet:
+  #     path: /health?service=
+  #     port: http
+  # readinessProbe:
+  #   httpGet:
+  #     path: /health?service=
+  #     port: http
+
+  # metrics:
+  #   enabled: false
+  #   port: 6060
+  #   prometheus:
+  #     enabled: false
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}

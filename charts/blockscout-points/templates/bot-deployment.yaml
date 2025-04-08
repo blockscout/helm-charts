@@ -1,0 +1,85 @@
+{{- if .Values.bot.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout-points.fullname" . }}-bot
+  labels:
+    app: {{ include "blockscout-points.fullname" . }}-bot
+    {{- include "blockscout-points.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.bot.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "blockscout-points.fullname" . }}-bot
+      {{- include "blockscout-points.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.bot.image.pullPolicy "Always" }}
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/bot-secret.yaml") . | sha256sum }}
+      {{- with .Values.bot.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "blockscout-points.fullname" . }}-bot
+        {{- include "blockscout-points.labels" . | nindent 8 }}-bot
+        {{- with .Values.bot.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.bot.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockscout-points.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.bot.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-bot
+          securityContext:
+            {{- toYaml .Values.bot.securityContext | nindent 12 }}
+          image: "{{ .Values.bot.image.repository }}:{{ .Values.bot.image.tag }}"
+          imagePullPolicy: {{ .Values.bot.image.pullPolicy }}
+          env:
+          {{- range $key, $value := .Values.bot.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.bot.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ include "blockscout-points.fullname" . }}-bot-env
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.bot.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.bot.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.bot.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.bot.resources | nindent 12 }}
+          {{- with .Values.bot.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.bot.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bot.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bot.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bot.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
