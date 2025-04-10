@@ -39,8 +39,34 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          {{- if .Values.config.fetchL2Metadata.enabled }}
             - name: DA_INDEXER__L2_ROUTER__ROUTES_PATH
               value: /app/config/celestia_routes.toml
+          {{- end }}
+          {{- if .Values.config.indexer.enabled }}
+            - name: DA_INDEXER__INDEXER__DA__CELESTIA__RPC__URL
+              value: {{ .Values.config.indexer.celestia.rpcUrl | quote }}
+            - name: DA_INDEXER__INDEXER__DA__CELESTIA__SAVE_BATCH_SIZE
+              value: {{ .Values.config.indexer.celestia.batchSize | quote }}
+            - name: DA_INDEXER__INDEXER__CONCURRENCY
+              value: {{ .Values.config.indexer.concurrency | quote }}
+            - name: DA_INDEXER__DATABASE__CONNECT__URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "da-indexer.fullname" . }}-db-config
+                  key: databaseUrl
+            - name: DA_INDEXER__DATABASE__RUN_MIGRATIONS
+              value: "true"
+          {{- end }}
+          {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.envFromSecret }}
+            envFrom:
+            - secretRef:
+                name: {{ include "da-indexer.fullname" . }}-env
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -51,13 +77,17 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.config.fetchL2Metadata.enabled }}
           volumeMounts:
             - name: config
               mountPath: /app/config
+          {{- end }}
+      {{- if .Values.config.fetchL2Metadata.enabled }}
       volumes:
         - name: config
           configMap:
             name: {{ template "da-indexer.fullname" . }}-config
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -19,8 +19,19 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 config:
-  #Celestia routes configuration
-  routes: {}
+  indexer:
+    enabled: true
+    celestia:
+      rpcUrl: http://localhost:26658
+      batchSize: 1000
+    concurrency: 15
+    databaseUrl: postgres://postgres:password@locahost:5432/da_indexer
+  fetchL2Metadata:
+    enabled: false
+    routes: {}
+
+env: []
+envFromSecret: []
 
 #This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:

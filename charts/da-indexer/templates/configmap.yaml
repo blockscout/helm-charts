@@ -1,3 +1,4 @@
+{{- if .Values.config.fetchL2Metadata.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,4 +7,5 @@ metadata:
     {{- include "da-indexer.labels" . | nindent 4 }}
 data:
   celestia_routes.toml:
-    {{ toYaml .Values.config.routes | indent 4 }}
+    {{ toYaml .Values.config.fetchL2Metadata.routes | indent 4 }}
+{{- end }}
