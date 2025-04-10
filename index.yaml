@@ -1011,6 +1011,16 @@ entries:
   da-indexer:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-04-10T09:12:21.475042361Z"
+    description: A Helm chart for Kubernetes
+    digest: c1760dc220c5206eb2786dc56391aa4c0032e383e4980fa1fb3fc49856c02f2c
+    name: da-indexer
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/da-indexer-0.2.0/da-indexer-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-10-04T09:49:10.246904473Z"
     description: A Helm chart for Kubernetes
     digest: f244a732f3430220d24445705e7c504d8f954c85b67ecc56cb50f6e13db5db13
@@ -1671,4 +1681,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-08T09:35:14.149297684Z"
+generated: "2025-04-10T09:12:21.475264443Z"
