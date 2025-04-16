@@ -58,6 +58,15 @@ spec:
           - name: COIN_NAME
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
+          {{- if .Values.postgresql.enabled }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-stack.postgresqlSecretName" . }}
+                key: postgres-password
+          - name: DATABASE_URL
+            value: {{ include "blockscout-stack.databaseUrl" . }}
+          {{- end }}
           {{- if .Values.config.account.enabled }}
           - name: ACCOUNT_ENABLED
             value: "true"
@@ -194,6 +203,15 @@ spec:
             value: "true"
           - name: DISABLE_WEBAPP
             value: "true"
+          {{- end }}
+          {{- if .Values.postgresql.enabled }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-stack.postgresqlSecretName" . }}
+                key: postgres-password
+          - name: DATABASE_URL
+            value: {{ include "blockscout-stack.databaseUrl" . }}
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
@@ -373,6 +391,15 @@ spec:
           - name: COIN_NAME
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
+          {{- if .Values.postgresql.enabled }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blockscout-stack.postgresqlSecretName" . }}
+                key: postgresql-password
+          - name: DATABASE_URL
+            value: {{ include "blockscout-stack.databaseUrl" . }}
+          {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
@@ -518,6 +545,15 @@ spec:
               value: "-kernel inet_dist_listen_min 9140 inet_dist_listen_max 9141"
             - name: IPFS_GATEWAY_URL
               value: {{ .Values.blockscout.nftStorage.ipfsGateway | quote }}
+            {{- if .Values.postgresql.enabled }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "blockscout-stack.postgresqlSecretName" . }}
+                  key: postgresql-password
+            - name: DATABASE_URL
+              value: {{ include "blockscout-stack.databaseUrl" . }}
+            {{- end }}
           envFrom:
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-blockscout-resizer

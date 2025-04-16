@@ -477,3 +477,25 @@ tolerations: []
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
 affinity: {}
+
+postgresql:
+  # Set ECTO_USE_SSL to false to disable SSL for database connections
+  # Example: blockscout.env.ECTO_USE_SSL: false
+  enabled: false
+  secretName: postgresql
+  global:
+    postgresql:
+      auth:
+        database: blockscout
+  primary:
+    extendedConfiguration: |
+      max_connections = 10000
+    resources:
+      limits:
+        cpu: 2000m
+        ephemeral-storage: 2Gi
+        memory: 4000Mi
+      requests:
+        cpu: 100m
+        ephemeral-storage: 50Mi
+        memory: 128Mi

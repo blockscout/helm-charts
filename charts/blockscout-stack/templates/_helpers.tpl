@@ -60,3 +60,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Construct the database URL
+*/}}
+{{- define "blockscout-stack.databaseUrl" -}}
+postgresql://postgres:$(POSTGRES_PASSWORD)@{{ .Release.Name }}-postgresql:5432/blockscout
+{{- end }}
+
+{{/*
+Construct the PostgreSQL secret name
+*/}}
+{{- define "blockscout-stack.postgresqlSecretName" -}}
+{{- printf "%s-postgresql" .Release.Name | lower -}}
+{{- end }}
