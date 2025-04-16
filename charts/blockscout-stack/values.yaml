@@ -479,7 +479,8 @@ tolerations: []
 affinity: {}
 
 postgresql:
-  # you may want to set blockscout.env.ECTO_USE_SSL: false
+  # Set ECTO_USE_SSL to false to disable SSL for database connections
+  # Example: blockscout.env.ECTO_USE_SSL: false
   secretName: postgresql
   enabled: true
   global:
