@@ -22,3 +22,10 @@ version: 2.2.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "7.0.0"
+
+dependencies:
+  - name: postgresql
+    alias: postgresql
+    version: "16.6.3"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled

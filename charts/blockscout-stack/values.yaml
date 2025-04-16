@@ -477,3 +477,24 @@ tolerations: []
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
 affinity: {}
+
+postgresql:
+  # you may want to set blockscout.env.ECTO_USE_SSL: false
+  secretName: postgresql
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: blockscout
+  primary:
+    extendedConfiguration: |
+      max_connections = 10000
+    resources:
+      limits:
+        cpu: 2000m
+        ephemeral-storage: 2Gi
+        memory: 4000Mi
+      requests:
+        cpu: 100m
+        ephemeral-storage: 50Mi
+        memory: 128Mi

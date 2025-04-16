@@ -1,0 +1,14 @@
+{{ .Chart.Name }} has been deployed!
+
+Release name: {{ .Release.Name }}
+
+To learn more about the release, try:
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+Postgres database connection details:
+  URL: {{ include "blockscout-stack.databaseUrl" . }}
+  Secret name: {{ include "blockscout-stack.postgresqlSecretName" . }}
+
+To get the database password, run:
+  $ kubectl get secret {{ include "blockscout-stack.postgresqlSecretName" . }} -o jsonpath="{.data.postgresql-password}" | base64 --decode
