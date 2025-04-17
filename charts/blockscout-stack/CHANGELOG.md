@@ -1,11 +1,11 @@
 # ChangeLog
 
-## 2.3.0
+## 3.0.0
 
 ## Feature
 
-- Change default docker registry for backend image from DockerHub to GH ContainerRegistry
-- Support api-only image removal
+- Change default docker registry for backend image from DockerHub to GH ContainerRegistry. Works only for 8.0.0 blockscout version, if you are using any previous version, do not update helm chart to 3.x
+- API-only image removal, now configuration of API-only mode can be made in runtime with DISABLE_INDEXER=true
 
 ## 2.2.0
 
