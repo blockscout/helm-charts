@@ -54,9 +54,12 @@ config:
       enabled: true
       annotations:
         nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-    blackbox:
+    rules:
       enabled: true
-      path: /api/health
+      ## If latest block timestamp is older than healthyBlockPeriod instance is considered unhealthy and alert is created
+      healthyBlockPeriod: 300
+      ## Alert is created if there is no new batches for more than batchTimeMultiplier x average_batch_time
+      batchTimeMultiplier: 2
 ## Configuration options for backend
 ##
 blockscout:

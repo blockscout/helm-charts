@@ -1,0 +1,30 @@
+{{- if and .Values.config.prometheus.enabled .Values.config.prometheus.rules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: eth-rpc-monitoring
+      rules:
+      - alert: "{{`{{ $labels.job }}`}} is unhealthy"
+        expr: time() - latest_block_timestamp{job="{{ include "blockscout-stack.fullname" . }}"} > {{ .Values.config.prometheus.rules.healthyBlockPeriod }}
+        for: 1m
+        labels:
+          severity: critical
+          service: "blockscout-stack"
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} is unhealthy"
+          description: "{{`{{ $labels.job }}`}} is unhealthy. Latest block is for more than {{ .Values.config.prometheus.rules.healthyBlockPeriod }} seconds old."
+      - alert: "{{`{{ $labels.job }}`}} has no new batches"
+        expr: time() - latest_batch_timestamp{job="{{ include "blockscout-stack.fullname" . }}"} > {{ .Values.config.prometheus.rules.batchTimeMultiplier }}*batch_average_time{job="{{ include "blockscout-stack.fullname" . }}"}
+        for: 1m
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new batches"
+          description: "Latest batch at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.batchTimeMultiplier }} average batch time ago."
+{{- end }}
