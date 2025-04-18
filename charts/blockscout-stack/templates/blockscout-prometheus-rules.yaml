@@ -7,7 +7,7 @@ metadata:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   groups:
-    - name: eth-rpc-monitoring
+    - name: {{ include "blockscout-stack.fullname" . }}-blockscout
       rules:
       - alert: "{{`{{ $labels.job }}`}} is unhealthy"
         expr: time() - latest_block_timestamp{job="{{ include "blockscout-stack.fullname" . }}"} > {{ .Values.config.prometheus.rules.healthyBlockPeriod }}
