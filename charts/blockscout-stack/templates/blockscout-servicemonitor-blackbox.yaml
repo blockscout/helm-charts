@@ -1,0 +1,31 @@
+{{- if and .Values.blockscout.ingress.enabled .Values.config.prometheus.blackbox.enabled }}
+{{- $url := printf "https://%s%s" .Values.blockscout.ingress.hostname .Values.config.prometheus.blackbox.path }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-bb
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 5s
+    port: http
+    path: "/probe"
+    interval: 15s
+    params:
+      module:
+      - http_2xx
+      target:
+      - {{ $url }}
+    metricRelabelings:
+      - targetLabel: instance
+        replacement: {{ $url }}
+      - targetLabel: target
+        replacement: {{ include "blockscout-stack.fullname" . }}
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-blackbox-exporter
+      app.kubernetes.io/instance: prometheus-blackbox-exporter
+{{- end }}

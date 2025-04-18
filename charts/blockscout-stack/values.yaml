@@ -54,6 +54,8 @@ config:
       enabled: true
       annotations:
         nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    blackbox:
+      enabled: true
     rules:
       enabled: true
       ## If latest block timestamp is older than healthyBlockPeriod instance is considered unhealthy and alert is created
