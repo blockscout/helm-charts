@@ -57,6 +57,13 @@ config:
     blackbox:
       enabled: true
       path: /api/health
+    rules:
+      enabled: true
+      ## If latest block timestamp is older than healthyBlockPeriod instance is considered unhealthy and alert is created
+      healthyBlockPeriod: 300
+      ## Alert is created if there is no new batches for more than batchTimeMultiplier x average_batch_time
+      batchTimeMultiplier: 2
+      labels: {}
 ## Configuration options for backend
 ##
 blockscout:
@@ -67,7 +74,7 @@ blockscout:
   ## Image parametes
   ##
   image:
-    repository: blockscout/blockscout
+    repository: ghcr.io/blockscout/blockscout
     pullPolicy: IfNotPresent
     tag: "latest"
   ## Init container configuration (used to run DB migrations)

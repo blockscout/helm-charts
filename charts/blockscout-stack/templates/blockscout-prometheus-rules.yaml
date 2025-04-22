@@ -1,0 +1,24 @@
+{{- if and .Values.config.prometheus.enabled .Values.config.prometheus.rules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: {{ include "blockscout-stack.fullname" . }}-blockscout
+      rules:
+      - alert: "{{`{{ $labels.job }}`}} has no new batches"
+        expr: time() - latest_batch_timestamp{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > {{ .Values.config.prometheus.rules.batchTimeMultiplier }}*batch_average_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}
+        for: 5m
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new batches"
+          description: "Latest batch at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.batchTimeMultiplier }} average batch time ago."
+{{- end }}

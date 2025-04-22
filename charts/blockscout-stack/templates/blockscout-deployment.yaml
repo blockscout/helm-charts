@@ -96,11 +96,7 @@ spec:
         - name: {{ .Chart.Name }}-blockscout
           securityContext:
             {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
-          {{- if .Values.blockscout.separateApi.enabled }}
-          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}-api"
-          {{- else }}
           image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
-          {{- end }}
           resources:
           {{- if .Values.blockscout.separateApi.enabled }}
             {{- toYaml .Values.blockscout.separateApi.resources | nindent 12 }}
