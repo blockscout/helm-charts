@@ -15,6 +15,9 @@ spec:
         labels:
           severity: warning
           service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
         annotations:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new batches"
           description: "Latest batch at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.batchTimeMultiplier }} average batch time ago."

@@ -63,6 +63,7 @@ config:
       healthyBlockPeriod: 300
       ## Alert is created if there is no new batches for more than batchTimeMultiplier x average_batch_time
       batchTimeMultiplier: 2
+      labels: {}
 ## Configuration options for backend
 ##
 blockscout:
