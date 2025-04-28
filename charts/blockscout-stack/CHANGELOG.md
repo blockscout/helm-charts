@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.1.0
+
+## Feature
+
+- Updated Stats component to use Blockscout shared domain with ability to manually set custom domain and base path
+
 ## 3.0.0
 
 ## Feature

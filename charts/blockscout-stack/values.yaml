@@ -325,11 +325,14 @@ stats:
 
   securityContext: {}
 
+  basePath: "/stats-service"
+  
   ## Configure ingress resource that allow you to access the stats installation.
   ## ref: http://kubernetes.io/docs/user-guide/ingress/
   ##
   ingress:
     enabled: false
+    separateDomain: false
     className: ""
     annotations: {}
     hostname: chart-example-stats.local
@@ -360,7 +363,6 @@ stats:
   ##
   livenessProbe:
     enabled: true
-    path: /health
     params:
       initialDelaySeconds: 100
       periodSeconds: 100
@@ -369,7 +371,6 @@ stats:
   ##
   readinessProbe:
     enabled: true
-    path: /health
     params:
       initialDelaySeconds: 60
       periodSeconds: 10

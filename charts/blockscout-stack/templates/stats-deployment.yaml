@@ -51,6 +51,10 @@ spec:
           - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
+          {{- if and (.Values.stats.basePath) (not (hasKey .Values.stats.env "STATS__SERVER__HTTP__BASE_PATH")) }}
+          - name: STATS__SERVER__HTTP__BASE_PATH
+            value: "{{ .Values.stats.basePath }}"
+          {{- end }}
           {{- range $key, $value := .Values.stats.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
@@ -72,7 +76,13 @@ spec:
           {{- if .Values.stats.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
+              {{- if .Values.stats.readinessProbe.path }}
               path: {{ .Values.stats.readinessProbe.path }}
+              {{- else if and (not .Values.stats.ingress.separateDomain) }}
+              path: "{{ .Values.stats.basePath }}/health"
+              {{- else }}
+              path: "/health"
+              {{- end }}
               port: http
               scheme: HTTP
             {{- with .Values.stats.readinessProbe.params }}
@@ -82,7 +92,13 @@ spec:
           {{- if .Values.stats.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
+              {{- if .Values.stats.livenessProbe.path }}
               path: {{ .Values.stats.livenessProbe.path }}
+              {{- else if and (not .Values.stats.ingress.separateDomain) }}
+              path: "{{ .Values.stats.basePath }}/health"
+              {{- else }}
+              path: "/health"
+              {{- end }}
               port: http
               scheme: HTTP
             {{- with .Values.stats.livenessProbe.params }}
