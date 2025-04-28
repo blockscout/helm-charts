@@ -4,7 +4,7 @@
 
 ## Feature
 
-- Updated Stats component to use Blockscout shared domain with ability to manually set custom domain and base path
+- Add ability to set base path for stats component
 
 ## 3.0.0
 

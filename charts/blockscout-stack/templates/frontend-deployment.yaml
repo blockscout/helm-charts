@@ -73,7 +73,7 @@ spec:
             value: {{ .Values.frontend.ingress.hostname | quote }}
           {{- end }}
           {{- if and .Values.stats.ingress.enabled .Values.stats.enabled }}
-          {{- if .Values.stats.ingress.separateDomain }}
+          {{- if eq .Values.stats.basePath "/" }}
           - name: NEXT_PUBLIC_STATS_API_HOST
             value: "https://{{ .Values.stats.ingress.hostname }}"
           {{- else }}

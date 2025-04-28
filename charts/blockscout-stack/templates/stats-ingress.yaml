@@ -27,7 +27,6 @@ spec:
   {{- if and .Values.stats.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.stats.ingress.className }}
   {{- end }}
-  {{- if .Values.stats.ingress.separateDomain }}
   {{- if .Values.stats.ingress.tls.enabled }}
   tls:
     - hosts:
@@ -56,31 +55,5 @@ spec:
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
-  {{- else }}
-  {{- if .Values.blockscout.ingress.tls.enabled }}
-  tls:
-    - hosts:
-        - {{ .Values.blockscout.ingress.hostname | quote }}
-      secretName: {{ .Values.blockscout.ingress.tls.secretName | default (printf "%s-stats-tls" $fullName) }}
-  {{- end }}
-  rules:
-    - host: {{ .Values.blockscout.ingress.hostname | quote }}
-      http:
-        paths:
-          - path: {{ .Values.stats.basePath | quote }}
-            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: Prefix
-            backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
-              service:
-                name: {{ $fullName }}-stats-svc
-                port:
-                  number: {{ $svcPort }}
-              {{- else }}
-              serviceName: {{ $fullName }}-stats-svc
-              servicePort: {{ $svcPort }}
-              {{- end }}
-            {{- end }}
-  {{- end }}
 {{- end }}
 {{- end }}

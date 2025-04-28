@@ -76,12 +76,10 @@ spec:
           {{- if .Values.stats.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              {{- if .Values.stats.readinessProbe.path }}
+              {{- if eq .Values.stats.basePath "/" }}
               path: {{ .Values.stats.readinessProbe.path }}
-              {{- else if and (not .Values.stats.ingress.separateDomain) }}
-              path: "{{ .Values.stats.basePath }}/health"
               {{- else }}
-              path: "/health"
+              path: "{{ .Values.stats.basePath }}{{ .Values.stats.livenessProbe.path }}"
               {{- end }}
               port: http
               scheme: HTTP
@@ -92,12 +90,10 @@ spec:
           {{- if .Values.stats.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              {{- if .Values.stats.livenessProbe.path }}
+              {{- if eq .Values.stats.basePath "/" }}
               path: {{ .Values.stats.livenessProbe.path }}
-              {{- else if and (not .Values.stats.ingress.separateDomain) }}
-              path: "{{ .Values.stats.basePath }}/health"
               {{- else }}
-              path: "/health"
+              path: "{{ .Values.stats.basePath }}{{ .Values.stats.livenessProbe.path }}"
               {{- end }}
               port: http
               scheme: HTTP
