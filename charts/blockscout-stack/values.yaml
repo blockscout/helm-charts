@@ -325,7 +325,7 @@ stats:
 
   securityContext: {}
 
-  basePath: "/stats-service"
+  basePath: "/"
 
   ## Configure ingress resource that allow you to access the stats installation.
   ## ref: http://kubernetes.io/docs/user-guide/ingress/
@@ -339,7 +339,7 @@ stats:
       enabled: false
       #secretName:
     paths:
-      - path: /stats-service
+      - path: /
         pathType: Prefix
 
   resources:
