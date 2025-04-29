@@ -73,13 +73,10 @@ spec:
             value: {{ .Values.frontend.ingress.hostname | quote }}
           {{- end }}
           {{- if and .Values.stats.ingress.enabled .Values.stats.enabled }}
-          {{- if eq .Values.stats.basePath "/" }}
           - name: NEXT_PUBLIC_STATS_API_HOST
             value: "https://{{ .Values.stats.ingress.hostname }}"
-          {{- else }}
-          - name: NEXT_PUBLIC_STATS_API_HOST
-            value: "https://{{ .Values.blockscout.ingress.hostname }}{{ .Values.stats.basePath }}"
-          {{- end }}
+          - name: NEXT_PUBLIC_STATS_API_BASE_PATH
+            value: {{ .Values.stats.basePath | quote }}
           {{- end }}
           {{- if .Values.config.prometheus.enabled }}
           - name: PROMETHEUS_METRICS_ENABLED
