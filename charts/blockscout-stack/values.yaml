@@ -325,6 +325,8 @@ stats:
 
   securityContext: {}
 
+  basePath: "/"
+
   ## Configure ingress resource that allow you to access the stats installation.
   ## ref: http://kubernetes.io/docs/user-guide/ingress/
   ##

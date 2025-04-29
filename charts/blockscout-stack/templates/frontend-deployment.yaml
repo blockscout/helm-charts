@@ -75,6 +75,10 @@ spec:
           {{- if and .Values.stats.ingress.enabled .Values.stats.enabled }}
           - name: NEXT_PUBLIC_STATS_API_HOST
             value: "https://{{ .Values.stats.ingress.hostname }}"
+          {{- if ne .Values.stats.basePath "/" }}
+          - name: NEXT_PUBLIC_STATS_API_BASE_PATH
+            value: {{ .Values.stats.basePath | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.config.prometheus.enabled }}
           - name: PROMETHEUS_METRICS_ENABLED

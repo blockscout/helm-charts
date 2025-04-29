@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.1.0
+
+## Feature
+
+- Add ability to set base path for stats component
+
 ## 3.0.0
 
 ## Feature
