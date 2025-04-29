@@ -51,7 +51,7 @@ spec:
           - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
-          {{- if and (.Values.stats.basePath) (not (hasKey .Values.stats.env "STATS__SERVER__HTTP__BASE_PATH")) }}
+          {{- if and (ne .Values.stats.basePath "/" ) (not (hasKey .Values.stats.env "STATS__SERVER__HTTP__BASE_PATH")) }}
           - name: STATS__SERVER__HTTP__BASE_PATH
             value: "{{ .Values.stats.basePath }}"
           {{- end }}
