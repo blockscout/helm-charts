@@ -107,6 +107,7 @@ blockscout:
     bucketName: nft
     bucketUrl: https://pub-xxx.r2.dev
     ipfsGateway: https://ipfs.io/ipfs
+    workerConcurrency: 10
     resources:
       limits:
         cpu: 2

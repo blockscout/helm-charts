@@ -1,14 +1,20 @@
 # ChangeLog
 
+## 3.2.0
+
+### Feature
+
+- Adding parameter for nft resizer worker concurrency
+
 ## 3.1.0
 
-## Feature
+### Feature
 
 - Add ability to set base path for stats component
 
 ## 3.0.0
 
-## Feature
+### Feature
 
 - Change default docker registry for backend image from DockerHub to GH ContainerRegistry. Works only for 8.0.0 blockscout version, if you are using any previous version, do not update helm chart to 3.x
 - API-only image removal, now configuration of API-only mode can be made in runtime with DISABLE_INDEXER=true
@@ -16,14 +22,14 @@
 
 ## 2.2.0
 
-## Feature
+### Feature
 
 - Shared certificate for frontend and backend if they run on same domain
 - Adding possibility to redirect to frontend domain from any other domain (Helpfull when moving from one domain to another)
 
 ## 2.1.1
 
-## Fix
+### Fix
 
 - Adding imagePullSecret to backend migration job
 
