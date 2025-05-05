@@ -507,7 +507,7 @@ spec:
               value: '{"indexer@{{ .Release.Name }}-blockscout-svc.{{ .Release.Namespace }}.svc.cluster.local": "/{{ .Release.Name }}"}'
             {{- end }}
             - name: NFT_MEDIA_HANDLER_WORKER_CONCURRENCY
-              values: {{ .Values.blockscout.nftStorage.workerConcurrency}}
+              value: {{ .Values.blockscout.nftStorage.workerConcurrency | quote }}
             - name: RELEASE_NODE
               value: 'worker@{{ .Release.Name }}-blockscout-resizer-svc.{{ .Release.Namespace }}.svc.cluster.local'
             - name: RELEASE_DISTRIBUTION

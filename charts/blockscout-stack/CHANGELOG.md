@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.2.1
+
+### Fix
+
+- Fixing nft resizer worker concurrency value in deployment
+
 ## 3.2.0
 
 ### Feature
