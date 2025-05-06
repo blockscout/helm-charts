@@ -1696,6 +1696,17 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/swapscout-0.1.0/swapscout-0.1.0.tgz
     version: 0.1.0
+  tac-operation-lifecycle:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2025-05-06T10:03:24.878015011Z"
+    description: A Helm chart for Kubernetes
+    digest: 38ae85854c41febe14d402b8432ed2fdac5c1c55d2f7220fa8bcf2073163dd0f
+    name: tac-operation-lifecycle
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/tac-operation-lifecycle-0.1.0/tac-operation-lifecycle-0.1.0.tgz
+    version: 0.1.0
   tracker:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -1771,4 +1782,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-05T15:36:54.565769276Z"
+generated: "2025-05-06T10:03:24.878354946Z"
