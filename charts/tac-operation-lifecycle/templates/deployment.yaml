@@ -41,6 +41,10 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ include "tac-operation-lifecycle.fullname" . }}-env
