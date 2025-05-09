@@ -41,6 +41,8 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
+            - name: NODE_ENV
+              value: {{ .Values.config.nodeEnv | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "quicknode-marketplace-integration.fullname" . }}-env

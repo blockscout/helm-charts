@@ -10,6 +10,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 config:
+  nodeEnv: production
   basicAuthRPC:
     username: username
     password: password
