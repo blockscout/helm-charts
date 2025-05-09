@@ -1390,6 +1390,16 @@ entries:
   quicknode-marketplace-integration:
   - apiVersion: v2
     appVersion: v0.1.0
+    created: "2025-05-09T08:43:07.105286115Z"
+    description: A Helm chart for Kubernetes
+    digest: 88f2986c11be56a23d6093ed386811c87b1204883e133781067c9fe4ecd15ac2
+    name: quicknode-marketplace-integration
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/quicknode-marketplace-integration-0.1.8/quicknode-marketplace-integration-0.1.8.tgz
+    version: 0.1.8
+  - apiVersion: v2
+    appVersion: v0.1.0
     created: "2024-11-08T12:06:03.684635027Z"
     description: A Helm chart for Kubernetes
     digest: 4e1fc28301c0b2ce4c85fc8c80b763468ae0caab4bf7759e573fd038875c05af
@@ -1782,4 +1792,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-06T10:03:24.878354946Z"
+generated: "2025-05-09T08:43:07.105617213Z"
