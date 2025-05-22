@@ -67,6 +67,15 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-auth0" (include "autoscout.fullname" .) }}
                   key: "management_secret"
+            {{- range $key, $value := .Values.frontend.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.frontend.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ include "autoscout.fullname" . }}-frontend-env
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}
