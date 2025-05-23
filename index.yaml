@@ -1276,6 +1276,16 @@ entries:
   image-generator:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2025-05-23T13:28:55.890275207Z"
+    description: A Helm chart for Kubernetes
+    digest: 452aa5031cff7d2ebdb9caad22b9718a711b24656a7220e10712b6e36083588b
+    name: image-generator
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/image-generator-0.1.1/image-generator-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-12-26T09:54:34.928230753Z"
     description: A Helm chart for Kubernetes
     digest: 2b64e41eb7fb653967a23ae50160efa5f0c27495a5813e47bc82cdee93f1f680
@@ -1802,4 +1812,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-22T14:58:32.748807653Z"
+generated: "2025-05-23T13:28:55.890634369Z"
