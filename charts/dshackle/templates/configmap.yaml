@@ -8,6 +8,7 @@ data:
   dshackle.yaml: |-
     version: v1
     port: {{ .Values.service.grpcPort }}
+    host: 0.0.0.0
     tls:
       enabled: false
     monitoring:
@@ -27,13 +28,22 @@ data:
         port: {{ .Values.config.redis.port }}
         db: 0
     {{- end }}
+    {{- if .Values.config.auth.enabled }}
+    auth:
+      enabled: true
+      publicKeyOwner: {{ .Values.config.auth.publicKeyOwner }}
+      server:
+        keys:
+          provider-private-key: /etc/dshackle/auth/private-{{ .Values.config.auth.providerName }}.p8.key
+          external-public-key: /etc/dshackle/auth/public-{{ .Values.config.auth.publicKeyOwner }}.pem
+    {{- end }}
     proxy:
       host: 0.0.0.0
       port: {{ .Values.service.rpcPort }}
       routes:
       {{- range .Values.config.networks }}
         - id: {{ .id }}
-          blockchain: {{ .blockchain }}
+          blockchain: {{ .chain }}
       {{- end }}
 
     cluster:
@@ -41,7 +51,11 @@ data:
         {{- range $key, $network := .Values.config.networks }}
         {{- range $network.upstreams }}
         - id: {{ .id }}
-          blockchain: {{ $network.blockchain }}
+          chain: {{ $network.chain }}
+          {{- with $network.options }}
+          options:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           connection:
             {{- toYaml .connection | nindent 12 }}
           methods:

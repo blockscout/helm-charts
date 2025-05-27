@@ -13,6 +13,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.config.auth.enabled }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -64,10 +67,19 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/dshackle
+              {{- if .Values.config.auth.enabled }}
+            - name: auth
+              mountPath: /etc/dshackle/auth
+              {{- end }}
       volumes:
         - name: config
           configMap:
             name: {{ template "dshackle.fullname" . }}-config
+          {{- if .Values.config.auth.enabled }}
+        - name: auth
+          secret:
+            secretName: {{ template "dshackle.fullname" . }}-auth
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
