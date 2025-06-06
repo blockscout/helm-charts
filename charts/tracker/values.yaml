@@ -21,6 +21,10 @@ config:
   redis:
     host:
     port: 6379
+  env:
+    BUFFER_FLUSH_SIZE: 100
+    BUFFER_FLUSH_INTERVAL_MS: 5000
+    MAX_BUFFER_SIZE: 10000
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
