@@ -1750,6 +1750,16 @@ entries:
   tracker:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-06-06T15:27:38.683937119Z"
+    description: A Helm chart for Kubernetes
+    digest: c55fac6a546f34488c56f612480e2954504e51dc2292fecf844c8b36013c76ec
+    name: tracker
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/tracker-0.2.0/tracker-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-02-12T10:19:07.712696594Z"
     description: A Helm chart for Kubernetes
     digest: 247a9010a6eb8eb0e75e3a0173eddd5b1354ae00aca1615b03466bae3a41facc
@@ -1822,4 +1832,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-27T09:48:30.208909802Z"
+generated: "2025-06-06T15:27:38.684205226Z"
