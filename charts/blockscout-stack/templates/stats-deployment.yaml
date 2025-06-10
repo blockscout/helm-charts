@@ -18,6 +18,9 @@ spec:
       {{- if eq .Values.stats.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
+      {{- with .Values.stats.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-stats
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
