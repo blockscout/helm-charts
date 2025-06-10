@@ -1,0 +1,15 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "rs-service.fullname" . }}
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "rs-service.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: {{ .Values.serviceMonitor.portName }}
+    path: {{ .Values.serviceMonitor.path }}
+{{- end }} 

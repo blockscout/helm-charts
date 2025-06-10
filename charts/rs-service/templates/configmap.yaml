@@ -1,0 +1,18 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rs-service.fullname" . }}-config
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.config }}
+  {{- if ne $key "file" }}
+  {{ $key | upper }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.config.file }}
+  config.json: |
+    {{- .Values.config.file | nindent 4 }}
+  {{- end }}
+{{- end }} 

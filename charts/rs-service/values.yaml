@@ -1,0 +1,136 @@
+# Global settings
+global:
+  env: production
+  imageRegistry: ghcr.io
+  imagePullSecrets: []
+
+# Basic service configuration
+replicaCount: 1
+
+# Image settings
+image:
+  repository: ""  # Required: specify the service image repository
+  tag: ""         # If empty, uses appVersion from Chart.yaml
+  pullPolicy: IfNotPresent
+
+# Container startup configuration
+container:
+  command: []     # Override default command
+  args: []        # Override default args
+
+# Service settings
+service:
+  type: ClusterIP
+  port: 8050
+  targetPort: 8050  # If not specified, uses port
+
+# Environment variables
+environment: {}
+  # LOG_LEVEL: info
+  # DATABASE_URL: "postgres://user:pass@db:5432/dbname"
+
+# Environment variables from secrets
+envFromSecret: {}
+  # SECRET_VAR: "secret-name"
+
+# Configuration files (creates ConfigMap)
+config: {}
+  # databaseUrl: "postgres://..."
+  # file: |  # Creates config.json
+  #   {
+  #     "key": "value"
+  #   }
+
+# Resource settings
+resources:
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+
+# Health check probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 60
+  timeoutSeconds: 5
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+# Ingress settings
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hostname: chart-example.local
+  paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+    enabled: false
+
+# ServiceMonitor for Prometheus
+serviceMonitor:
+  enabled: false
+  portName: "http"
+  path: "/metrics"
+
+# Volume settings
+volumes: []
+volumeMounts: []
+
+# gRPC settings (for services that support it)
+grpc:
+  enabled: false
+  port: 8051
+
+# CronJob configuration (optional)
+cronjob:
+  enabled: false
+  # schedule: "0 2 * * *"  # Daily at 2 AM
+  # image:
+  #   repository: blockscout/token-info-extractor
+  #   tag: ""
+  # environment: {}
+  # config: {}
+  # resources: {}
+
+# Common settings
+nameOverride: ""
+fullnameOverride: ""
+
+# Service Account
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+# Pod settings
+podAnnotations: {}
+podLabels: {}
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Node selectors
+nodeSelector: {}
+tolerations: []
+affinity: {} 
