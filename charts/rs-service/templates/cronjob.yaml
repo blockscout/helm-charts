@@ -1,0 +1,69 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "rs-service.fullname" . }}-cronjob
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "rs-service.selectorLabels" . | nindent 12 }}
+        spec:
+          {{- with .Values.global.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "rs-service.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+          - name: cronjob
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            image: "{{ include "rs-service.imageRepository" (list .Values.cronjob.image.repository .) }}:{{ include "rs-service.imageTag" (list .Values.cronjob.image.tag .) }}"
+            imagePullPolicy: IfNotPresent
+            {{- if or .Values.cronjob.environment .Values.cronjob.envFromSecret }}
+            env:
+              {{- include "rs-service.environmentVariables" (list .Values.cronjob.environment .Values.cronjob.envFromSecret .) | nindent 14 }}
+            {{- end }}
+            {{- if .Values.cronjob.config }}
+            envFrom:
+              - configMapRef:
+                  name: {{ include "rs-service.fullname" . }}-cronjob-config
+            {{- end }}
+            {{- if .Values.cronjob.resources }}
+            resources:
+              {{- toYaml .Values.cronjob.resources | nindent 14 }}
+            {{- end }}
+          restartPolicy: OnFailure
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+{{- if .Values.cronjob.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rs-service.fullname" . }}-cronjob-config
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.cronjob.config }}
+  {{ $key | upper }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+{{- end }} 
