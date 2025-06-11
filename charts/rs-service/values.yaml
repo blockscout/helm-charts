@@ -86,7 +86,25 @@ serviceMonitor:
   portName: "http"
   path: "/metrics"
 
-# Volume settings
+# Persistence settings
+# See https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+persistence:
+  enabled: false
+  # -- Size of the persistent volume.
+  size: 8Gi
+  # -- Storage class for the persistent volume.
+  # If not specified, the default storage class will be used.
+  storageClassName: ""
+  # -- Access modes for the persistent volume.
+  # See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  accessModes:
+    - ReadWriteOnce
+  # -- Path to mount the persistent volume.
+  mountPath: /data
+
+# Extra volumes and volume mounts
+# For more complex configurations, you can add extra volumes and volume mounts
+# see https://kubernetes.io/docs/concepts/storage/volumes/
 volumes: []
 volumeMounts: []
 
