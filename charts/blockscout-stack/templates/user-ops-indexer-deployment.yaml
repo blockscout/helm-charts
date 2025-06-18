@@ -6,6 +6,10 @@ metadata:
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.userOpsIndexer.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.userOpsIndexer.replicaCount }}
   selector:

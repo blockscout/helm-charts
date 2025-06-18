@@ -6,6 +6,10 @@ metadata:
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-blockscout
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.blockscout.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if .Values.blockscout.separateApi.enabled }}
   replicas: {{ .Values.blockscout.separateApi.replicaCount }}
@@ -260,6 +264,10 @@ metadata:
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.blockscout.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.blockscout.replicaCount }}
   selector:
@@ -439,6 +447,10 @@ metadata:
   labels:
     app: {{ .Release.Name }}-blockscout-resizer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.blockscout.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.blockscout.replicaCount }}
   selector:

@@ -6,6 +6,10 @@ metadata:
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-frontend
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.frontend.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:

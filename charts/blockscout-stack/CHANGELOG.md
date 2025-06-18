@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.2.3
+
+### Feature
+
+- Add ability to set deployment annotations
+
 ## 3.2.2
 
 ### Fix

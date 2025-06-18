@@ -148,6 +148,9 @@ blockscout:
   ## Annotations to add to blockscout pod
   podAnnotations: {}
 
+  ## Annotations to add to blockscout deployment
+  annotations: {}
+
   podSecurityContext: {}
   ## SecurityContext holds pod-level security attributes and common container settings.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -232,8 +235,10 @@ frontend:
 
   replicaCount: 2
   ## Annotations to add to frontend pod
-  ##
   podAnnotations: {}
+
+  ## Annotations to add to frontend deployment
+  annotations: {}
 
   podSecurityContext: {}
   ## SecurityContext holds pod-level security attributes and common container settings.
@@ -322,6 +327,9 @@ stats:
 
   podAnnotations: {}
 
+  ## Annotations to add to stats deployment
+  annotations: {}
+
   podSecurityContext: {}
 
   securityContext: {}
@@ -409,6 +417,9 @@ userOpsIndexer:
     metricsPort: 6060
 
   podAnnotations: {}
+
+  ## Annotations to add to user-ops-indexer deployment
+  annotations: {}
 
   podSecurityContext: {}
 
