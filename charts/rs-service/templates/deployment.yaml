@@ -60,9 +60,22 @@ spec:
               containerPort: {{ .Values.grpc.port }}
               protocol: TCP
             {{- end }}
-          {{- if .Values.environment }}
+          {{- if .Values.env }}
           env:
-            {{- range $key, $value := .Values.environment }}
+            {{- range $key, $value := .Values.env }}
+            {{- if keyExists .Values.env.$key "valueFrom" }}
+            - name: {{ $key }}
+              valueFrom:
+                {{- if eq .Values.env.$key."valueFrom" "secretKeyRef" }}
+                secretKeyRef:
+                  name: {{ .Values.env.$key."valueFrom"."secretKeyRef"."name" }}
+                  key: {{ .Values.env.$key."valueFrom"."secretKeyRef"."key" }}
+                {{- else if eq .Values.env.$key."valueFrom" "configMapKeyRef" }}
+                configMapKeyRef:
+                  name: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."name" }}
+                  key: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."key" }}
+                {{- end }}
+            {{- else }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -83,9 +96,9 @@ spec:
             - name: data
               mountPath: {{ .Values.persistence.mountPath }}
             {{- end }}
-            {{- if .Values.envFromSecret }}
+            {{- if .Values.config.enabled }}
             - name: config
-              mountPath: /etc/rs-service/config
+              mountPath: {{ .Values.config.mountPath }}
               readOnly: true
             {{- end }}
             {{- with .Values.volumeMounts }}
@@ -97,7 +110,7 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "rs-service.fullname" . }}
         {{- end }}
-        {{- if .Values.config }}
+        {{- if .Values.config.enabled }}
         - name: config
           configMap:
             name: {{ include "rs-service.fullname" . }}-config

@@ -27,34 +27,55 @@ spec:
               {{- toYaml .Values.securityContext | nindent 14 }}
             image: "{{ include "rs-service.imageRepository" (list .Values.cronjob.image.repository .) }}:{{ include "rs-service.imageTag" (list .Values.cronjob.image.tag .) }}"
             imagePullPolicy: IfNotPresent
-            {{- if or .Values.cronjob.environment .Values.cronjob.envFromSecret }}
+            {{- if .Values.cronjob.env }}
             env:
-              {{- include "rs-service.environmentVariables" (list .Values.cronjob.environment .Values.cronjob.envFromSecret .) | nindent 14 }}
+              {{- range $key, $value := .Values.cronjob.env }}
+              - name: {{ $key }}
+                value: {{ $value | quote }}
+              {{- end }}
             {{- end }}
-            {{- if .Values.cronjob.config }}
+            {{- if .Values.cronjob.envFromSecret }}
             envFrom:
-              - configMapRef:
-                  name: {{ include "rs-service.fullname" . }}-cronjob-config
+              - secretRef:
+                  name: {{ include "rs-service.fullname" . }}-env
             {{- end }}
             {{- if .Values.cronjob.resources }}
             resources:
               {{- toYaml .Values.cronjob.resources | nindent 14 }}
             {{- end }}
+            volumeMounts:
+              {{- if .Values.cronjob.config.enabled }}
+              - name: config
+                mountPath: {{ .Values.cronjob.config.mountPath }}
+                readOnly: true
+              {{- end }}
+              {{- with .Values.cronjob.volumeMounts }}
+              {{- toYaml . | nindent 12 }}
+              {{- end }}
+        volumes:
+          {{- if .Values.cronjob.config.enabled }}
+          - name: config
+            configMap:
+              name: {{ include "rs-service.fullname" . }}-cronjob-config
+          {{- end }}
+          {{- with .Values.cronjob.volumes }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
           restartPolicy: OnFailure
-          {{- with .Values.nodeSelector }}
+          {{- with .Values.cronjob.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.affinity }}
+          {{- with .Values.cronjob.affinity }}
           affinity:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.tolerations }}
+          {{- with .Values.cronjob.tolerations }}
           tolerations:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 ---
-{{- if .Values.cronjob.config }}
+{{- if .Values.cronjob.config.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -62,7 +83,7 @@ metadata:
   labels:
     {{- include "rs-service.labels" . | nindent 4 }}
 data:
-  {{- range $key, $value := .Values.cronjob.config }}
+  {{- range $key, $value := .Values.cronjob.config.files }}
   {{ $key | upper }}: {{ $value | quote }}
   {{- end }}
 {{- end }}

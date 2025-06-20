@@ -6,10 +6,15 @@ metadata:
   labels:
     {{- include "rs-service.labels" . | nindent 4 }}
 spec:
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
   selector:
     matchLabels:
       {{- include "rs-service.selectorLabels" . | nindent 6 }}
   endpoints:
-  - port: {{ .Values.serviceMonitor.portName }}
-    path: {{ .Values.serviceMonitor.path }}
+  - path: {{ .Values.serviceMonitor.path }}
+    interval: "30s"
+    scrapeTimeout: "5s"
+    targetPort: {{ .Values.serviceMonitor.portName }}
 {{- end }} 

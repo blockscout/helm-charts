@@ -1,5 +1,16 @@
 {{- if .Values.ingress.enabled }}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ include "rs-service.fullname" . }}
@@ -10,7 +21,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.className }}
+  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   {{- if .Values.ingress.tls.enabled }}
@@ -27,9 +38,66 @@ spec:
           - path: {{ .path }}
             pathType: {{ .pathType }}
             backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ include "rs-service.fullname" $ }}
                 port:
                   number: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              {{- else }}
+              serviceName: {{ include "rs-service.fullname" $ }}
+              servicePort: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              {{- end }}
         {{- end }}
 {{- end }} 
+---
+{{- if .Values.extraIngress.enabled }}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "rs-service.fullname" . }}-extra
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.extraIngress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.extraIngress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.extraIngress.className }}
+  {{- end }}
+  {{- if .Values.extraIngress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.extraIngress.hostname }}
+      secretName: {{ include "rs-service.fullname" . }}-tls
+  {{- end }}
+  rules:
+    - host: {{ .Values.extraIngress.hostname }}
+      http:
+        paths:
+        {{- range .Values.extraIngress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ include "rs-service.fullname" $ }}
+                port:
+                  number: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              {{- else }}
+              serviceName: {{ include "rs-service.fullname" $ }}
+              servicePort: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              {{- end }}
+        {{- end }}
+{{- end }}

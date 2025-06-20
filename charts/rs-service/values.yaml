@@ -25,7 +25,7 @@ service:
   targetPort: 8050  # If not specified, uses port
 
 # Environment variables
-environment: {}
+env: {}
   # LOG_LEVEL: info
   # DATABASE_URL: "postgres://user:pass@db:5432/dbname"
 
@@ -34,8 +34,10 @@ envFromSecret: {}
   # SECRET_VAR: "secret-name"
 
 # Configuration files (creates ConfigMap)
-config: {}
-  # databaseUrl: "postgres://..."
+config:
+  enabled: false
+  mountPath: /app/config
+  files: {}
   # file: |  # Creates config.json
   #   {
   #     "key": "value"
@@ -73,6 +75,16 @@ ingress:
   className: ""
   annotations: {}
     # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hostname: chart-example.local
+  paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+    enabled: false
+extraIngress:
+  enabled: false
+  className: ""
+  annotations: {}
   hostname: chart-example.local
   paths:
     - path: /
@@ -120,8 +132,11 @@ cronjob:
   # image:
   #   repository: blockscout/token-info-extractor
   #   tag: ""
-  # environment: {}
-  # config: {}
+  # env: {}
+  config:
+    enabled: false
+    mountPath: /app/config
+    files: {}
   # resources: {}
 
 # Common settings
