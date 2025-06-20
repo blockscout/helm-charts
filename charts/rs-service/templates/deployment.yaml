@@ -1,0 +1,132 @@
+{{/*
+Deployment for single rs-service
+*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rs-service.fullname" . }}
+  labels:
+    {{- include "rs-service.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "rs-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.image.pullPolicy "Always" }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.envFromSecret }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- end }}
+      labels:
+        {{- include "rs-service.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "rs-service.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "rs-service.name" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ include "rs-service.imageRepository" (list .Values.image.repository .) }}:{{ include "rs-service.imageTag" (list .Values.image.tag .) }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.container.command }}
+          command:
+            {{- toYaml .Values.container.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.container.args }}
+          args:
+            {{- toYaml .Values.container.args | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ include "rs-service.targetPort" (list .Values.service .) }}
+              protocol: TCP
+            {{- if and .Values.grpc .Values.grpc.enabled }}
+            - name: grpc
+              containerPort: {{ .Values.grpc.port }}
+              protocol: TCP
+            {{- end }}
+          {{- if .Values.env }}
+          env:
+            {{- range $key, $value := .Values.env }}
+            {{- if keyExists .Values.env.$key "valueFrom" }}
+            - name: {{ $key }}
+              valueFrom:
+                {{- if eq .Values.env.$key."valueFrom" "secretKeyRef" }}
+                secretKeyRef:
+                  name: {{ .Values.env.$key."valueFrom"."secretKeyRef"."name" }}
+                  key: {{ .Values.env.$key."valueFrom"."secretKeyRef"."key" }}
+                {{- else if eq .Values.env.$key."valueFrom" "configMapKeyRef" }}
+                configMapKeyRef:
+                  name: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."name" }}
+                  key: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."key" }}
+                {{- end }}
+            {{- else }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ include "rs-service.fullname" . }}-env
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+            {{- if .Values.config.enabled }}
+            - name: config
+              mountPath: {{ .Values.config.mountPath }}
+              readOnly: true
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "rs-service.fullname" . }}
+        {{- end }}
+        {{- if .Values.config.enabled }}
+        - name: config
+          configMap:
+            name: {{ include "rs-service.fullname" . }}-config
+        {{- end }}
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
