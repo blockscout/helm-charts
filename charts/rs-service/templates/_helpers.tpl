@@ -122,26 +122,6 @@ Create ingress hostname
 {{- end }}
 
 {{/*
-Merge environment variables from different sources
-*/}}
-{{- define "rs-service.environmentVariables" -}}
-{{- $env := index . 0 | default dict }}
-{{- $envFromSecret := index . 1 | default dict }}
-{{- $root := index . 2 }}
-{{- range $key, $value := $env }}
-- name: {{ $key }}
-  value: {{ $value | quote }}
-{{- end }}
-{{- range $key, $value := $envFromSecret }}
-- name: {{ $key }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ $value }}
-      key: {{ $key }}
-{{- end }}
-{{- end }}
-
-{{/*
 Get resource configuration with fallback to common
 */}}
 {{- define "rs-service.resources" -}}
