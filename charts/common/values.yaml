@@ -1,0 +1,169 @@
+# Global settings
+global:
+  imagePullSecrets: []
+
+# Basic service configuration
+replicaCount: 1
+
+# Image settings
+image:
+  repository: ""  # Required: specify the service image repository
+  tag: ""         # If empty, uses appVersion from Chart.yaml
+  pullPolicy: IfNotPresent
+
+# Container startup configuration
+container:
+  command: []     # Override default command
+  args: []        # Override default args
+
+# Service settings
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8050
+      targetPort: 8050
+      protocol: TCP
+
+# Environment variables
+env: {}
+  # LOG_LEVEL: info
+  # DATABASE_URL: "postgres://user:pass@db:5432/dbname"
+
+# Environment variables from secrets
+envFromSecret: {}
+  # SECRET_VAR: "secret-name"
+
+# Configuration files (creates ConfigMap)
+config:
+  enabled: false
+  mountPath: /app/config
+  files: {}
+  # file: |  # Creates config.json
+  #   {
+  #     "key": "value"
+  #   }
+
+# Resource settings
+resources:
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+
+# Health check probes
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 60
+  timeoutSeconds: 5
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+# Ingress settings
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hostname: chart-example.local
+  portName: "" # Defaults to "http"
+  paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+    enabled: false
+extraIngress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hostname: chart-example.local
+  portName: "" # Defaults to "http"
+  paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+    enabled: false
+
+# ServiceMonitor for Prometheus
+serviceMonitor:
+  enabled: false
+  portName: "http"
+  path: "/metrics"
+
+# Persistence settings
+# See https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+persistence:
+  enabled: false
+  # -- Size of the persistent volume.
+  size: 8Gi
+  # -- Storage class for the persistent volume.
+  # If not specified, the default storage class will be used.
+  storageClassName: ""
+  # -- Access modes for the persistent volume.
+  # See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  accessModes:
+    - ReadWriteOnce
+  # -- Path to mount the persistent volume.
+  mountPath: /data
+
+# Extra volumes and volume mounts
+# For more complex configurations, you can add extra volumes and volume mounts
+# see https://kubernetes.io/docs/concepts/storage/volumes/
+volumes: []
+volumeMounts: []
+
+# CronJob configuration (optional)
+cronjob:
+  enabled: false
+  # schedule: "0 2 * * *"  # Daily at 2 AM
+  # image:
+  #   repository: blockscout/token-info-extractor
+  #   tag: ""
+  # env: {}
+  config:
+    enabled: false
+    mountPath: /app/config
+    files: {}
+  # resources: {}
+
+# Common settings
+nameOverride: ""
+fullnameOverride: ""
+
+# Service Account
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+# Pod settings
+podAnnotations: {}
+podLabels: {}
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Node selectors
+nodeSelector: {}
+tolerations: []
+affinity: {} 

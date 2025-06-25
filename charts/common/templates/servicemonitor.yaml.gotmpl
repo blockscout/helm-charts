@@ -1,0 +1,20 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - path: {{ .Values.serviceMonitor.path }}
+    interval: "30s"
+    scrapeTimeout: "5s"
+    targetPort: {{ .Values.serviceMonitor.portName }}
+{{- end }} 

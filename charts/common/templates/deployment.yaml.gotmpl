@@ -1,0 +1,154 @@
+{{/*
+Deployment for single common
+*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if eq .Values.image.pullPolicy "Always" }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.envFromSecret }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml.gotmpl") . | sha256sum }}
+      {{- end }}
+      labels:
+        {{- include "common.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "common.name" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ include "common.imageTag" (list .Values.image.tag .) }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.container.command }}
+          command:
+            {{- toYaml .Values.container.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.container.args }}
+          args:
+            {{- toYaml .Values.container.args | nindent 12 }}
+          {{- end }}
+          ports:
+            {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort | default .port }}
+              protocol: {{ .protocol | default "TCP" }}
+            {{- end }}
+          {{- if .Values.env }}
+          env:
+            {{- range $key, $value := .Values.env }}
+            {{- if and (kindIs "map" $value) (hasKey $value "valueFrom") }}
+            - name: {{ $key }}
+              valueFrom:
+                {{- if hasKey $value.valueFrom "secretKeyRef" }}
+                secretKeyRef:
+                  name: {{ $value.valueFrom.secretKeyRef.name }}
+                  key: {{ $value.valueFrom.secretKeyRef.key }}
+                {{- else if hasKey $value.valueFrom "configMapKeyRef" }}
+                configMapKeyRef:
+                  name: {{ $value.valueFrom.configMapKeyRef.name }}
+                  key: {{ $value.valueFrom.configMapKeyRef.key }}
+                {{- end }}
+            {{- else }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ include "common.fullname" . }}-env
+          {{- end }}
+          livenessProbe:
+            {{- if and .Values.livenessProbe.enabled .Values.livenessProbe }}
+            {{- with .Values.livenessProbe }}
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            {{- end }}
+            {{- end }}
+          readinessProbe:
+            {{- if and .Values.readinessProbe.enabled .Values.readinessProbe }}
+            {{- with .Values.readinessProbe }}
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            {{- end }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- $hasVolumeMounts := or .Values.persistence.enabled (or .Values.config.enabled (gt (len .Values.volumeMounts) 0)) }}
+          {{- if $hasVolumeMounts }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+            {{- if .Values.config.enabled }}
+            - name: config
+              mountPath: {{ .Values.config.mountPath }}
+              readOnly: true
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- $hasVolumes := or .Values.persistence.enabled (or .Values.config.enabled (gt (len .Values.volumes) 0)) }}
+      {{- if $hasVolumes }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "common.fullname" . }}
+        {{- end }}
+        {{- if .Values.config.enabled }}
+        - name: config
+          configMap:
+            name: {{ include "common.fullname" . }}-config
+        {{- end }}
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

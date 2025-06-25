@@ -1,0 +1,96 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "common.fullname" . }}-cronjob
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "common.selectorLabels" . | nindent 12 }}
+        spec:
+          {{- with .Values.global.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "common.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+          - name: cronjob
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            image: "{{ include "common.imageRepository" (list .Values.cronjob.image.repository .) }}:{{ include "common.imageTag" (list .Values.cronjob.image.tag .) }}"
+            imagePullPolicy: IfNotPresent
+            {{- if .Values.cronjob.env }}
+            env:
+              {{- range $key, $value := .Values.cronjob.env }}
+              - name: {{ $key }}
+                value: {{ $value | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.cronjob.envFromSecret }}
+            envFrom:
+              - secretRef:
+                  name: {{ include "common.fullname" . }}-env
+            {{- end }}
+            {{- if .Values.cronjob.resources }}
+            resources:
+              {{- toYaml .Values.cronjob.resources | nindent 14 }}
+            {{- end }}
+            {{- $hasVolumeMounts := or .Values.cronjob.config.enabled (gt (len .Values.cronjob.volumeMounts) 0) }}
+            {{- if $hasVolumeMounts }}
+            volumeMounts:
+              {{- if .Values.cronjob.config.enabled }}
+              - name: config
+                mountPath: {{ .Values.cronjob.config.mountPath }}
+                readOnly: true
+              {{- end }}
+              {{- with .Values.cronjob.volumeMounts }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+            {{- end }}
+        {{- $hasVolumes := or .Values.cronjob.config.enabled (gt (len .Values.cronjob.volumes) 0) }}
+        {{- if $hasVolumes }}
+        volumes:
+          {{- if .Values.cronjob.config.enabled }}
+          - name: config
+            configMap:
+              name: {{ include "common.fullname" . }}-cronjob-config
+          {{- end }}
+          {{- with .Values.cronjob.volumes }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+        restartPolicy: OnFailure
+        {{- with .Values.cronjob.nodeSelector }}
+        nodeSelector:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.cronjob.affinity }}
+        affinity:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.cronjob.tolerations }}
+        tolerations:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+---
+{{- if .Values.cronjob.config.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" . }}-cronjob-config
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.cronjob.config.files }}
+  {{ $key | upper }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+{{- end }} 
