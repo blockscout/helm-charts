@@ -1,7 +1,5 @@
 # Global settings
 global:
-  env: production
-  imageRegistry: ghcr.io
   imagePullSecrets: []
 
 # Basic service configuration
@@ -21,8 +19,11 @@ container:
 # Service settings
 service:
   type: ClusterIP
-  port: 8050
-  targetPort: 8050  # If not specified, uses port
+  ports:
+    - name: http
+      port: 8050
+      targetPort: 8050
+      protocol: TCP
 
 # Environment variables
 env: {}
@@ -54,6 +55,7 @@ resources:
 
 # Health check probes
 livenessProbe:
+  enabled: true
   httpGet:
     path: /health
     port: http
@@ -62,6 +64,7 @@ livenessProbe:
   timeoutSeconds: 5
 
 readinessProbe:
+  enabled: true
   httpGet:
     path: /health
     port: http
@@ -76,6 +79,7 @@ ingress:
   annotations: {}
     # cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hostname: chart-example.local
+  portName: "" # Defaults to "http"
   paths:
     - path: /
       pathType: ImplementationSpecific
@@ -86,6 +90,7 @@ extraIngress:
   className: ""
   annotations: {}
   hostname: chart-example.local
+  portName: "" # Defaults to "http"
   paths:
     - path: /
       pathType: ImplementationSpecific
@@ -119,11 +124,6 @@ persistence:
 # see https://kubernetes.io/docs/concepts/storage/volumes/
 volumes: []
 volumeMounts: []
-
-# gRPC settings (for services that support it)
-grpc:
-  enabled: false
-  port: 8051
 
 # CronJob configuration (optional)
 cronjob:

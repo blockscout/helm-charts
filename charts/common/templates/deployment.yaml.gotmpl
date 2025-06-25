@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.envFromSecret }}
-        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml.gotmpl") . | sha256sum }}
       {{- end }}
       labels:
         {{- include "common.labels" . | nindent 8 }}
@@ -41,7 +41,7 @@ spec:
         - name: {{ include "common.name" . }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ include "common.imageRepository" (list .Values.image.repository .) }}:{{ include "common.imageTag" (list .Values.image.tag .) }}"
+          image: "{{ .Values.image.repository }}:{{ include "common.imageTag" (list .Values.image.tag .) }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.container.command }}
           command:
@@ -52,13 +52,10 @@ spec:
             {{- toYaml .Values.container.args | nindent 12 }}
           {{- end }}
           ports:
-            - name: http
-              containerPort: {{ include "common.targetPort" (list .Values.service .) }}
-              protocol: TCP
-            {{- if and .Values.grpc .Values.grpc.enabled }}
-            - name: grpc
-              containerPort: {{ .Values.grpc.port }}
-              protocol: TCP
+            {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort | default .port }}
+              protocol: {{ .protocol | default "TCP" }}
             {{- end }}
           {{- if .Values.env }}
           env:
@@ -87,11 +84,31 @@ spec:
                 name: {{ include "common.fullname" . }}-env
           {{- end }}
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- if and .Values.livenessProbe.enabled .Values.livenessProbe }}
+            {{- with .Values.livenessProbe }}
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            {{- end }}
+            {{- end }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- if and .Values.readinessProbe.enabled .Values.readinessProbe }}
+            {{- with .Values.readinessProbe }}
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            {{- end }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- $hasVolumeMounts := or .Values.persistence.enabled (or .Values.config.enabled (gt (len .Values.volumeMounts) 0)) }}
+          {{- if $hasVolumeMounts }}
           volumeMounts:
             {{- if .Values.persistence.enabled }}
             - name: data
@@ -105,6 +122,9 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- end }}
+      {{- $hasVolumes := or .Values.persistence.enabled (or .Values.config.enabled (gt (len .Values.volumes) 0)) }}
+      {{- if $hasVolumes }}
       volumes:
         {{- if .Values.persistence.enabled }}
         - name: data
@@ -119,6 +139,7 @@ spec:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

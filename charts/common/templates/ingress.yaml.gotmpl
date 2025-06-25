@@ -34,6 +34,13 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
+        {{- $portName := .Values.ingress.portName | default "http" }}
+        {{- $portDict := dict "number" 0 }}
+        {{- range .Values.service.ports }}
+          {{- if eq .name $portName }}
+            {{- $_ := set $portDict "number" .port }}
+          {{- end }}
+        {{- end }}
         {{- range .Values.ingress.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
@@ -42,10 +49,10 @@ spec:
               service:
                 name: {{ include "common.fullname" $ }}
                 port:
-                  number: {{ include "common.servicePort" (list $.Values.service $) }}
+                  number: {{ $portDict.number }}
               {{- else }}
               serviceName: {{ include "common.fullname" $ }}
-              servicePort: {{ include "common.servicePort" (list $.Values.service $) }}
+              servicePort: {{ $portDict.number }}
               {{- end }}
         {{- end }}
 {{- end }} 
@@ -86,6 +93,13 @@ spec:
     - host: {{ .Values.extraIngress.hostname }}
       http:
         paths:
+        {{- $portName := .Values.extraIngress.portName | default "http" }}
+        {{- $portDict := dict "number" 0 }}
+        {{- range .Values.service.ports }}
+          {{- if eq .name $portName }}
+            {{- $_ := set $portDict "number" .port }}
+          {{- end }}
+        {{- end }}
         {{- range .Values.extraIngress.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
@@ -94,10 +108,10 @@ spec:
               service:
                 name: {{ include "common.fullname" $ }}
                 port:
-                  number: {{ include "common.servicePort" (list $.Values.service $) }}
+                  number: {{ $portDict.number }}
               {{- else }}
               serviceName: {{ include "common.fullname" $ }}
-              servicePort: {{ include "common.servicePort" (list $.Values.service $) }}
+              servicePort: {{ $portDict.number }}
               {{- end }}
         {{- end }}
 {{- end }}

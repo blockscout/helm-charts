@@ -43,6 +43,8 @@ spec:
             resources:
               {{- toYaml .Values.cronjob.resources | nindent 14 }}
             {{- end }}
+            {{- $hasVolumeMounts := or .Values.cronjob.config.enabled (gt (len .Values.cronjob.volumeMounts) 0) }}
+            {{- if $hasVolumeMounts }}
             volumeMounts:
               {{- if .Values.cronjob.config.enabled }}
               - name: config
@@ -50,8 +52,11 @@ spec:
                 readOnly: true
               {{- end }}
               {{- with .Values.cronjob.volumeMounts }}
-              {{- toYaml . | nindent 12 }}
+              {{- toYaml . | nindent 14 }}
               {{- end }}
+            {{- end }}
+        {{- $hasVolumes := or .Values.cronjob.config.enabled (gt (len .Values.cronjob.volumes) 0) }}
+        {{- if $hasVolumes }}
         volumes:
           {{- if .Values.cronjob.config.enabled }}
           - name: config
@@ -59,21 +64,22 @@ spec:
               name: {{ include "common.fullname" . }}-cronjob-config
           {{- end }}
           {{- with .Values.cronjob.volumes }}
-          {{- toYaml . | nindent 8 }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
-          restartPolicy: OnFailure
-          {{- with .Values.cronjob.nodeSelector }}
-          nodeSelector:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.cronjob.affinity }}
-          affinity:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.cronjob.tolerations }}
-          tolerations:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+        {{- end }}
+        restartPolicy: OnFailure
+        {{- with .Values.cronjob.nodeSelector }}
+        nodeSelector:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.cronjob.affinity }}
+        affinity:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.cronjob.tolerations }}
+        tolerations:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
 ---
 {{- if .Values.cronjob.config.enabled }}
 apiVersion: v1
