@@ -1,10 +1,10 @@
-# rs-service Helm Chart
+# common Helm Chart
 
-Universal Helm chart for deploying any single rs-service component of Blockscout.
+Universal Helm chart for deploying any single service.
 
 ## Overview
 
-This chart allows you to deploy any of the Blockscout rs-service with a unified configuration approach. Instead of maintaining separate charts for each service, this chart provides a universal template that can be configured to deploy any rs-service.
+This chart allows you to deploy any of the services with a unified configuration approach. Instead of maintaining separate charts for each service, this chart provides a universal template that can be configured to deploy any service.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ _See [`helm repo`](https://helm.sh/docs/helm/helm_repo/) for command documentati
 ## Install Helm Chart
 
 ```console
-helm install [RELEASE_NAME] blockscout/rs-service
+helm install [RELEASE_NAME] blockscout/common
 ```
 
 _See [configuration](#configuration) below._
@@ -41,7 +41,7 @@ This removes all the Kubernetes components associated with the chart and deletes
 ## Upgrading Chart
 
 ```console
-helm upgrade [RELEASE_NAME] blockscout/rs-service
+helm upgrade [RELEASE_NAME] blockscout/common
 ```
 
 ## Configuration
@@ -49,7 +49,7 @@ helm upgrade [RELEASE_NAME] blockscout/rs-service
 See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments:
 
 ```console
-helm show values blockscout/rs-service
+helm show values blockscout/common
 ```
 
 ## Troubleshooting
@@ -68,7 +68,7 @@ helm show values blockscout/rs-service
 
 ```bash
 # Check pod logs
-kubectl logs -l app.kubernetes.io/name=rs-services
+kubectl logs -l app.kubernetes.io/name=commons
 
 # Check service endpoints
 kubectl get endpoints
@@ -77,12 +77,12 @@ kubectl get endpoints
 kubectl describe ingress
 
 # Validate Helm template
-helm template my-service blockscout/rs-service --debug
+helm template my-service blockscout/common --debug
 ```
 
 ## Contributing
 
-When adding support for new rs-services:
+When adding support for new commons:
 
 1. Test the service with this chart
 2. Ensure proper defaults are set

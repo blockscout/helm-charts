@@ -13,9 +13,9 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "rs-service.fullname" . }}
+  name: {{ include "common.fullname" . }}
   labels:
-    {{- include "rs-service.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -28,7 +28,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.ingress.hostname }}
-      secretName: {{ include "rs-service.fullname" . }}-tls
+      secretName: {{ include "common.fullname" . }}-tls
   {{- end }}
   rules:
     - host: {{ .Values.ingress.hostname }}
@@ -40,12 +40,12 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ include "rs-service.fullname" $ }}
+                name: {{ include "common.fullname" $ }}
                 port:
-                  number: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+                  number: {{ include "common.servicePort" (list $.Values.service $) }}
               {{- else }}
-              serviceName: {{ include "rs-service.fullname" $ }}
-              servicePort: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              serviceName: {{ include "common.fullname" $ }}
+              servicePort: {{ include "common.servicePort" (list $.Values.service $) }}
               {{- end }}
         {{- end }}
 {{- end }} 
@@ -65,9 +65,9 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "rs-service.fullname" . }}-extra
+  name: {{ include "common.fullname" . }}-extra
   labels:
-    {{- include "rs-service.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
   annotations:
   {{- with .Values.extraIngress.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -80,7 +80,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.extraIngress.hostname }}
-      secretName: {{ include "rs-service.fullname" . }}-tls
+      secretName: {{ include "common.fullname" . }}-tls
   {{- end }}
   rules:
     - host: {{ .Values.extraIngress.hostname }}
@@ -92,12 +92,12 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ include "rs-service.fullname" $ }}
+                name: {{ include "common.fullname" $ }}
                 port:
-                  number: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+                  number: {{ include "common.servicePort" (list $.Values.service $) }}
               {{- else }}
-              serviceName: {{ include "rs-service.fullname" $ }}
-              servicePort: {{ include "rs-service.servicePort" (list $.Values.service $) }}
+              serviceName: {{ include "common.fullname" $ }}
+              servicePort: {{ include "common.servicePort" (list $.Values.service $) }}
               {{- end }}
         {{- end }}
 {{- end }}

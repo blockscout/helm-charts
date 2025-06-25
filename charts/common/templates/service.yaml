@@ -1,17 +1,17 @@
 {{/*
-Service for single rs-service
+Service for single common
 */}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rs-service.fullname" . }}
+  name: {{ include "common.fullname" . }}
   labels:
-    {{- include "rs-service.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type | default "ClusterIP" }}
   ports:
-    - port: {{ include "rs-service.servicePort" (list .Values.service .) }}
-      targetPort: {{ include "rs-service.targetPort" (list .Values.service .) }}
+    - port: {{ include "common.servicePort" (list .Values.service .) }}
+      targetPort: {{ include "common.targetPort" (list .Values.service .) }}
       protocol: TCP
       name: http
     {{- if and .Values.grpc .Values.grpc.enabled }}
@@ -21,4 +21,4 @@ spec:
       name: grpc
     {{- end }}
   selector:
-    {{- include "rs-service.selectorLabels" . | nindent 4 }}
+    {{- include "common.selectorLabels" . | nindent 4 }}

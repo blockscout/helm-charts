@@ -1,17 +1,17 @@
 {{/*
-Deployment for single rs-service
+Deployment for single common
 */}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rs-service.fullname" . }}
+  name: {{ include "common.fullname" . }}
   labels:
-    {{- include "rs-service.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "rs-service.selectorLabels" . | nindent 6 }}
+      {{- include "common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -25,7 +25,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       {{- end }}
       labels:
-        {{- include "rs-service.labels" . | nindent 8 }}
+        {{- include "common.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -34,14 +34,14 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "rs-service.serviceAccountName" . }}
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ include "rs-service.name" . }}
+        - name: {{ include "common.name" . }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ include "rs-service.imageRepository" (list .Values.image.repository .) }}:{{ include "rs-service.imageTag" (list .Values.image.tag .) }}"
+          image: "{{ include "common.imageRepository" (list .Values.image.repository .) }}:{{ include "common.imageTag" (list .Values.image.tag .) }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.container.command }}
           command:
@@ -53,7 +53,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ include "rs-service.targetPort" (list .Values.service .) }}
+              containerPort: {{ include "common.targetPort" (list .Values.service .) }}
               protocol: TCP
             {{- if and .Values.grpc .Values.grpc.enabled }}
             - name: grpc
@@ -84,7 +84,7 @@ spec:
           {{- if .Values.envFromSecret }}
           envFrom:
             - secretRef:
-                name: {{ include "rs-service.fullname" . }}-env
+                name: {{ include "common.fullname" . }}-env
           {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
@@ -109,12 +109,12 @@ spec:
         {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "rs-service.fullname" . }}
+            claimName: {{ include "common.fullname" . }}
         {{- end }}
         {{- if .Values.config.enabled }}
         - name: config
           configMap:
-            name: {{ include "rs-service.fullname" . }}-config
+            name: {{ include "common.fullname" . }}-config
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}

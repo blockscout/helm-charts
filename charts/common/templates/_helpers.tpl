@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "rs-service.name" -}}
+{{- define "common.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "rs-service.fullname" -}}
+{{- define "common.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "rs-service.chart" -}}
+{{- define "common.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "rs-service.labels" -}}
-helm.sh/chart: {{ include "rs-service.chart" . }}
-{{ include "rs-service.selectorLabels" . }}
+{{- define "common.labels" -}}
+helm.sh/chart: {{ include "common.chart" . }}
+{{ include "common.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,19 +45,19 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "rs-service.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "rs-service.name" . }}
+{{- define "common.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "common.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Component specific labels
 */}}
-{{- define "rs-service.componentLabels" -}}
+{{- define "common.componentLabels" -}}
 {{- $component := index . 0 }}
 {{- $root := index . 1 }}
-helm.sh/chart: {{ include "rs-service.chart" $root }}
-{{ include "rs-service.componentSelectorLabels" . }}
+helm.sh/chart: {{ include "common.chart" $root }}
+{{ include "common.componentSelectorLabels" . }}
 {{- if $root.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $root.Chart.AppVersion | quote }}
 {{- end }}
@@ -67,10 +67,10 @@ app.kubernetes.io/managed-by: {{ $root.Release.Service }}
 {{/*
 Component specific selector labels
 */}}
-{{- define "rs-service.componentSelectorLabels" -}}
+{{- define "common.componentSelectorLabels" -}}
 {{- $component := index . 0 }}
 {{- $root := index . 1 }}
-app.kubernetes.io/name: {{ include "rs-service.name" $root }}
+app.kubernetes.io/name: {{ include "common.name" $root }}
 app.kubernetes.io/instance: {{ $root.Release.Name }}
 app.kubernetes.io/component: {{ $component }}
 {{- end }}
@@ -78,9 +78,9 @@ app.kubernetes.io/component: {{ $component }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "rs-service.serviceAccountName" -}}
+{{- define "common.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "rs-service.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "common.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -89,7 +89,7 @@ Create the name of the service account to use
 {{/*
 Get image repository with global registry prefix
 */}}
-{{- define "rs-service.imageRepository" -}}
+{{- define "common.imageRepository" -}}
 {{- $repo := index . 0 }}
 {{- $root := index . 1 }}
 {{- if $root.Values.global.imageRegistry }}
@@ -102,7 +102,7 @@ Get image repository with global registry prefix
 {{/*
 Get image tag with fallback to chart app version
 */}}
-{{- define "rs-service.imageTag" -}}
+{{- define "common.imageTag" -}}
 {{- $tag := index . 0 }}
 {{- $root := index . 1 }}
 {{- $tag | default $root.Chart.AppVersion }}
@@ -111,7 +111,7 @@ Get image tag with fallback to chart app version
 {{/*
 Create ingress hostname
 */}}
-{{- define "rs-service.ingressHostname" -}}
+{{- define "common.ingressHostname" -}}
 {{- $ingress := index . 0 }}
 {{- $root := index . 1 }}
 {{- if $ingress.hostname }}
@@ -124,7 +124,7 @@ Create ingress hostname
 {{/*
 Get resource configuration with fallback to common
 */}}
-{{- define "rs-service.resources" -}}
+{{- define "common.resources" -}}
 {{- $resources := index . 0 }}
 {{- $root := index . 1 }}
 {{- if $resources }}
@@ -137,7 +137,7 @@ Get resource configuration with fallback to common
 {{/*
 Get service port configuration
 */}}
-{{- define "rs-service.servicePort" -}}
+{{- define "common.servicePort" -}}
 {{- $service := index . 0 }}
 {{- $root := index . 1 }}
 {{- $service.port | default 8050 }}
@@ -146,7 +146,7 @@ Get service port configuration
 {{/*
 Get target port configuration
 */}}
-{{- define "rs-service.targetPort" -}}
+{{- define "common.targetPort" -}}
 {{- $service := index . 0 }}
 {{- $root := index . 1 }}
 {{- $service.targetPort | default $service.port | default 8050 }}
@@ -155,7 +155,7 @@ Get target port configuration
 {{/*
 Get liveness probe configuration
 */}}
-{{- define "rs-service.livenessProbe" -}}
+{{- define "common.livenessProbe" -}}
 {{- $probe := index . 0 }}
 {{- $root := index . 1 }}
 {{- if $probe }}
@@ -168,7 +168,7 @@ Get liveness probe configuration
 {{/*
 Get readiness probe configuration
 */}}
-{{- define "rs-service.readinessProbe" -}}
+{{- define "common.readinessProbe" -}}
 {{- $probe := index . 0 }}
 {{- $root := index . 1 }}
 {{- if $probe }}

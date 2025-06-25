@@ -3,7 +3,7 @@
 ## [1.0.0] - 2025-06-04
 
 ### Added
-- Created universal Helm chart `rs-service` for deploying all rs-service components of Blockscout
+- Created universal Helm chart `common` for deploying all micro-services
 
 ### Features
 - **Uniform structure**: All services use common settings and patterns

@@ -2,16 +2,16 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "rs-service.fullname" . }}
+  name: {{ include "common.fullname" . }}
   labels:
-    {{- include "rs-service.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
 spec:
   namespaceSelector:
     matchNames:
     - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{- include "rs-service.selectorLabels" . | nindent 6 }}
+      {{- include "common.selectorLabels" . | nindent 6 }}
   endpoints:
   - path: {{ .Values.serviceMonitor.path }}
     interval: "30s"
