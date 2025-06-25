@@ -63,21 +63,22 @@ spec:
           {{- if .Values.env }}
           env:
             {{- range $key, $value := .Values.env }}
-            {{- if keyExists .Values.env.$key "valueFrom" }}
+            {{- if and (kindIs "map" $value) (hasKey $value "valueFrom") }}
             - name: {{ $key }}
               valueFrom:
-                {{- if eq .Values.env.$key."valueFrom" "secretKeyRef" }}
+                {{- if hasKey $value.valueFrom "secretKeyRef" }}
                 secretKeyRef:
-                  name: {{ .Values.env.$key."valueFrom"."secretKeyRef"."name" }}
-                  key: {{ .Values.env.$key."valueFrom"."secretKeyRef"."key" }}
-                {{- else if eq .Values.env.$key."valueFrom" "configMapKeyRef" }}
+                  name: {{ $value.valueFrom.secretKeyRef.name }}
+                  key: {{ $value.valueFrom.secretKeyRef.key }}
+                {{- else if hasKey $value.valueFrom "configMapKeyRef" }}
                 configMapKeyRef:
-                  name: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."name" }}
-                  key: {{ .Values.env.$key."valueFrom"."configMapKeyRef"."key" }}
+                  name: {{ $value.valueFrom.configMapKeyRef.name }}
+                  key: {{ $value.valueFrom.configMapKeyRef.key }}
                 {{- end }}
             {{- else }}
             - name: {{ $key }}
               value: {{ $value | quote }}
+            {{- end }}
             {{- end }}
           {{- end }}
           {{- if .Values.envFromSecret }}
