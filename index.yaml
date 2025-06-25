@@ -1128,6 +1128,29 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/cloudflare-tunnel-1.0.0/cloudflare-tunnel-1.0.0.tgz
     version: 1.0.0
+  common:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-06-25T12:56:37.997715108Z"
+    description: Universal Helm chart for deploying services
+    digest: ad53d26aa5c8d4346515d16b5ebedcb8ab2160bb37f6da1a4daeb51d3b0de882
+    home: https://blockscout.com
+    keywords:
+    - blockscout
+    - ethereum
+    - blockchain
+    - explorer
+    - common
+    maintainers:
+    - email: ops@blockscout.com
+      name: Blockscout Team
+    name: common
+    sources:
+    - https://github.com/blockscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/common-1.0.0/common-1.0.0.tgz
+    version: 1.0.0
   da-indexer:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -1852,4 +1875,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-18T14:14:11.782320423Z"
+generated: "2025-06-25T12:56:37.998102532Z"
