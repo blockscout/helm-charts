@@ -1131,6 +1131,28 @@ entries:
   common:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-06-26T11:21:29.34523262Z"
+    description: Universal Helm chart for deploying services
+    digest: 5e9e21ce64965454d5b82a77e0ad59df7a0bd05d567a6a609896e6013caa2fc0
+    home: https://blockscout.com
+    keywords:
+    - blockscout
+    - ethereum
+    - blockchain
+    - explorer
+    - common
+    maintainers:
+    - email: ops@blockscout.com
+      name: Blockscout Team
+    name: common
+    sources:
+    - https://github.com/blockscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/common-1.1.0/common-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-06-25T12:56:37.997715108Z"
     description: Universal Helm chart for deploying services
     digest: ad53d26aa5c8d4346515d16b5ebedcb8ab2160bb37f6da1a4daeb51d3b0de882
@@ -1875,4 +1897,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-25T12:56:37.998102532Z"
+generated: "2025-06-26T11:21:29.345466841Z"
