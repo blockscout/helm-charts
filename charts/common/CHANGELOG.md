@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.1] - 2025-06-26
+## [1.1.0] - 2025-06-26
 
 ### Fixed
 - Fixed issue with nested `valueFrom` in `env`
