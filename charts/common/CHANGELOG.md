@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.1] - 2025-06-27
+
+### Fixed
+- Fixed issue with configmap keys being uppercase
+
 ## [1.1.0] - 2025-06-26
 
 ### Fixed
