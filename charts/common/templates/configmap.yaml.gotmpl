@@ -7,6 +7,6 @@ metadata:
     {{- include "common.labels" . | nindent 4 }}
 data:
   {{- range $key, $value := .Values.config.files }}
-  {{ $key | upper }}: {{ $value | quote }}
+  {{ $key }}: {{ $value | quote }}
   {{- end }}
 {{- end }} 
