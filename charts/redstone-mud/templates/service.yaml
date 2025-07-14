@@ -11,5 +11,11 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- range .Values.additionalPorts }}
+    - port: {{ .containerPort }}
+      targetPort: {{ .name}}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+    {{- end }}
   selector:
     {{- include "redstone-mud.selectorLabels" . | nindent 4 }}

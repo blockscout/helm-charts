@@ -42,6 +42,11 @@ service:
   type: ClusterIP
   port: 3001
 
+additionalPorts: []
+  # - name: probe
+  #   containerPort: 9999
+  #   protocol: TCP
+
 ingress:
   enabled: false
   className: ""
