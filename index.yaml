@@ -1598,6 +1598,16 @@ entries:
   redstone-mud:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2025-07-14T10:45:40.07625919Z"
+    description: A Helm chart for Redstone MUD service
+    digest: 2d39add14a65802637d751084975ac4d2d3fbe4107d7b2431b3a0606c9d6667d
+    name: redstone-mud
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/redstone-mud-0.2.0/redstone-mud-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2024-05-23T07:48:53.739755212Z"
     description: A Helm chart for Redstone MUD service
     digest: 5a30153c505e172a9e1eadb27b839410e5b926cc6544cd15091ef34f57940a6d
@@ -1919,4 +1929,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-27T12:31:59.785517336Z"
+generated: "2025-07-14T10:45:40.076547159Z"
