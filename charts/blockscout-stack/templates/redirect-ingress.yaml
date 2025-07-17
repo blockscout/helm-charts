@@ -14,9 +14,13 @@ spec:
   {{- if .Values.config.redirect.ingress.tls.enabled }}
   tls:
     - hosts:
-        - {{ .Values.config.redirect.hostname }}
+          {{- range .Values.config.redirect.hostnames }}
+        - {{ . }}
+          {{- end }}
       secretName: {{ include "blockscout-stack.fullname" . }}-redirect-ingress-tls
   {{- end }}
   rules:
-    - host: {{ .Values.config.redirect.hostname | quote }}
+      {{- range .Values.config.redirect.hostnames }}
+    - host: {{ . | quote }}
+      {{- end }}
 {{- end }}

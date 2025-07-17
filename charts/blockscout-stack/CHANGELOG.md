@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.3.0
+
+### Feature
+
+- Redirect ingress now supports multiple domains (this is breaking change, if config.redirect is used)
+
 ## 3.2.3
 
 ### Feature

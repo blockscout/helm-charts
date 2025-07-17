@@ -35,7 +35,7 @@ config:
   ## Works only if backend and frontend runs on single domain
   redirect:
     enabled: false
-    hostname: extra-chart-example.local
+    hostnames: ["extra-chart-example.local"]
     ingress:
       className: nginx
       annotations:
