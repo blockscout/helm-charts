@@ -26,7 +26,21 @@ config:
     existingSecretUsernameKey:
     existingSecretPasswordKey:
   ipfs: 'ipfs:5001'
-  ethereum: 'mainnet:http://localhost:8545'
+  file: |
+    [deployment]
+    [[deployment.rule]]
+    indexers = [ "default" ]
+    shards   = [ "primary" ]
+    [chains]
+    ingestor = "block_ingestor"
+    [chains.sepolia]
+    shard    = "primary"
+    provider = [{ label = "sepolia-main", url = "https://eth-sepolia.node.localhost", features = []}]
+    [store]
+    [store.primary]
+    connection = "postgresql://${postgres_user}:${postgres_pass}@${postgres_host}/${postgres_db}"
+    weight = 1
+    pool_size = 10
 
 env:
   GRAPH_LOG: info

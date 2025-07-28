@@ -35,10 +35,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          - name: GRAPH_NODE_CONFIG
+            value: /app/config/graph-node.toml
           - name: ipfs
             value: {{ .Values.config.ipfs | quote }}
-          - name: ethereum
-            value: {{ .Values.config.ethereum | quote }}
           - name: postgres_host
             value: {{ .Values.config.postgres.host | quote }}
           - name: postgres_port
@@ -96,6 +96,14 @@ spec:
             initialDelaySeconds: 180
             periodSeconds: 30
             timeoutSeconds: 20
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "graph-node.fullname" . }}-config
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
