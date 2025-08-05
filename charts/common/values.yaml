@@ -147,10 +147,12 @@ job:
   # image:
   #   repository: ""
   #   tag: ""
-  # command: []
-  # args: []
-  # env: {}
-  # resources: {}
+  command: []
+  args: []
+  env: {}
+  envFromSecret: {}
+  #   SECRET_VAR: "secret-name"
+  resources: {}
 
 # Common settings
 nameOverride: ""

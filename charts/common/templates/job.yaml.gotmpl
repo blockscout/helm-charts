@@ -49,25 +49,19 @@ spec:
         {{- if .Values.job.envFromSecret }}
         envFrom:
           - secretRef:
-              name: {{ include "common.fullname" . }}-env
+              name: {{ include "common.fullname" . }}-job-env
         {{- end }}
         {{- if .Values.job.resources }}
         resources:
           {{- toYaml .Values.job.resources | nindent 12 }}
         {{- end }}
-        {{- $hasVolumeMounts := gt (len .Values.job.volumeMounts) 0 }}
-        {{- if $hasVolumeMounts }}
+        {{- with .Values.job.volumeMounts }}
         volumeMounts:
-          {{- with .Values.job.volumeMounts }}
           {{- toYaml . | nindent 12 }}
-          {{- end }}
         {{- end }}
-      {{- $hasVolumes := gt (len .Values.job.volumes) 0 }}
-      {{- if $hasVolumes }}
+      {{- with .Values.job.volumes }}
       volumes:
-        {{- with .Values.job.volumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
       {{- end }}
       {{- with .Values.job.nodeSelector }}
       nodeSelector:
@@ -81,3 +75,18 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+{{- if .Values.job.envFromSecret }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "common.fullname" . }}-job-env
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+type: Opaque
+data:
+  {{- range $key, $value := .Values.job.envFromSecret }}
+  {{ $key }}: {{ $value | b64enc }}
+  {{- end }}
+{{- end }}
+{{- end }}
