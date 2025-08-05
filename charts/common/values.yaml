@@ -139,6 +139,21 @@ cronjob:
     files: {}
   # resources: {}
 
+# Job configuration (optional)
+job:
+  enabled: false
+  # completions: 1
+  # parallelism: 1
+  # image:
+  #   repository: ""
+  #   tag: ""
+  command: []
+  args: []
+  env: {}
+  envFromSecret: {}
+  #   SECRET_VAR: "secret-name"
+  resources: {}
+
 # Common settings
 nameOverride: ""
 fullnameOverride: ""
