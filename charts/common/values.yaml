@@ -139,6 +139,19 @@ cronjob:
     files: {}
   # resources: {}
 
+# Job configuration (optional)
+job:
+  enabled: false
+  # completions: 1
+  # parallelism: 1
+  # image:
+  #   repository: ""
+  #   tag: ""
+  # command: []
+  # args: []
+  # env: {}
+  # resources: {}
+
 # Common settings
 nameOverride: ""
 fullnameOverride: ""

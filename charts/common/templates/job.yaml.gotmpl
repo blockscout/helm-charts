@@ -1,0 +1,83 @@
+{{- if .Values.job.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "common.fullname" . }}-job
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.job.completions }}
+  completions: {{ . }}
+  {{- end }}
+  {{- with .Values.job.parallelism }}
+  parallelism: {{ . }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+      - name: job
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.job.image.repository }}:{{ include "common.imageTag" (list .Values.job.image.tag .) }}"
+        imagePullPolicy: IfNotPresent
+        {{- if .Values.job.command }}
+        command:
+          {{- toYaml .Values.job.command | nindent 12 }}
+        {{- end }}
+        {{- if .Values.job.args }}
+        args:
+          {{- toYaml .Values.job.args | nindent 12 }}
+        {{- end }}
+        {{- if .Values.job.env }}
+        env:
+          {{- range $key, $value := .Values.job.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.job.envFromSecret }}
+        envFrom:
+          - secretRef:
+              name: {{ include "common.fullname" . }}-env
+        {{- end }}
+        {{- if .Values.job.resources }}
+        resources:
+          {{- toYaml .Values.job.resources | nindent 12 }}
+        {{- end }}
+        {{- $hasVolumeMounts := gt (len .Values.job.volumeMounts) 0 }}
+        {{- if $hasVolumeMounts }}
+        volumeMounts:
+          {{- with .Values.job.volumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
+      {{- $hasVolumes := gt (len .Values.job.volumes) 0 }}
+      {{- if $hasVolumes }}
+      volumes:
+        {{- with .Values.job.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.job.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.job.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.job.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

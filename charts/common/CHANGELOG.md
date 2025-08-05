@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.0] - 2025-08-05
+
+### Added
+- Added support for Job resources
+
 ## [1.1.1] - 2025-06-27
 
 ### Fixed
