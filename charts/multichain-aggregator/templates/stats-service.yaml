@@ -1,0 +1,22 @@
+{{- if .Values.stats.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "multichain-aggregator.fullname" . }}-stats-svc
+  labels:
+    app: {{ include "multichain-aggregator.fullname" . }}-stats-svc
+    {{- include "multichain-aggregator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.stats.service.type }}
+  ports:
+    - port: {{ .Values.stats.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.stats.service.metricsPort }}
+      targetPort: http-metrics
+      protocol: TCP
+      name: http-metrics
+  selector:
+    app: {{ include "multichain-aggregator.fullname" . }}-stats
+{{- end }}

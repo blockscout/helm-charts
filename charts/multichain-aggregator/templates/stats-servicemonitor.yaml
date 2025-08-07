@@ -1,0 +1,16 @@
+{{- if and .Values.stats.enabled .Values.config.metrics.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "multichain-aggregator.fullname" . }}-stats
+  labels:
+    {{- include "multichain-aggregator.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - scrapeTimeout: 10s
+    port: http-metrics
+    path: /metrics
+  selector:
+    matchLabels:
+      app: {{ include "multichain-aggregator.fullname" . }}-stats-svc
+{{- end }}

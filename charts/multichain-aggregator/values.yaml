@@ -152,6 +152,93 @@ frontend:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+stats:
+  enabled: false
+  ## Image parametes
+  ##
+  image:
+    repository: ghcr.io/blockscout/stats
+    tag: v2.4.0
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+    metricsPort: 6060
+
+  podAnnotations: {}
+
+  ## Annotations to add to stats deployment
+  annotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  basePath: "/"
+
+  ## Configure ingress resource that allow you to access the stats installation.
+  ## ref: http://kubernetes.io/docs/user-guide/ingress/
+  ##
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hostname: chart-example-stats.local
+    tls:
+      enabled: false
+      #secretName:
+    paths:
+      - path: /
+        pathType: Prefix
+
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: 250m
+    requests:
+      memory: 512Mi
+      cpu: 250m
+  ## Files to mount to stats pod
+  ##
+  files:
+    enabled: false
+    list: {}
+      # file.txt: |
+      #   test
+    mountPath: /tmp/path
+
+  ## Liveness probe
+  ##
+  livenessProbe:
+    enabled: true
+    path: /health
+    params:
+      initialDelaySeconds: 100
+      periodSeconds: 100
+      timeoutSeconds: 30
+  ## Readiness probe
+  ##
+  readinessProbe:
+    enabled: true
+    path: /health
+    params:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 60
+  ## Stats ENV vars
+  ## ref: https://github.com/blockscout/blockscout-rs/tree/main/stats#env
+  env: []
+    # NAME: VALUE
+  envFromSecret: []
+    # NAME: VALUE
+  extraEnv: []
+    # - name: STATS__DB_URL
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: blockscout-stats-secret
+    #       key: STATS__DB_URL
 
 # Additional volumes on the output Deployment definition.
 volumes: []

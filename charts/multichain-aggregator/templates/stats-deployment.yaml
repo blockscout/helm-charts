@@ -1,0 +1,124 @@
+{{- if .Values.stats.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "multichain-aggregator.fullname" . }}-stats
+  labels:
+    app: {{ include "multichain-aggregator.fullname" . }}-stats
+    {{- include "multichain-aggregator.labels" . | nindent 4 }}
+  {{- with .Values.stats.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.stats.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "multichain-aggregator.fullname" . }}-stats
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/stats-secret.yaml") . | sha256sum }}
+      {{- if eq .Values.stats.image.pullPolicy "Always" }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      {{- end }}
+      {{- with .Values.stats.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "multichain-aggregator.fullname" . }}-stats
+        {{- include "multichain-aggregator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "multichain-aggregator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.stats.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-stats
+          securityContext:
+            {{- toYaml .Values.stats.securityContext | nindent 12 }}
+          image: "{{ .Values.stats.image.repository }}:{{ .Values.stats.image.tag }}"
+          resources:
+            {{- toYaml .Values.stats.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.stats.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8050
+              protocol: TCP
+            - name: http-metrics
+              containerPort: 6060
+              protocol: TCP
+          env:
+          {{- if and (ne .Values.stats.basePath "/" ) (not (hasKey .Values.stats.env "STATS__SERVER__HTTP__BASE_PATH")) }}
+          - name: STATS__SERVER__HTTP__BASE_PATH
+            value: "{{ .Values.stats.basePath }}"
+          {{- end }}
+          {{- range $key, $value := .Values.stats.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range .Values.stats.extraEnv }}
+          - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "multichain-aggregator.fullname" . }}-stats-env
+          {{- if .Values.stats.files.enabled }}
+          volumeMounts:
+            {{- range $key, $value := .Values.stats.files.list }}
+            - mountPath: {{ $.Values.stats.files.mountPath }}/{{ $key }}
+              name: stats-cm
+              subPath: {{ $key }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.stats.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              {{- if eq .Values.stats.basePath "/" }}
+              path: {{ .Values.stats.readinessProbe.path }}
+              {{- else }}
+              path: "{{ .Values.stats.basePath }}{{ .Values.stats.livenessProbe.path }}"
+              {{- end }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.stats.readinessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.stats.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              {{- if eq .Values.stats.basePath "/" }}
+              path: {{ .Values.stats.livenessProbe.path }}
+              {{- else }}
+              path: "{{ .Values.stats.basePath }}{{ .Values.stats.livenessProbe.path }}"
+              {{- end }}
+              port: http
+              scheme: HTTP
+            {{- with .Values.stats.livenessProbe.params }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+      {{- if .Values.stats.files.enabled }}
+      volumes:
+        - configMap:
+            name: {{ include "multichain-aggregator.fullname" . }}-stats-cm
+            defaultMode: 0777
+          name: stats-cm
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
