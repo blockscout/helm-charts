@@ -42,7 +42,7 @@ data:
       port: {{ .Values.service.rpcPort }}
       routes:
       {{- range .Values.config.networks }}
-        - id: {{ .id }}
+        - id: {{ .id | replace "-" ""}}
           blockchain: {{ .chain }}
       {{- end }}
 
