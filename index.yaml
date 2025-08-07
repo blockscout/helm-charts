@@ -1262,6 +1262,16 @@ entries:
   dshackle:
   - apiVersion: v2
     appVersion: 0.15.0
+    created: "2025-08-07T11:55:42.284620857Z"
+    description: A Helm chart for Kubernetes
+    digest: 78ce9329633ab6c7b1f79c75455f0ef440f1981f0a3e5102df331ce25064fa05
+    name: dshackle
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/dshackle-0.2.1/dshackle-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 0.15.0
     created: "2025-05-27T09:48:30.208091499Z"
     description: A Helm chart for Kubernetes
     digest: 6facdec940a6cad2df615dc43d08b0505a63b0d79b565498525f18f9c6c4ebdf
@@ -1992,4 +2002,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-08-07T08:29:23.957527395Z"
+generated: "2025-08-07T11:55:42.285509068Z"
