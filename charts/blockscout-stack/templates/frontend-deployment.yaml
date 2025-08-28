@@ -95,6 +95,10 @@ spec:
           {{- if .Values.userOpsIndexer.enabled }}
           - name: NEXT_PUBLIC_HAS_USER_OPS
             value: 'true'
+          {{- if .Values.userOpsIndexer.ingress.enabled }}
+          - name: NEXT_PUBLIC_USER_OPS_INDEXER_API_HOST
+            value: "https://{{ .Values.userOpsIndexer.ingress.hostname }}"
+          {{- end }}
           {{- end }}
           {{- range $key, $value := .Values.frontend.env }}
           - name: {{ $key }}

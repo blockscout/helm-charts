@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 3.4.0
+
+### Feature
+
+- Adding user-ops-indexer url to frontend env(feature works with frontend 2.3.0 and above)
+
+### Fix
+
+- Set STATS__BLOCKSCOUT_API_URL only if ingress exists
+
 ## 3.3.0
 
 ### Feature
