@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.5.0
+
+### Feature
+
+- Added distributed elixir runtime support
+
 ## 3.4.0
 
 ### Feature
