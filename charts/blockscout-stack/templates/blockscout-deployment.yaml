@@ -120,13 +120,10 @@ spec:
               containerPort: 4000
               protocol: TCP
             {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            - name: inet_dist_listen_min
               containerPort: 9138
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9139
               protocol: TCP
             {{- end }}
@@ -320,17 +317,12 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            - name: inet_dist_listen_min
               containerPort: 9138
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9139
               protocol: TCP
-            {{- end }}
           env:
           - name: APPLICATION_MODE
             value: "indexer"
@@ -376,7 +368,6 @@ spec:
           - name: NFT_MEDIA_HANDLER_BACKFILL_ENABLED
             value: 'true'
           {{- end }}
-          {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
           - name: K8S_SERVICE
             value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
           - name: ERL_AFLAGS
@@ -390,7 +381,6 @@ spec:
             value: 'blockscout@$(POD_IP)'
           - name: RELEASE_DISTRIBUTION
             value: 'name'
-          {{- end }}
           {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
@@ -485,6 +475,7 @@ spec:
       {{- end }}
       labels:
         app: {{ .Release.Name }}-blockscout-resizer
+        app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -512,13 +503,10 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            - name: inet_dist_listen_min
               containerPort: 9140
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9141
               protocol: TCP
           env:
