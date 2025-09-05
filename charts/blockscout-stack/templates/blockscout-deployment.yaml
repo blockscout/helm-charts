@@ -144,6 +144,8 @@ spec:
             value: 'true'
           - name: NFT_MEDIA_HANDLER_BACKFILL_ENABLED
             value: 'true'
+          - name: NFT_MEDIA_HANDLER_R2_BUCKET_FOLDER
+            value: '/{{ .Release.Name }}'
           {{- end }}
           {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
           - name: POD_IP
@@ -367,6 +369,8 @@ spec:
             value: 'true'
           - name: NFT_MEDIA_HANDLER_BACKFILL_ENABLED
             value: 'true'
+          - name: NFT_MEDIA_HANDLER_R2_BUCKET_FOLDER
+            value: '/{{ .Release.Name }}'
           {{- end }}
           - name: K8S_SERVICE
             value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
