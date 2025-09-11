@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.4.1
+
+### Fix
+
+- Set APPLICATION_MODE to indexer for migration job
+
 ## 3.4.0
 
 ### Feature
