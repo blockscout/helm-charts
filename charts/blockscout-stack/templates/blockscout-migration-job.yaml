@@ -62,6 +62,8 @@ spec:
             value: "true"
           - name: DISABLE_WEBAPP
             value: "true"
+          - name: APPLICATION_MODE
+            value: "indexer"
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
