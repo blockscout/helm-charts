@@ -17,6 +17,7 @@ spec:
         rollme: {{ randAlphaNum 5 | quote }}
       {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/admin-ts-secret.yaml") . | sha256sum }}
+        checksum/common-config: {{ include (print $.Template.BasePath "/common-configmap.yaml") . | sha256sum }}
       labels:
         app.kubernetes.io/name: admin-ts-{{ include "blockscout-admin.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
