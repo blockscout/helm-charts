@@ -28,6 +28,7 @@ spec:
       {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-blockscout
+        app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -118,14 +119,11 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            {{- if and .Values.blockscout.nftStorage.enabled (not .Values.blockscout.separateApi.enabled) }}
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
+            - name: inet_dist_listen_min
               containerPort: 9138
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9139
               protocol: TCP
             {{- end }}
@@ -144,15 +142,24 @@ spec:
             value: 'true'
           - name: NFT_MEDIA_HANDLER_REMOTE_DISPATCHER_NODE_MODE_ENABLED
             value: 'true'
-          - name: RELEASE_NODE
-            value: 'indexer@{{ .Release.Name }}-blockscout-svc.{{ .Release.Namespace }}.svc.cluster.local'
-          - name: RELEASE_DISTRIBUTION
-            value: 'name'
           - name: NFT_MEDIA_HANDLER_BACKFILL_ENABLED
             value: 'true'
+          - name: NFT_MEDIA_HANDLER_R2_BUCKET_FOLDER
+            value: '/{{ .Release.Name }}'
+          {{- end }}
+          {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: RELEASE_DISTRIBUTION
+            value: 'name'
+          - name: RELEASE_NODE
+            value: 'blockscout@$(POD_IP)'
           - name: ERL_AFLAGS
             value: "-kernel inet_dist_listen_min 9138 inet_dist_listen_max 9139"
-          {{- end }}
+          {{- end}}
           - name: CHAIN_ID
             value: {{ .Values.config.network.id | quote }}
           {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
@@ -194,6 +201,8 @@ spec:
             value: "true"
           - name: DISABLE_WEBAPP
             value: "true"
+          - name: K8S_SERVICE
+            value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
           - name: {{ $key }}
@@ -281,6 +290,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
@@ -309,17 +319,12 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            {{- if .Values.blockscout.nftStorage.enabled }}
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            - name: inet_dist_listen_min
               containerPort: 9138
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9139
               protocol: TCP
-            {{- end }}
           env:
           - name: APPLICATION_MODE
             value: "indexer"
@@ -362,15 +367,24 @@ spec:
             value: 'true'
           - name: NFT_MEDIA_HANDLER_REMOTE_DISPATCHER_NODE_MODE_ENABLED
             value: 'true'
-          - name: RELEASE_NODE
-            value: 'indexer@{{ .Release.Name }}-blockscout-indexer-svc.{{ .Release.Namespace }}.svc.cluster.local'
-          - name: RELEASE_DISTRIBUTION
-            value: 'name'
           - name: NFT_MEDIA_HANDLER_BACKFILL_ENABLED
             value: 'true'
+          - name: NFT_MEDIA_HANDLER_R2_BUCKET_FOLDER
+            value: '/{{ .Release.Name }}'
+          {{- end }}
+          - name: K8S_SERVICE
+            value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
           - name: ERL_AFLAGS
             value: "-kernel inet_dist_listen_min 9138 inet_dist_listen_max 9139"
-          {{- end }}
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: RELEASE_NODE
+            value: 'blockscout@$(POD_IP)'
+          - name: RELEASE_DISTRIBUTION
+            value: 'name'
           {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}
           - name: COIN
             value: {{ .Values.config.network.currency.symbol | quote }}
@@ -465,6 +479,7 @@ spec:
       {{- end }}
       labels:
         app: {{ .Release.Name }}-blockscout-resizer
+        app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -492,13 +507,10 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            - name: epmd
-              containerPort: 4369
-              protocol: TCP
-            - name: epmd-dyn-1
+            - name: inet_dist_listen_min
               containerPort: 9140
               protocol: TCP
-            - name: epmd-dyn-2
+            - name: inet_dist_listen_max
               containerPort: 9141
               protocol: TCP
           env:
@@ -512,22 +524,23 @@ spec:
               value: 'true'
             - name: NFT_MEDIA_HANDLER_IS_WORKER
               value: 'true'
-            - name: NFT_MEDIA_HANDLER_NODES_MAP
-            {{- if .Values.blockscout.separateApi.enabled }}
-              value: '{"indexer@{{ .Release.Name }}-blockscout-indexer-svc.{{ .Release.Namespace }}.svc.cluster.local": "/{{ .Release.Name }}"}'
-            {{- else }}
-              value: '{"indexer@{{ .Release.Name }}-blockscout-svc.{{ .Release.Namespace }}.svc.cluster.local": "/{{ .Release.Name }}"}'
-            {{- end }}
             - name: NFT_MEDIA_HANDLER_WORKER_CONCURRENCY
               value: {{ .Values.blockscout.nftStorage.workerConcurrency | quote }}
-            - name: RELEASE_NODE
-              value: 'worker@{{ .Release.Name }}-blockscout-resizer-svc.{{ .Release.Namespace }}.svc.cluster.local'
-            - name: RELEASE_DISTRIBUTION
-              value: 'name'
-            - name: ERL_AFLAGS
-              value: "-kernel inet_dist_listen_min 9140 inet_dist_listen_max 9141"
             - name: IPFS_GATEWAY_URL
               value: {{ .Values.blockscout.nftStorage.ipfsGateway | quote }}
+            - name: K8S_SERVICE
+              value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
+            - name: ERL_AFLAGS
+              value: "-kernel inet_dist_listen_min 9140 inet_dist_listen_max 9141"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: RELEASE_NODE
+              value: 'blockscout@$(POD_IP)'
+            - name: RELEASE_DISTRIBUTION
+              value: 'name'
           envFrom:
           - secretRef:
               name: {{ include "blockscout-stack.fullname" . }}-blockscout-resizer
