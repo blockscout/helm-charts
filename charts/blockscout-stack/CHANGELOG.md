@@ -4,7 +4,7 @@
 
 ### Breaking Change
 
-- This version introduces breaking change for nftStorage feature and it requires blockscout backend version 9.1.0 and above to be used with. If you are using any previous version, do not update helm chart to 4.x
+- This version introduces breaking change for nftStorage feature and it requires blockscout backend version 9.1.0 and above to be used with. If you are using any previous version and NFT storage, do not update helm chart to 4.x
 
 ### Feature
 

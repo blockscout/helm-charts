@@ -120,10 +120,10 @@ spec:
               containerPort: 4000
               protocol: TCP
             {{- if or .Values.blockscout.nftStorage.enabled .Values.blockscout.separateApi.enabled }}
-            - name: inet_dist_listen_min
+            - name: inet-dist-min
               containerPort: 9138
               protocol: TCP
-            - name: inet_dist_listen_max
+            - name: inet-dist-max
               containerPort: 9139
               protocol: TCP
             {{- end }}
@@ -319,10 +319,10 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            - name: inet_dist_listen_min
+            - name: inet-dist-min
               containerPort: 9138
               protocol: TCP
-            - name: inet_dist_listen_max
+            - name: inet-dist-max
               containerPort: 9139
               protocol: TCP
           env:
@@ -507,10 +507,10 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-            - name: inet_dist_listen_min
+            - name: inet-dist-min
               containerPort: 9140
               protocol: TCP
-            - name: inet_dist_listen_max
+            - name: inet-dist-max
               containerPort: 9141
               protocol: TCP
           env:
