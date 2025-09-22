@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.2] - 2025-09-22
+
+### Fixed
+- Fixing default job annotations
+
 ## [1.2.1] - 2025-09-22
 
 ### Added

@@ -133,10 +133,6 @@ cronjob:
   #   repository: blockscout/token-info-extractor
   #   tag: ""
   # env: {}
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-succeeded
   config:
     enabled: false
     mountPath: /app/config
@@ -151,6 +147,10 @@ job:
   # image:
   #   repository: ""
   #   tag: ""
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded
   command: []
   args: []
   env: {}
