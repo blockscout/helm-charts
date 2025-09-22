@@ -133,6 +133,7 @@ cronjob:
   #   repository: blockscout/token-info-extractor
   #   tag: ""
   # env: {}
+  annotations: {}
   config:
     enabled: false
     mountPath: /app/config
@@ -181,4 +182,4 @@ securityContext:
 # Node selectors
 nodeSelector: {}
 tolerations: []
-affinity: {} 
+affinity: {}
