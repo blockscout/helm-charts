@@ -5,6 +5,10 @@ metadata:
   name: {{ include "common.fullname" . }}-job
   labels:
     {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.job.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- with .Values.job.completions }}
   completions: {{ . }}
