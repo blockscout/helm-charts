@@ -45,6 +45,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+              {{- if .Values.config.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.config.metrics.port }}
+              protocol: TCP
+              {{- end }}
           env:
             - name: AUTOSCOUT__SERVER__HTTP__ADDR
               value: "0.0.0.0:8050"
@@ -64,6 +69,12 @@ spec:
                   key: {{ or .Values.config.database.existingSecretPasswordKey "password" }}
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__DBNAME
               value: {{ .Values.config.database.dbname | quote }}
+            {{- if .Values.config.metrics.enabled }}
+            - name: AUTOSCOUT__METRICS__ENABLED
+              value: 'true'
+            - name: AUTOSCOUT__METRICS__ADDR
+              value: 0.0.0.0:{{ .Values.config.metrics.port }}
+            {{- end }}
             - name: AUTOSCOUT__GITHUB__TOKEN
               valueFrom:
                 secretKeyRef:

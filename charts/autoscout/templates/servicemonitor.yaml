@@ -1,0 +1,20 @@
+{{- if .Values.config.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "autoscout.fullname" . }}
+  labels:
+    {{- include "autoscout.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - interval: "15s"
+    scrapeTimeout: "5s"
+    path: /metrics
+    targetPort: metrics
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "autoscout.fullname" . }}
+{{- end }}
