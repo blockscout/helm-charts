@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 3.5.0
+
+### Feature
+
+- Add support for commonLabels to apply custom labels to all resources
+
 ## 3.4.2
 
 ### Fix
