@@ -11,6 +11,8 @@ image:
   tag: ""         # If empty, uses appVersion from Chart.yaml
   pullPolicy: IfNotPresent
 
+runtimeClassName: ""
+
 # Container startup configuration
 container:
   command: []     # Override default command
