@@ -25,7 +25,7 @@ spec:
           - name: cronjob
             securityContext:
               {{- toYaml .Values.securityContext | nindent 14 }}
-            image: "{{ include "common.imageRepository" (list .Values.cronjob.image.repository .) }}:{{ include "common.imageTag" (list .Values.cronjob.image.tag .) }}"
+            image: "{{ .Values.cronjob.image.repository }}:{{ include "common.imageTag" (list .Values.cronjob.image.tag .) }}"
             imagePullPolicy: IfNotPresent
             {{- if .Values.cronjob.env }}
             env:
