@@ -138,6 +138,8 @@ cronjob:
     mountPath: /app/config
     files: {}
   # resources: {}
+  volumeMounts: []
+  volumes: []
 
 # Job configuration (optional)
 job:
