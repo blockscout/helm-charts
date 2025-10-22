@@ -38,12 +38,16 @@ spec:
       {{- if .Values.runtimeClassName }}
       runtimeClassName: {{ .Values.runtimeClassName }}
       {{- end }}
+      {{- if not .Values.insecure }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ include "common.name" . }}
+          {{- if not .Values.insecure }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ include "common.imageTag" (list .Values.image.tag .) }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.container.command }}

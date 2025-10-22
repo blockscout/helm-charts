@@ -22,12 +22,16 @@ spec:
           {{- if .Values.runtimeClassName }}
           runtimeClassName: {{ .Values.runtimeClassName }}
           {{- end }}
+          {{- if not .Values.insecure }}
           securityContext:
             {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          {{- end }}
           containers:
           - name: cronjob
+            {{- if not .Values.insecure }}
             securityContext:
               {{- toYaml .Values.securityContext | nindent 14 }}
+            {{- end }}
             image: "{{ include "common.imageRepository" (list .Values.cronjob.image.repository .) }}:{{ include "common.imageTag" (list .Values.cronjob.image.tag .) }}"
             imagePullPolicy: IfNotPresent
             {{- if .Values.cronjob.env }}

@@ -12,6 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 runtimeClassName: ""
+# Insecure mode - disables security contexts to allow running as root
+insecure: false
 
 # Container startup configuration
 container:
@@ -140,6 +142,8 @@ cronjob:
     mountPath: /app/config
     files: {}
   # resources: {}
+  volumeMounts: []
+  volumes: []
 
 # Job configuration (optional)
 job:
