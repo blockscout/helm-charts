@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.3] - 2025-09-22
+
+### Added
+- Support privileged run
+
 ## [1.2.2] - 2025-09-22
 
 ### Fixed
