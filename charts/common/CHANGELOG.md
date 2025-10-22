@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.4] - 2025-10-22
+
+### Added
+- Support custom runtimeClassName
+
 ## [1.2.3] - 2025-09-22
 
 ### Added
