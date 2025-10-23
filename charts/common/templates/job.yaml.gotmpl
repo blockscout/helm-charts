@@ -5,6 +5,10 @@ metadata:
   name: {{ include "common.fullname" . }}-job
   labels:
     {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.job.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- with .Values.job.completions }}
   completions: {{ . }}
@@ -22,13 +26,17 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "common.serviceAccountName" . }}
+      {{- if not .Values.insecure }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
       restartPolicy: OnFailure
       containers:
       - name: job
+        {{- if not .Values.insecure }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
+        {{- end }}
         image: "{{ .Values.job.image.repository }}:{{ include "common.imageTag" (list .Values.job.image.tag .) }}"
         imagePullPolicy: IfNotPresent
         {{- if .Values.job.command }}

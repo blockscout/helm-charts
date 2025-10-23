@@ -9,6 +9,17 @@
 ### Feature
 
 - Add distributed elixir runtime support
+## 3.5.0
+
+### Feature
+
+- Add support for commonLabels to apply custom labels to all resources
+
+## 3.4.2
+
+### Fix
+
+- Making NEXT_PUBLIC_NETWORK_SHORT_NAME optional
 
 ## 3.4.1
 

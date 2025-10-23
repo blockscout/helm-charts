@@ -50,8 +50,10 @@ spec:
             value: {{ .Values.config.network.id | quote }}
           - name: NEXT_PUBLIC_NETWORK_NAME
             value: {{ .Values.config.network.name | quote }}
+          {{- if .Values.config.network.shortname }}
           - name: NEXT_PUBLIC_NETWORK_SHORT_NAME
             value: {{ .Values.config.network.shortname | quote }}
+          {{- end }}
           - name: NEXT_PUBLIC_NETWORK_CURRENCY_NAME
             value: {{ .Values.config.network.currency.name | quote }}
           {{- if and .Values.config.network.currency.symbol (not .Values.config.network.currency.dualToken) }}

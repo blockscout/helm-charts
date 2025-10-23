@@ -11,6 +11,9 @@ image:
   tag: ""         # If empty, uses appVersion from Chart.yaml
   pullPolicy: IfNotPresent
 
+# Insecure mode - disables security contexts to allow running as root
+insecure: false
+
 # Container startup configuration
 container:
   command: []     # Override default command
@@ -138,6 +141,8 @@ cronjob:
     mountPath: /app/config
     files: {}
   # resources: {}
+  volumeMounts: []
+  volumes: []
 
 # Job configuration (optional)
 job:
@@ -147,6 +152,10 @@ job:
   # image:
   #   repository: ""
   #   tag: ""
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded
   command: []
   args: []
   env: {}
@@ -181,4 +190,4 @@ securityContext:
 # Node selectors
 nodeSelector: {}
 tolerations: []
-affinity: {} 
+affinity: {}

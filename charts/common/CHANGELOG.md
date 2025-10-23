@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.3] - 2025-09-22
+
+### Added
+- Support privileged run
+
+## [1.2.2] - 2025-09-22
+
+### Fixed
+- Fixing default job annotations
+
+## [1.2.1] - 2025-09-22
+
+### Added
+- Adding job annotations
+
 ## [1.2.0] - 2025-08-05
 
 ### Added

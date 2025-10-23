@@ -46,6 +46,10 @@ config:
     webhook_secret: ""
   sendgrid:
     api_key: ""
+  metrics:
+    enabled: false
+    port: 6060
+
 
 serviceAccount:
   # Specifies whether a service account should be created
