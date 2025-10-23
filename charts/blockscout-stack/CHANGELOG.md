@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.0.1
+
+### Fix
+
+- Fixing port names for distributed elixir runtime
+
 ## 4.0.0
 
 ### Breaking Change
