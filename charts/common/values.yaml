@@ -11,6 +11,7 @@ image:
   tag: ""         # If empty, uses appVersion from Chart.yaml
   pullPolicy: IfNotPresent
 
+runtimeClassName: ""
 # Insecure mode - disables security contexts to allow running as root
 insecure: false
 
