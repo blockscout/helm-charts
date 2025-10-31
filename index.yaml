@@ -3,6 +3,16 @@ entries:
   autoscout:
   - apiVersion: v2
     appVersion: 1.7.0
+    created: "2025-10-31T06:01:24.123567492Z"
+    description: A Helm chart for Kubernetes
+    digest: bf534cb5b7c3a9df9cf62fc8a47ec29e0c1222d1f08ca6714073ff6756badd54
+    name: autoscout
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/autoscout-0.8.0/autoscout-0.8.0.tgz
+    version: 0.8.0
+  - apiVersion: v2
+    appVersion: 1.7.0
     created: "2025-09-23T14:00:57.47051213Z"
     description: A Helm chart for Kubernetes
     digest: 7f037e357b33927a8e8a4be865bff92d730b442e68f7fe4a0a4e1b323b643c33
@@ -2201,4 +2211,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-27T09:08:15.619042253Z"
+generated: "2025-10-31T06:01:24.124003797Z"
