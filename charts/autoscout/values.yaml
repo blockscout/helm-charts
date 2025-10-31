@@ -50,6 +50,18 @@ config:
     enabled: false
     port: 6060
 
+prometheusRule:
+  enabled: false
+  rules: []
+    # - alert: AutoscoutDown
+    #   expr: up{job="autoscout"} == 0
+    #   for: 5m
+    #   labels:
+    #     severity: critical
+    #     service: "autoscout"
+    #   annotations:
+    #     description: Autoscout instance {{ $labels.instance }} is down
+    #     summary: Autoscout is down
 
 serviceAccount:
   # Specifies whether a service account should be created
