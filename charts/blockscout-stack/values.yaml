@@ -91,6 +91,7 @@ blockscout:
       - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"
   ## Run API service as separate deployment
   ##
+  releaseCookie: secret
   separateApi:
     enabled: false
     replicaCount: 2
@@ -103,7 +104,6 @@ blockscout:
         memory: 1Gi
   nftStorage:
     enabled: false
-    cookie: secret
     bucketHost: xxx.r2.cloudflarestorage.com
     accessKey: ""
     secretKey: ""

@@ -89,4 +89,16 @@ spec:
   selector:
     app: {{ .Release.Name }}-blockscout-resizer
 {{- end }}
+---
+{{- if or .Values.blockscout.separateApi.enabled .Values.blockscout.nftStorage.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
+{{- end }}
 {{- end }}
