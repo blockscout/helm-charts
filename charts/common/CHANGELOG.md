@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.5] - 2025-11-12
+
+### Added
+- Support for initContainers to run initialization tasks before the main container
+
 ## [1.2.4] - 2025-10-22
 
 ### Added
