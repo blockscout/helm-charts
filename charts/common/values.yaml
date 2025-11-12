@@ -129,6 +129,11 @@ persistence:
 volumes: []
 volumeMounts: []
 
+# Init containers
+# Allows you to run initialization tasks before the main container starts
+# see https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+initContainers: []
+
 # CronJob configuration (optional)
 cronjob:
   enabled: false
