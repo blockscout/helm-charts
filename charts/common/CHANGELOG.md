@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.6] - 2025-11-12
+
+### Added
+- Support for deploymentStrategy
+
 ## [1.2.5] - 2025-11-12
 
 ### Added
