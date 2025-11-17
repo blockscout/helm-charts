@@ -60,6 +60,13 @@ config:
     blackbox:
       enabled: true
       path: /api/health
+      scrapeTimeout: 5s
+      interval: 15s
+      module: http_2xx
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus-blackbox-exporter
+          app.kubernetes.io/instance: prometheus-blackbox-exporter
     rules:
       enabled: true
       ## If latest block timestamp is older than healthyBlockPeriod instance is considered unhealthy and alert is created

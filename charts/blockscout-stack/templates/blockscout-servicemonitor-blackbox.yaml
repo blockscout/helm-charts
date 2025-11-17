@@ -8,13 +8,13 @@ metadata:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   endpoints:
-  - scrapeTimeout: 5s
+  - scrapeTimeout: {{ .Values.config.prometheus.blackbox.scrapeTimeout }}
     port: http
     path: "/probe"
-    interval: 15s
+    interval: {{ .Values.config.prometheus.blackbox.interval }}
     params:
       module:
-      - http_2xx
+      - {{ .Values.config.prometheus.blackbox.module }}
       target:
       - {{ $url }}
     metricRelabelings:
@@ -25,7 +25,5 @@ spec:
   namespaceSelector:
     any: true
   selector:
-    matchLabels:
-      app.kubernetes.io/name: prometheus-blackbox-exporter
-      app.kubernetes.io/instance: prometheus-blackbox-exporter
+    {{- toYaml .Values.config.prometheus.blackbox.selector | nindent 4 }}
 {{- end }}
