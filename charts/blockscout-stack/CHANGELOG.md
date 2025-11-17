@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.0.1
+
+### Feature
+
+- Add custom configuration for blackbox exporter service monitor
+
 ## 4.0.0
 
 ### Breaking Change
@@ -9,6 +15,7 @@
 ### Feature
 
 - Add distributed elixir runtime support
+
 ## 3.5.0
 
 ### Feature
