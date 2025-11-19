@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.0.2
+
+### Fix
+
+- Making alertname static for prometheus rules
+
 ## 4.0.1
 
 ### Feature
