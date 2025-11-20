@@ -52,9 +52,9 @@ spec:
               containerPort: 6060
               protocol: TCP
           env:
-          {{- if .Values.blockscout.ingress.hostname }}
+          {{- if .Values.blockscout.enabled }}
           - name: STATS__BLOCKSCOUT_API_URL
-            value: "https://{{ .Values.blockscout.ingress.hostname }}"
+            value: 'http://{{ include "blockscout-stack.fullname" . }}-blockscout-svc:{{ .Values.blockscout.service.port }}'
           {{- end }}
           {{- if .Values.config.network.currency.symbol }}
           - name: STATS_CHARTS__TEMPLATE_VALUES__NATIVE_COIN_SYMBOL
