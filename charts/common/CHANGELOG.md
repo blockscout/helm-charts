@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.7] - 2025-11-20
+
+### Fixed
+- Fixing deploymentStrategy
+
 ## [1.2.6] - 2025-11-12
 
 ### Added
