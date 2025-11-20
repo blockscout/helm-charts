@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.0.3
+
+### Fix
+
+- Using blockscout service name instead of ingress for stats services
+
 ## 4.0.2
 
 ### Fix
