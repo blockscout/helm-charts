@@ -63,6 +63,7 @@ config:
       scrapeTimeout: 5s
       interval: 15s
       module: http_2xx
+      extraLabels: {}
       selector:
         matchLabels:
           app.kubernetes.io/name: prometheus-blackbox-exporter

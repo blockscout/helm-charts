@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.1.0
+
+### Feature
+
+- Custom labels for blackbox exporter service monitor
+
 ## 4.0.3
 
 ### Fix

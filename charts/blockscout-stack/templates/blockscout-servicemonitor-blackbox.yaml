@@ -22,6 +22,10 @@ spec:
         replacement: {{ $url }}
       - targetLabel: target
         replacement: {{ include "blockscout-stack.fullname" . }}
+        {{- range $key, $value := .Values.config.prometheus.blackbox.extraLabels }}
+      - targetLabel: {{ $key }}
+        replacement: {{ $value }}
+        {{- end }}
   namespaceSelector:
     any: true
   selector:
