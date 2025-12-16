@@ -21,4 +21,43 @@ spec:
         annotations:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new batches"
           description: "Latest batch at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.batchTimeMultiplier }} average batch time ago."
+
+      - alert: BlockscoutMissingBlocksIncreasing
+        expr: delta(missing_blocks_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[2h]) > 100
+        for: 2h
+        labels:
+          severity: critical
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Blockscout missing blocks count is growing"
+          description: "delta(missing_blocks_count[2h]) is {{`{{ $value }}`}} for {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}}."
+
+      - alert: BlockscoutMissingBlocksIncreasingDaily
+        expr: delta(missing_blocks_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[24h]) > 50
+        for: 2h
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Blockscout missing blocks count is growing daily"
+          description: "delta(missing_blocks_count[24h]) is {{`{{ $value }}`}} for {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}}."
+
+      - alert: BlockscoutMissingInternalTransactionsIncreasing
+        expr: delta(missing_internal_transactions_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[12h]) > 100
+        for: 3h
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Blockscout internal transactions backlog is growing"
+          description: "delta(missing_internal_transactions_count[12h]) is {{`{{ $value }}`}} for {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}}."
 {{- end }}

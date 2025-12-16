@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.2.0
+
+### Feature
+
+- Add missing blocks/transactions alerting on explorer
+
 ## 4.1.0
 
 ### Feature
