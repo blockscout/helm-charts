@@ -197,10 +197,6 @@ spec:
             value: "https://{{ .Values.userOpsIndexer.ingress.hostname }}"
           {{- end }}
           {{- if .Values.blockscout.separateApi.enabled }}
-          - name: DISABLE_INDEXER
-            value: "true"
-          - name: DISABLE_WEBAPP
-            value: "true"
           - name: K8S_SERVICE
             value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
           {{- end }}
@@ -356,8 +352,6 @@ spec:
           - name: MICROSERVICE_ACCOUNT_ABSTRACTION_URL
             value: "https://{{ .Values.userOpsIndexer.ingress.hostname }}"
           {{- end }}
-          - name: DISABLE_WEBAPP
-            value: "true"
           - name: API_V1_READ_METHODS_DISABLED
             value: "true"
           - name: API_V1_WRITE_METHODS_DISABLED
