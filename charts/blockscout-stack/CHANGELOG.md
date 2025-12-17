@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 4.3.0
+
+### Feature
+
+- Removing DISABLE_INDEXER=true from api pod. Since 9.3.0 APPLICATION_MODE=api disables indexer and DISABLE_INDEXER no longer needed
+
+### Improvement
+
+- Removing unused DISABLE_WEBAPP env variable
+
 ## 4.2.0
 
 ### Feature
