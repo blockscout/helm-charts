@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 4.2.0
+## 4.3.0
 
 ### Feature
 
@@ -9,6 +9,12 @@
 ### Improvement
 
 - Removing unused DISABLE_WEBAPP env variable
+
+## 4.2.0
+
+### Feature
+
+- Add missing blocks/transactions alerting on explorer
 
 ## 4.1.0
 
