@@ -48,6 +48,23 @@ config:
           }
       tls:
         enabled: true
+    ## Configure Gateway API HTTPRoute for redirect functionality
+    ##
+    gateway:
+      enabled: false
+      ## Reference to an existing Gateway resource
+      ##
+      gatewayRef:
+        name: ""
+        namespace: ""
+      ## TLS configuration for HTTPRoute
+      ##
+      tls:
+        enabled: false
+        certificateRefs: []
+      ## Custom annotations for HTTPRoute
+      ##
+      annotations: {}
   ## If set to true will create service monitors for blockscout and stats
   ##
   prometheus:
@@ -214,6 +231,29 @@ blockscout:
         pathType: Exact
       - path: /auth/logout
         pathType: Exact
+  ## Configure Gateway API HTTPRoute resource that allow you to access the blockscout installation.
+  ## ref: https://gateway-api.sigs.k8s.io/
+  ## Note: When enabled, gatewayRef.name is required. If namespace is not specified, it defaults to the same namespace as the HTTPRoute.
+  ##
+    gateway:
+      enabled: false
+      ## Reference to an existing Gateway resource (required when gateway.enabled is true)
+    ##
+    gatewayRef:
+      name: ""
+      namespace: ""
+    hostnames: []
+      # - blockscout.example.com
+    ## TLS configuration for HTTPRoute
+    ##
+    tls:
+      enabled: false
+      certificateRefs: []
+        # - name: blockscout-tls-cert
+        #   kind: Secret
+    ## Custom annotations for HTTPRoute
+    ##
+    annotations: {}
 
   resources:
     limits:
@@ -273,6 +313,29 @@ frontend:
       #secretName:
     paths:
       - path: /
+  ## Configure Gateway API HTTPRoute resource that allow you to access the frontend installation.
+  ## ref: https://gateway-api.sigs.k8s.io/
+  ## Note: When enabled, gatewayRef.name is required. If namespace is not specified, it defaults to the same namespace as the HTTPRoute.
+  ##
+    gateway:
+      enabled: false
+      ## Reference to an existing Gateway resource (required when gateway.enabled is true)
+    ##
+    gatewayRef:
+      name: ""
+      namespace: ""
+    hostnames: []
+      # - explorer.example.com
+    ## TLS configuration for HTTPRoute
+    ##
+    tls:
+      enabled: false
+      certificateRefs: []
+        # - name: frontend-tls-cert
+        #   kind: Secret
+    ## Custom annotations for HTTPRoute
+    ##
+    annotations: {}
 
   resources:
     limits:
@@ -361,6 +424,29 @@ stats:
     paths:
       - path: /
         pathType: Prefix
+  ## Configure Gateway API HTTPRoute resource that allow you to access the stats installation.
+  ## ref: https://gateway-api.sigs.k8s.io/
+  ## Note: When enabled, gatewayRef.name is required. If namespace is not specified, it defaults to the same namespace as the HTTPRoute.
+  ##
+    gateway:
+      enabled: false
+      ## Reference to an existing Gateway resource (required when gateway.enabled is true)
+    ##
+    gatewayRef:
+      name: ""
+      namespace: ""
+    hostnames: []
+      # - stats.example.com
+    ## TLS configuration for HTTPRoute
+    ##
+    tls:
+      enabled: false
+      certificateRefs: []
+        # - name: stats-tls-cert
+        #   kind: Secret
+    ## Custom annotations for HTTPRoute
+    ##
+    annotations: {}
 
   resources:
     limits:
@@ -450,6 +536,29 @@ userOpsIndexer:
     paths:
       - path: /
         pathType: Prefix
+  ## Configure Gateway API HTTPRoute resource that allow you to access the user-ops-indexer installation.
+  ## ref: https://gateway-api.sigs.k8s.io/
+  ## Note: When enabled, gatewayRef.name is required. If namespace is not specified, it defaults to the same namespace as the HTTPRoute.
+  ##
+    gateway:
+      enabled: false
+      ## Reference to an existing Gateway resource (required when gateway.enabled is true)
+    ##
+    gatewayRef:
+      name: ""
+      namespace: ""
+    hostnames: []
+      # - userops.example.com
+    ## TLS configuration for HTTPRoute
+    ##
+    tls:
+      enabled: false
+      certificateRefs: []
+        # - name: userops-tls-cert
+        #   kind: Secret
+    ## Custom annotations for HTTPRoute
+    ##
+    annotations: {}
 
   resources:
     limits:

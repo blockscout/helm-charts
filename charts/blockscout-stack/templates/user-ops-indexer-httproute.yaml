@@ -1,0 +1,50 @@
+{{- if .Values.userOpsIndexer.enabled }}
+{{- if .Values.userOpsIndexer.gateway.enabled }}
+{{- $fullName := include "blockscout-stack.fullname" . -}}
+{{- $svcPort := .Values.userOpsIndexer.service.port -}}
+{{- if semverCompare ">=1.27-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: gateway.networking.k8s.io/v1
+{{- else -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+{{- end }}
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}-user-ops-indexer-httproute
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.userOpsIndexer.gateway.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if and .Values.userOpsIndexer.gateway.gatewayRef.name .Values.userOpsIndexer.gateway.gatewayRef.namespace }}
+    - name: {{ .Values.userOpsIndexer.gateway.gatewayRef.name }}
+      namespace: {{ .Values.userOpsIndexer.gateway.gatewayRef.namespace }}
+    {{- else if .Values.userOpsIndexer.gateway.gatewayRef.name }}
+    - name: {{ .Values.userOpsIndexer.gateway.gatewayRef.name }}
+    {{- end }}
+  {{- if .Values.userOpsIndexer.gateway.hostnames }}
+  hostnames:
+    {{- range .Values.userOpsIndexer.gateway.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - matches:
+        {{- range .Values.userOpsIndexer.ingress.paths }}
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: PathExact
+            {{- else if eq .pathType "Prefix" }}
+            type: PathPrefix
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path | quote }}
+        {{- end }}
+      backendRefs:
+        - name: {{ $fullName }}-user-ops-indexer-svc
+          port: {{ $svcPort }}
+{{- end }}
+{{- end }}
