@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 4.4.0
+
+### Feature
+
+- Add Gateway API (HTTPRoute) support for blockscout, frontend, stats, and user-ops-indexer components
+- Gateway API can be used alongside or instead of traditional Ingress resources
+- Support for referencing existing Gateway resources with configurable hostnames and TLS
+
 ## 4.3.0
 
 ### Feature
