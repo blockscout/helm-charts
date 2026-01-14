@@ -47,7 +47,8 @@ spec:
         annotations:
           summary: "Missing blocks increasing daily for {{`{{ $labels.job }}`}} ({{`{{ $labels.namespace }}`}})"
           description: "The number of missing blocks increased by {{`{{ $value | printf \"%.0f\" }}`}} over the last 24 hours."
-
+      
+      {{- if ne (toString (default "false" .Values.blockscout.env.INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER)) "true" }}
       - alert: BlockscoutMissingInternalTransactionsIncreasing
         expr: delta(missing_internal_transactions_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[12h]) > 100
         for: 3h
@@ -60,4 +61,5 @@ spec:
         annotations:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has missing internal transactions"
           description: "The number of missing internal transactions increased by {{`{{ $value | printf \"%.0f\" }}`}} in the last 12 hours."
+      {{- end }}
 {{- end }}
