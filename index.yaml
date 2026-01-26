@@ -144,6 +144,17 @@ entries:
   blockscout-admin:
   - apiVersion: v2
     appVersion: 1.1.0
+    created: "2026-01-26T13:36:40.115890214Z"
+    description: A Helm chart for Blockscout admin services - admin-rs, admin-ts,
+      contracts-info, metadata, token-info-extractor
+    digest: 6876c766bf8c19abcb79316035cce78b78603c5a036f662a03c2ff4dc591daba
+    name: blockscout-admin
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/blockscout-admin-1.7.0/blockscout-admin-1.7.0.tgz
+    version: 1.7.0
+  - apiVersion: v2
+    appVersion: 1.1.0
     created: "2025-09-08T13:55:11.754788384Z"
     description: A Helm chart for Blockscout admin services - admin-rs, admin-ts,
       contracts-info, metadata, token-info-extractor
@@ -2397,4 +2408,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-14T13:29:19.145423077Z"
+generated: "2026-01-26T13:36:40.116365556Z"
