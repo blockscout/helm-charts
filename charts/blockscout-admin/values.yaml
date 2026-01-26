@@ -160,6 +160,25 @@ metadata:
   envFromSecret: {}
     #- name: SOME_SECRET_ENV
     #  value: secret_value
+  extractorConfig:
+    enabled: false
+    # JSON configuration for metadata extractor
+    # Example:
+    # config: |
+    #   {
+    #     "extractors": {
+    #       "regex": [
+    #         {
+    #           "enabled": true,
+    #           "pattern": "claim rewards",
+    #           "tag_name": "Scam(claim rewards)",
+    #           "tag_type": "name",
+    #           "sources": ["multichain"]
+    #         }
+    #       ]
+    #     }
+    #   }
+    config: ""
   resource:
     limits:
       memory: "256Mi"

@@ -1,0 +1,11 @@
+{{- if .Values.metadata.extractorConfig.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metadata-{{ include "blockscout-admin.fullname" . }}-config
+  labels:
+    {{- include "blockscout-admin.labels" . | nindent 4 }}
+data:
+  extractor-config.json: |
+{{ .Values.metadata.extractorConfig.config | indent 4 }}
+{{- end }}

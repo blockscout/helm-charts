@@ -17,6 +17,9 @@ spec:
         rollme: {{ randAlphaNum 5 | quote }}
       {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/metadata-secret.yaml") . | sha256sum }}
+      {{- if .Values.metadata.extractorConfig.enabled }}
+        checksum/extractor-config: {{ include (print $.Template.BasePath "/metadata-configmap.yaml") . | sha256sum }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: metadata-{{ include "blockscout-admin.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -38,6 +41,10 @@ spec:
           {{- if .Values.config.prometheus.enabled }}
             - name: METADATA__METRICS__ENABLED
               value: 'true'
+          {{- end }}
+          {{- if .Values.metadata.extractorConfig.enabled }}
+            - name: METADATA_EXTRACTOR__CONFIG
+              value: /app/config/extractor-config.json
           {{- end }}
           {{- range .Values.metadata.environment }}
             - name: {{ .name }}
@@ -73,6 +80,19 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.metadata.resources | nindent 12 }}
+          {{- if .Values.metadata.extractorConfig.enabled }}
+          volumeMounts:
+            - name: extractor-config
+              mountPath: /app/config/extractor-config.json
+              subPath: extractor-config.json
+          {{- end }}
+      {{- if .Values.metadata.extractorConfig.enabled }}
+      volumes:
+        - name: extractor-config
+          configMap:
+            name: metadata-{{ include "blockscout-admin.fullname" . }}-config
+            defaultMode: 0444
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
