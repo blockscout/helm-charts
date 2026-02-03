@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.8] - 2026-02-03
+
+### Fixed
+- Fixing job image pullPolicy
+
 ## [1.2.7] - 2025-11-20
 
 ### Fixed

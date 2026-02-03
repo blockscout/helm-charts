@@ -163,6 +163,7 @@ job:
   # image:
   #   repository: ""
   #   tag: ""
+  #   pullPolicy: IfNotPresent
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-weight: "-5"

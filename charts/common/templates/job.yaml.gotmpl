@@ -41,7 +41,7 @@ spec:
           {{- toYaml .Values.securityContext | nindent 12 }}
         {{- end }}
         image: "{{ .Values.job.image.repository }}:{{ include "common.imageTag" (list .Values.job.image.tag .) }}"
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ .Values.job.image.pullPolicy }}
         {{- if .Values.job.command }}
         command:
           {{- toYaml .Values.job.command | nindent 12 }}
