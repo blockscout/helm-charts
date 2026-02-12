@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+{{- $database := .Values.config.database | default dict }}
 metadata:
   name: {{ include "autoscout.fullname" . }}
   labels:
@@ -54,21 +55,21 @@ spec:
             - name: AUTOSCOUT__SERVER__HTTP__ADDR
               value: "0.0.0.0:8050"
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__HOST
-              value: {{ .Values.config.database.host | quote }}
+              value: {{ (index $database "host" | default "") | quote }}
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__PORT
-              value: {{ .Values.config.database.port | quote }}
+              value: {{ (index $database "port" | default "") | quote }}
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "autoscout.fullname" .)) }}
-                  key: {{ or .Values.config.database.existingSecretUsernameKey "username" }}
+                  name: {{ or (index $database "existingSecret") (printf "%s-database" (include "autoscout.fullname" .)) }}
+                  key: {{ or (index $database "existingSecretUsernameKey") "username" }}
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ or .Values.config.database.existingSecret (printf "%s-database" (include "autoscout.fullname" .)) }}
-                  key: {{ or .Values.config.database.existingSecretPasswordKey "password" }}
+                  name: {{ or (index $database "existingSecret") (printf "%s-database" (include "autoscout.fullname" .)) }}
+                  key: {{ or (index $database "existingSecretPasswordKey") "password" }}
             - name: AUTOSCOUT__DATABASE__CONNECT__KV__DBNAME
-              value: {{ .Values.config.database.dbname | quote }}
+              value: {{ (index $database "dbname" | default "") | quote }}
             {{- if .Values.config.metrics.enabled }}
             - name: AUTOSCOUT__METRICS__ENABLED
               value: 'true'
