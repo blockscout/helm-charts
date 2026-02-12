@@ -16,21 +16,19 @@ spec:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-frontend
   template:
-    {{- $frontendPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.frontend.podAnnotations | default dict) }}
-    {{- $frontendPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.frontend.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/frontend-secret.yaml") . | sha256sum }}
       {{- if eq .Values.frontend.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
-      {{- with $frontendPodAnnotations }}
+      {{- with (include "blockscout-stack.podAnnotations" (dict "root" . "component" .Values.frontend) | fromYaml) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-frontend
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
-      {{- with $frontendPodLabels }}
+      {{- with (include "blockscout-stack.podLabels" (dict "root" . "component" .Values.frontend) | fromYaml) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
