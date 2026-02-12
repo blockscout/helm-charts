@@ -20,16 +20,21 @@ spec:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout
   template:
+    {{- $blockscoutPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.blockscout.podAnnotations | default dict) }}
+    {{- $blockscoutPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.blockscout.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with $blockscoutPodAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-blockscout
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $blockscoutPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -279,16 +284,21 @@ spec:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
   template:
+    {{- $blockscoutPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.blockscout.podAnnotations | default dict) }}
+    {{- $blockscoutPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.blockscout.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with $blockscoutPodAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $blockscoutPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -465,16 +475,21 @@ spec:
     matchLabels:
       app: {{ .Release.Name }}-blockscout-resizer
   template:
+    {{- $blockscoutPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.blockscout.podAnnotations | default dict) }}
+    {{- $blockscoutPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.blockscout.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with $blockscoutPodAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ .Release.Name }}-blockscout-resizer
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $blockscoutPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

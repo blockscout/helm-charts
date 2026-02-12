@@ -11,6 +11,19 @@ metadata:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
   template:
+    {{- $blockscoutPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.blockscout.podAnnotations | default dict) }}
+    {{- $blockscoutPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.blockscout.podLabels | default dict) }}
+    metadata:
+      labels:
+        app: {{ include "blockscout-stack.fullname" . }}-blockscout-migrations
+        {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $blockscoutPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $blockscoutPodAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       securityContext:
         {{- toYaml .Values.blockscout.podSecurityContext | nindent 8 }}

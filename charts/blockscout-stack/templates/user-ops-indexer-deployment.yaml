@@ -16,15 +16,23 @@ spec:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
   template:
+    {{- $userOpsIndexerPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.userOpsIndexer.podAnnotations | default dict) }}
+    {{- $userOpsIndexerPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.userOpsIndexer.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/user-ops-indexer-secret.yaml") . | sha256sum }}
       {{- if eq .Values.userOpsIndexer.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
+      {{- with $userOpsIndexerPodAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $userOpsIndexerPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

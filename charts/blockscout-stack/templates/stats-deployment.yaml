@@ -16,18 +16,23 @@ spec:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-stats
   template:
+    {{- $statsPodAnnotations := mergeOverwrite (dict) (.Values.podAnnotations | default dict) (.Values.stats.podAnnotations | default dict) }}
+    {{- $statsPodLabels := mergeOverwrite (dict) (.Values.podLabels | default dict) (.Values.stats.podLabels | default dict) }}
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/stats-secret.yaml") . | sha256sum }}
       {{- if eq .Values.stats.image.pullPolicy "Always" }}
         releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       {{- end }}
-      {{- with .Values.stats.podAnnotations }}
+      {{- with $statsPodAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-stats
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with $statsPodLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
