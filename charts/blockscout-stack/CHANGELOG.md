@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.4.0
+
+### Feature
+
+- Add Basic Authentication support for frontend ingress. Supports two modes: referencing an existing Secret (`existingSecret`) or generating one from username/password in values
+
 ## 4.3.0
 
 ### Feature
