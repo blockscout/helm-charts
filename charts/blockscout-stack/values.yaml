@@ -129,7 +129,7 @@ blockscout:
   ## Blockscout ENV vars
   ## ref: https://docs.blockscout.com/setup/env-variables
   ##
-  env: []
+  env: {}
     # NAME: VALUE
   # Refer to an existing Secret/ConfigMap
   extraEnv: []
