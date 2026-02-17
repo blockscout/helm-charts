@@ -274,6 +274,25 @@ frontend:
     paths:
       - path: /
 
+    ## Basic authentication for frontend ingress (nginx ingress controller)
+    ## ref: https://kubernetes.github.io/ingress-nginx/examples/auth/basic/
+    ##
+    basicAuth:
+      enabled: false
+      ## Use an existing Secret containing key "auth" with htpasswd-formatted credentials.
+      ## Recommended for production / GitOps workflows.
+      existingSecret: ""
+      ## Override the generated Secret name (only used when existingSecret is empty).
+      ## Default: "<release>-frontend-basic-auth"
+      secretName: ""
+      ## Credentials for chart-generated Secret (only when existingSecret is empty).
+      ## WARNING: storing passwords in values.yaml exposes them to Git history and CI logs.
+      ## Use existingSecret or external secret management for production.
+      username: ""
+      password: ""
+    ## Authentication realm shown in the browser prompt
+      realm: "Authentication Required"
+
   resources:
     limits:
       memory: "1Gi"

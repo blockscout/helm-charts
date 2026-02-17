@@ -19,9 +19,24 @@ metadata:
   name: {{ $fullName }}-frontend-ingress
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- $annotations := dict }}
   {{- with .Values.frontend.ingress.annotations }}
+  {{- $annotations = merge $annotations . }}
+  {{- end }}
+  {{- if .Values.frontend.ingress.basicAuth.enabled }}
+  {{- $authSecretName := "" }}
+  {{- if .Values.frontend.ingress.basicAuth.existingSecret }}
+  {{- $authSecretName = .Values.frontend.ingress.basicAuth.existingSecret }}
+  {{- else }}
+  {{- $authSecretName = default (printf "%s-frontend-basic-auth" (include "blockscout-stack.fullname" .)) .Values.frontend.ingress.basicAuth.secretName }}
+  {{- end }}
+  {{- $_ := set $annotations "nginx.ingress.kubernetes.io/auth-type" "basic" }}
+  {{- $_ := set $annotations "nginx.ingress.kubernetes.io/auth-secret" $authSecretName }}
+  {{- $_ := set $annotations "nginx.ingress.kubernetes.io/auth-realm" (.Values.frontend.ingress.basicAuth.realm | default "Authentication Required") }}
+  {{- end }}
+  {{- if $annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- toYaml $annotations | nindent 4 }}
   {{- end }}
 spec:
   {{- if and .Values.frontend.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
