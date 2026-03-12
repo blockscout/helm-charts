@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.4.1
+
+### Fix
+
+- Fixing env and envFromSecret default type
+
 ## 4.4.0
 
 ### Feature

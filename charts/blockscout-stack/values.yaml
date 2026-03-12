@@ -129,7 +129,7 @@ blockscout:
   ## Blockscout ENV vars
   ## ref: https://docs.blockscout.com/setup/env-variables
   ##
-  env: []
+  env: {}
     # NAME: VALUE
   # Refer to an existing Secret/ConfigMap
   extraEnv: []
@@ -141,7 +141,7 @@ blockscout:
   ## Set ENV vars via secret, this can be useful for DB connection params, api keys, etc.
   ##
   # This will create a Secret with the specified data
-  envFromSecret: []
+  envFromSecret: {}
     # NAME: VALUE
   # Refer to an existing Secret/ConfigMap
   envFrom: []
@@ -321,7 +321,7 @@ frontend:
   ## Frontend ENV vars
   ## ref: https://github.com/blockscout/frontend/blob/main/docs/ENVS.md
   ##
-  env: []
+  env: {}
     # NAME: VALUE
   # Refer to an existing Secret/ConfigMap
   extraEnv: []
@@ -331,7 +331,7 @@ frontend:
     #       name: blockscout-frontend-secret
     #       key: FAVICON_GENERATOR_API_KEY
   # This will create a Secret with the specified data
-  envFromSecret: []
+  envFromSecret: {}
     # NAME: VALUE
   # Refer to an existing Secret/ConfigMap
   envFrom: []
@@ -417,9 +417,9 @@ stats:
       timeoutSeconds: 60
   ## Stats ENV vars
   ## ref: https://github.com/blockscout/blockscout-rs/tree/main/stats#env
-  env: []
+  env: {}
     # NAME: VALUE
-  envFromSecret: []
+  envFromSecret: {}
     # NAME: VALUE
   extraEnv: []
     # - name: STATS__DB_URL
@@ -498,9 +498,9 @@ userOpsIndexer:
       timeoutSeconds: 60
   ## Stats ENV vars
   ## ref: https://github.com/blockscout/blockscout-rs/tree/main/stats#env
-  env: []
+  env: {}
     # NAME: VALUE
-  envFromSecret: []
+  envFromSecret: {}
     # NAME: VALUE
   extraEnv: []
     # - name: USER_OPS_INDEXER__DATABASE__CONNECT__URL
