@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.4.2
+
+### Fix
+
+- Fixing batch prometheus alert
+
 ## 4.4.1
 
 ### Fix
