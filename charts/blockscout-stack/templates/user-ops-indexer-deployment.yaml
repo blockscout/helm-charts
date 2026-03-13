@@ -75,9 +75,16 @@ spec:
           {{- range .Values.userOpsIndexer.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
+          {{- if or .Values.userOpsIndexer.envFromSecret .Values.userOpsIndexer.envFrom }}
           envFrom:
+          {{- if .Values.userOpsIndexer.envFromSecret }}
             - secretRef:
                 name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-env
+          {{- end }}
+          {{- range .Values.userOpsIndexer.envFrom }}
+            - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
           {{- if .Values.userOpsIndexer.readinessProbe.enabled }}
           readinessProbe:
             httpGet:

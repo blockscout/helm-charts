@@ -71,9 +71,16 @@ spec:
           {{- range .Values.stats.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
           {{- end }}
+          {{- if or .Values.stats.envFromSecret .Values.stats.envFrom }}
           envFrom:
+          {{- if .Values.stats.envFromSecret }}
             - secretRef:
                 name: {{ include "blockscout-stack.fullname" . }}-stats-env
+          {{- end }}
+          {{- range .Values.stats.envFrom }}
+            - {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+          {{- end }}
           {{- if .Values.stats.files.enabled }}
           volumeMounts:
             {{- range $key, $value := .Values.stats.files.list }}
