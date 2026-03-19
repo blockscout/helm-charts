@@ -1,5 +1,12 @@
 # ChangeLog
 
+
+## 4.4.3
+
+### Fix
+
+- Fixing user-ops and stats secrets creation
+
 ## 4.4.2
 
 ### Fix
