@@ -3,6 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:
