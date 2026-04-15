@@ -1,0 +1,11 @@
+{{- if .Values.restartStuckSubgraphs.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "graph-node.fullname" . }}-restart-stuck-subgraphs
+  labels:
+    {{- include "graph-node.labels" . | nindent 4 }}
+data:
+  restart_subgraph.sh: |
+    {{- .Values.restartStuckSubgraphs.script | nindent 4 }}
+{{- end }}

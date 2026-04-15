@@ -1,0 +1,121 @@
+{{- if .Values.restartStuckSubgraphs.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "graph-node.fullname" . }}-restart-stuck-subgraphs
+  labels:
+    {{- include "graph-node.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.restartStuckSubgraphs.schedule | quote }}
+  concurrencyPolicy: {{ .Values.restartStuckSubgraphs.concurrencyPolicy | default "Forbid" }}
+  successfulJobsHistoryLimit: {{ .Values.restartStuckSubgraphs.successfulJobsHistoryLimit | default 3 }}
+  failedJobsHistoryLimit: {{ .Values.restartStuckSubgraphs.failedJobsHistoryLimit | default 3 }}
+  {{- with .Values.restartStuckSubgraphs.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ . }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      {{- with .Values.restartStuckSubgraphs.backoffLimit }}
+      backoffLimit: {{ . }}
+      {{- end }}
+      template:
+        metadata:
+          {{- with .Values.restartStuckSubgraphs.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- include "graph-node.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: restart-stuck-subgraphs
+        spec:
+          restartPolicy: {{ .Values.restartStuckSubgraphs.restartPolicy | default "OnFailure" }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "graph-node.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: graphman
+              securityContext:
+                {{- toYaml .Values.securityContext | nindent 16 }}
+              image: "{{ .Values.restartStuckSubgraphs.image.repository | default .Values.image.repository }}:{{ .Values.restartStuckSubgraphs.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.restartStuckSubgraphs.image.pullPolicy | default .Values.image.pullPolicy }}
+              command: ["/bin/bash", "/scripts/restart_subgraph.sh"]
+              args:
+                - "-y"
+                - "-t"
+                - {{ .Values.restartStuckSubgraphs.threshold | quote }}
+              env:
+                - name: GRAPH_NODE_CONFIG
+                  value: /app/config/graph-node.toml
+                - name: ipfs
+                  value: {{ .Values.config.ipfs | quote }}
+                - name: postgres_host
+                  value: {{ .Values.config.postgres.host | quote }}
+                - name: postgres_port
+                  value: {{ .Values.config.postgres.port | quote }}
+                - name: postgres_db
+                  value: {{ .Values.config.postgres.db | quote }}
+                - name: postgres_args
+                  value: {{ .Values.config.postgres.args | quote }}
+                {{- if not .Values.config.postgres.existingSecret }}
+                - name: postgres_user
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "graph-node.fullname" . }}-db
+                      key: username
+                - name: postgres_pass
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "graph-node.fullname" . }}-db
+                      key: password
+                {{- else }}
+                - name: postgres_user
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.config.postgres.existingSecret }}
+                      key: {{ .Values.config.postgres.existingSecretUsernameKey }}
+                - name: postgres_pass
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.config.postgres.existingSecret }}
+                      key: {{ .Values.config.postgres.existingSecretPasswordKey }}
+                {{- end }}
+                {{- range $key, $value := .Values.env }}
+                - name: {{ $key }}
+                  value: {{ $value | quote }}
+                {{- end }}
+                {{- range $key, $value := .Values.restartStuckSubgraphs.extraEnv }}
+                - name: {{ $key }}
+                  value: {{ $value | quote }}
+                {{- end }}
+              resources:
+                {{- toYaml .Values.restartStuckSubgraphs.resources | nindent 16 }}
+              volumeMounts:
+                - name: config
+                  mountPath: /app/config
+                - name: script
+                  mountPath: /scripts
+          volumes:
+            - name: config
+              configMap:
+                name: {{ include "graph-node.fullname" . }}-config
+            - name: script
+              configMap:
+                name: {{ include "graph-node.fullname" . }}-restart-stuck-subgraphs
+                defaultMode: 0755
+          {{- with .Values.restartStuckSubgraphs.nodeSelector | default .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.restartStuckSubgraphs.affinity | default .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.restartStuckSubgraphs.tolerations | default .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

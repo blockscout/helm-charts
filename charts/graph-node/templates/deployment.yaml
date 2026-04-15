@@ -45,6 +45,8 @@ spec:
             value: {{ .Values.config.postgres.port | quote }}
           - name: postgres_db
             value: {{ .Values.config.postgres.db | quote }}
+          - name: postgres_args
+            value: {{ .Values.config.postgres.args | quote }}
           {{- if not .Values.config.postgres.existingSecret }}
           - name: postgres_user
             valueFrom:
