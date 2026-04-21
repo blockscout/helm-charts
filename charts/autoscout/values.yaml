@@ -42,6 +42,7 @@ config:
       secret: ""
       audience: ""
   coinbase:
+    enabled: true
     api_key: ""
     webhook_secret: ""
   sendgrid:
