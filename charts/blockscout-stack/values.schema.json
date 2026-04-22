@@ -1,0 +1,2533 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "blockscout-stack Helm chart values",
+  "description": "Schema for validating blockscout-stack Helm chart values.yaml",
+  "type": "object",
+  "x-env-sources": {
+    "frontend": {
+      "version": "main",
+      "updatedAt": "2026-04-22"
+    }
+  },
+  "definitions": {
+    "resourceQuantity": {
+      "description": "Kubernetes resource quantity (e.g. 500m, 2, 4Gi)",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "resources": {
+      "type": "object",
+      "description": "Kubernetes resource requirements",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "$ref": "#/definitions/resourceQuantity"
+            },
+            "memory": {
+              "$ref": "#/definitions/resourceQuantity"
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "$ref": "#/definitions/resourceQuantity"
+            },
+            "memory": {
+              "$ref": "#/definitions/resourceQuantity"
+            }
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "description": "Container image configuration",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "description": "Container image repository"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Container image tag"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "description": "Image pull policy",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "description": "Health probe configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable the probe"
+        },
+        "path": {
+          "type": "string",
+          "description": "HTTP path for the probe"
+        },
+        "params": {
+          "type": "object",
+          "description": "Probe timing parameters",
+          "properties": {
+            "initialDelaySeconds": {
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "type": "integer"
+            },
+            "timeoutSeconds": {
+              "type": "integer"
+            },
+            "failureThreshold": {
+              "type": "integer"
+            },
+            "successThreshold": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "description": "Ingress configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable ingress"
+        },
+        "className": {
+          "type": "string",
+          "description": "Ingress class name"
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Ingress annotations",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Ingress hostname"
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "secretName": {
+              "type": "string"
+            }
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "pathType": {
+                "type": "string",
+                "enum": [
+                  "Prefix",
+                  "Exact",
+                  "ImplementationSpecific"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "envMap": {
+      "type": "object",
+      "description": "Environment variables as key-value pairs",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    "extraEnv": {
+      "type": "array",
+      "description": "Extra environment variables with valueFrom references",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "valueFrom": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "envFrom": {
+      "type": "array",
+      "description": "References to existing Secrets/ConfigMaps for env vars",
+      "items": {
+        "type": "object",
+        "properties": {
+          "secretRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "configMapRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "description": "Kubernetes Service configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Service type",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer",
+            "ExternalName"
+          ]
+        },
+        "port": {
+          "type": "integer",
+          "description": "Service port"
+        }
+      }
+    }
+  },
+  "properties": {
+    "nameOverride": {
+      "type": "string",
+      "description": "Override for app: labels"
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "description": "Override for full resource names"
+    },
+    "commonLabels": {
+      "type": "object",
+      "description": "Common labels to add to all resources",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "description": "Image pull secrets",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "description": "Blockscout stack configuration",
+      "properties": {
+        "network": {
+          "type": "object",
+          "description": "Network configuration",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Network/chain ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Network name"
+            },
+            "shortname": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Short network name"
+            },
+            "currency": {
+              "type": "object",
+              "description": "Native currency configuration",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Currency name"
+                },
+                "symbol": {
+                  "type": "string",
+                  "description": "Currency symbol"
+                },
+                "decimals": {
+                  "type": "integer",
+                  "description": "Currency decimals"
+                },
+                "dualToken": {
+                  "type": "boolean",
+                  "description": "Enable dual token model (e.g. Gnosis)"
+                }
+              }
+            }
+          }
+        },
+        "account": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable My Account feature"
+            }
+          }
+        },
+        "testnet": {
+          "type": "boolean",
+          "description": "Mark network as testnet"
+        },
+        "nameService": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable name service integration"
+            },
+            "url": {
+              "type": "string",
+              "description": "Name service URL"
+            }
+          }
+        },
+        "redirect": {
+          "type": "object",
+          "description": "Redirect from additional domains to frontend",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "hostnames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ingress": {
+              "type": "object",
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "annotations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "tls": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "prometheus": {
+          "type": "object",
+          "description": "Prometheus monitoring configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable Prometheus service monitors"
+            },
+            "ingressWhitelist": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "annotations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "blackbox": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "scrapeTimeout": {
+                  "type": "string"
+                },
+                "interval": {
+                  "type": "string"
+                },
+                "module": {
+                  "type": "string"
+                },
+                "extraLabels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "selector": {
+                  "type": "object",
+                  "properties": {
+                    "matchLabels": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "rules": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "healthyBlockPeriod": {
+                  "type": "integer",
+                  "description": "Seconds after which a block is considered stale"
+                },
+                "batchTimeMultiplier": {
+                  "type": "integer",
+                  "description": "Multiplier for average batch time to trigger alert"
+                },
+                "labels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "blockscout": {
+      "type": "object",
+      "description": "Blockscout backend configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable blockscout backend"
+        },
+        "replicaCount": {
+          "type": "integer",
+          "description": "Number of replicas",
+          "minimum": 1
+        },
+        "image": {
+          "$ref": "#/definitions/image"
+        },
+        "init": {
+          "type": "object",
+          "description": "Init container for DB migrations",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "command": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "releaseCookie": {
+          "type": "string",
+          "description": "Erlang release cookie for distributed nodes"
+        },
+        "separateApi": {
+          "type": "object",
+          "description": "Run API as a separate deployment",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "replicaCount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "resources": {
+              "$ref": "#/definitions/resources"
+            }
+          }
+        },
+        "nftStorage": {
+          "type": "object",
+          "description": "NFT media storage configuration (R2/S3)",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "bucketHost": {
+              "type": "string"
+            },
+            "accessKey": {
+              "type": "string"
+            },
+            "secretKey": {
+              "type": "string"
+            },
+            "bucketName": {
+              "type": "string"
+            },
+            "bucketUrl": {
+              "type": "string"
+            },
+            "ipfsGateway": {
+              "type": "string"
+            },
+            "workerConcurrency": {
+              "type": "integer"
+            },
+            "resources": {
+              "$ref": "#/definitions/resources"
+            }
+          }
+        },
+        "env": {
+          "$ref": "#/definitions/envMap"
+        },
+        "extraEnv": {
+          "$ref": "#/definitions/extraEnv"
+        },
+        "envFromSecret": {
+          "$ref": "#/definitions/envMap"
+        },
+        "envFrom": {
+          "$ref": "#/definitions/envFrom"
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "podAnnotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "podSecurityContext": {
+          "type": "object"
+        },
+        "securityContext": {
+          "type": "object"
+        },
+        "terminationGracePeriodSeconds": {
+          "type": "integer",
+          "description": "Grace period for pod termination"
+        },
+        "livenessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "readinessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "service": {
+          "$ref": "#/definitions/service"
+        },
+        "ingress": {
+          "$ref": "#/definitions/ingress"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "volumes": {
+          "type": "array",
+          "description": "Additional volumes"
+        },
+        "volumeMounts": {
+          "type": "array",
+          "description": "Additional volume mounts"
+        }
+      }
+    },
+    "frontend": {
+      "type": "object",
+      "description": "Blockscout frontend configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable blockscout frontend"
+        },
+        "image": {
+          "$ref": "#/definitions/image"
+        },
+        "replicaCount": {
+          "type": "integer",
+          "description": "Number of replicas",
+          "minimum": 1
+        },
+        "podAnnotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "podSecurityContext": {
+          "type": "object"
+        },
+        "securityContext": {
+          "type": "object"
+        },
+        "service": {
+          "$ref": "#/definitions/service"
+        },
+        "ingress": {
+          "type": "object",
+          "description": "Frontend ingress with optional basic auth",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "className": {
+              "type": "string"
+            },
+            "annotations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "hostname": {
+              "type": "string"
+            },
+            "tls": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "pathType": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "basicAuth": {
+              "type": "object",
+              "description": "Basic authentication for nginx ingress",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "existingSecret": {
+                  "type": "string",
+                  "description": "Use an existing Secret with htpasswd credentials"
+                },
+                "secretName": {
+                  "type": "string",
+                  "description": "Override generated Secret name"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "realm": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "livenessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "readinessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "env": {
+          "$ref": "#/definitions/envMap",
+          "type": "object",
+          "additionalProperties": {},
+          "properties": {
+            "FAVICON_GENERATOR_API_KEY": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: We don't use RealFaviconGenerator anymore] RealFaviconGenerator [API key](https://realfavicongenerator.net/api/)",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            },
+            "FAVICON_MASTER_URL": {
+              "type": "string",
+              "description": "-",
+              "default": "NEXT_PUBLIC_NETWORK_ICON",
+              "examples": [
+                "https://placekitten.com/180/180"
+              ]
+            },
+            "NEXT_PUBLIC_ACCOUNT_API_KEYS_BUTTON": {
+              "type": "string",
+              "description": "string`",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_ACCOUNT_AUTH_PROVIDER": {
+              "type": "string",
+              "description": "dynamic`",
+              "examples": [
+                "auth0"
+              ]
+            },
+            "NEXT_PUBLIC_ACCOUNT_DYNAMIC_ENVIRONMENT_ID": {
+              "type": "string",
+              "description": "Environment ID of the Dynamic project.",
+              "examples": [
+                "<your-secret>"
+              ]
+            },
+            "NEXT_PUBLIC_ADDRESS_3RD_PARTY_WIDGETS": {
+              "type": "string",
+              "description": "Array of widget ids to be displayed",
+              "examples": [
+                "['widget-1', 'widget-2']"
+              ]
+            },
+            "NEXT_PUBLIC_ADDRESS_3RD_PARTY_WIDGETS_CONFIG_URL": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) which contains mapping of widget names to their configuration. See [below](#address-3rd-party-widget-configuration-properties) list of available properties for a widget.",
+              "examples": [
+                "https://example.com/address_3rd_party_widgets_config.json"
+              ]
+            },
+            "NEXT_PUBLIC_ADDRESS_USERNAME_TAG": {
+              "type": "string",
+              "description": "Address profile API tag configuration properties. See [below](#user-profile-api-configuration-properties).",
+              "examples": [
+                "uniswap"
+              ]
+            },
+            "NEXT_PUBLIC_ADMIN_SERVICE_API_HOST": {
+              "type": "string",
+              "description": "Admin Service API endpoint url",
+              "examples": [
+                "https://admin-rs.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_ADVANCED_FILTER_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable \"Advanced filter\" page in the app",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_AD_ADBUTLER_CONFIG_DESKTOP": {
+              "type": "string",
+              "description": "Placement config for desktop Adbutler banner",
+              "examples": [
+                "{'id':'123456','width':'728','height':'90'}"
+              ]
+            },
+            "NEXT_PUBLIC_AD_ADBUTLER_CONFIG_MOBILE": {
+              "type": "string",
+              "description": "Placement config for mobile Adbutler banner",
+              "examples": [
+                "{'id':'654321','width':'300','height':'100'}"
+              ]
+            },
+            "NEXT_PUBLIC_AD_BANNER_ADDITIONAL_PROVIDER": {
+              "type": "string",
+              "description": "Additional ads provider to mix with the main one",
+              "examples": [
+                "adbutler"
+              ]
+            },
+            "NEXT_PUBLIC_AD_BANNER_ENABLE_SPECIFY": {
+              "type": "string",
+              "description": "Enables Specify ads in addition to the main ad banner provider",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_AD_BANNER_PROVIDER": {
+              "type": "string",
+              "description": "`adbutler` \\",
+              "default": "none",
+              "examples": [
+                "Ads provider"
+              ]
+            },
+            "NEXT_PUBLIC_AD_TEXT_PROVIDER": {
+              "type": "string",
+              "description": "`none`",
+              "examples": [
+                "coinzilla"
+              ]
+            },
+            "NEXT_PUBLIC_API_BASE_PATH": {
+              "type": "string",
+              "description": "Base path for Main API endpoint url",
+              "examples": [
+                "/poa/core"
+              ]
+            },
+            "NEXT_PUBLIC_API_DOCS_ALERT_MESSAGE": {
+              "type": "string",
+              "description": "Used for displaying custom alerts on the API documentation page. Could be a regular string or a HTML code.",
+              "examples": [
+                "Hello world! 🤪"
+              ]
+            },
+            "NEXT_PUBLIC_API_DOCS_TABS": {
+              "type": "string",
+              "description": "Controls which tabs appear on the API documentation page. Possible values for `TabId` are `rest_api`, `eth_rpc_api`, `rpc_api`, and `graphql_api`. **Note** that this variable has a default value, so the feature is enabled by default. Pass an empty array to disable it.",
+              "default": "['rest_api','eth_rpc_api','rpc_api','graphql_api']",
+              "examples": [
+                "[]"
+              ]
+            },
+            "NEXT_PUBLIC_API_HOST": {
+              "type": "string",
+              "description": "Main API host",
+              "examples": [
+                "blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_API_KEYS_ALERT_MESSAGE": {
+              "type": "string",
+              "description": "Used for displaying custom alerts on the API keys page. Could be a regular string or a HTML code.",
+              "examples": [
+                "Hello world! 🤪"
+              ]
+            },
+            "NEXT_PUBLIC_API_PORT": {
+              "type": "string",
+              "description": "Port where API is running on the host",
+              "examples": [
+                "3001"
+              ]
+            },
+            "NEXT_PUBLIC_API_PROTOCOL": {
+              "type": "string",
+              "description": "https`",
+              "examples": [
+                "https"
+              ]
+            },
+            "NEXT_PUBLIC_API_SPEC_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: The URL is now constructed automatically based on the configuration received from the API.] Spec of Blockscout core API to be displayed on the page.",
+              "default": "https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml",
+              "examples": [
+                "https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL": {
+              "type": "string",
+              "description": "wss`",
+              "examples": [
+                "wss"
+              ]
+            },
+            "NEXT_PUBLIC_APP_ENV": {
+              "type": "string",
+              "description": "App env (e.g development, staging, production, etc.).",
+              "default": "production",
+              "examples": [
+                "staging"
+              ]
+            },
+            "NEXT_PUBLIC_APP_HOST": {
+              "type": "string",
+              "description": "App host",
+              "examples": [
+                "blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_APP_INSTANCE": {
+              "type": "string",
+              "description": "Name of app instance. Used for app monitoring purposes. If not provided, it will be constructed from `NEXT_PUBLIC_APP_HOST`",
+              "examples": [
+                "wonderful_kepler"
+              ]
+            },
+            "NEXT_PUBLIC_APP_PORT": {
+              "type": "string",
+              "description": "Port where app is running",
+              "default": "3000",
+              "examples": [
+                "3001"
+              ]
+            },
+            "NEXT_PUBLIC_APP_PROTOCOL": {
+              "type": "string",
+              "description": "https`",
+              "examples": [
+                "https"
+              ]
+            },
+            "NEXT_PUBLIC_AUTH0_CLIENT_ID": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Variable is no longer required] Client id for [Auth0](https://auth0.com/) provider",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_AUTH_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Variable is no longer required] Account auth base url; it is used for building login URL (`${ NEXT_PUBLIC_AUTH_URL }/auth/auth0`) and logout return URL (`${ NEXT_PUBLIC_AUTH_URL }/auth/logout`); if not provided the base app URL will be used instead",
+              "examples": [
+                "https://blockscout.com"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_BEACON_CHAIN_CURRENCY_SYMBOL": {
+              "type": "string",
+              "description": "Beacon network currency symbol",
+              "default": "NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL",
+              "examples": [
+                "ETH"
+              ]
+            },
+            "NEXT_PUBLIC_BEACON_CHAIN_VALIDATOR_URL_TEMPLATE": {
+              "type": "string",
+              "description": "Url template to build a link to validator. Should contain `{pk}` string that will be replaced with the validator's public key",
+              "examples": [
+                "https://example.com/beacon/{pk}/validator"
+              ]
+            },
+            "NEXT_PUBLIC_BEACON_CHAIN_WITHDRAWALS_ONLY": {
+              "type": "string",
+              "description": "Set to true for networks that have only withdrawals (no deposits)",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_BRIDGED_TOKENS_BRIDGES": {
+              "type": "string",
+              "description": "Used for displaying text about bridges types on the tokens page.",
+              "examples": [
+                "[{'type':'omni','title':'OmniBridge','short_title':'OMNI'}]"
+              ]
+            },
+            "NEXT_PUBLIC_BRIDGED_TOKENS_CHAINS": {
+              "type": "string",
+              "description": "Used for displaying filter by the chain from which token where bridged. Also, used for creating links to original tokens in other explorers.",
+              "examples": [
+                "[{'id':'1','title':'Ethereum','short_title':'ETH','base_url':'https://eth.blockscout.com/token'}]"
+              ]
+            },
+            "NEXT_PUBLIC_CELO_ENABLED": {
+              "type": "string",
+              "description": "Indicates that it is a Celo-based chain.",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_CELO_L2_UPGRADE_BLOCK": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Removed; configuration done on the API side] Indicates the block number when the Celo-type chain transitioned to L2. This is used to display links to the Epoch block page from a regular block page.",
+              "examples": [
+                "26369280"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_CLUSTERS_API_HOST": {
+              "type": "string",
+              "description": "Clusters.xyz API endpoint for fetching cluster data, directory listings, and cross-chain address mappings",
+              "examples": [
+                "https://example.com/clusters-api"
+              ]
+            },
+            "NEXT_PUBLIC_CLUSTERS_CDN_URL": {
+              "type": "string",
+              "description": "CDN base URL for serving cluster profile images and avatars displayed in search results and cluster pages",
+              "default": "https://cdn.clusters.xyz",
+              "examples": [
+                "https://your-cdn.example.com"
+              ]
+            },
+            "NEXT_PUBLIC_COLOR_THEME_DEFAULT": {
+              "type": "string",
+              "description": "'dim' \\",
+              "default": "'dark'",
+              "examples": [
+                "Preferred color theme of the app"
+              ]
+            },
+            "NEXT_PUBLIC_COLOR_THEME_OVERRIDES": {
+              "type": "string",
+              "description": "Color overrides for the default theme; pass a JSON-like string that represents a subset of the `DEFAULT_THEME_COLORS` object (see `toolkit/theme/foundations/colors.ts`) to customize the app's main colors. See [here](https://www.figma.com/design/4In0X8UADoZaTfZ34HaZ3K/Blockscout-design-system?node-id=29124-23813&t=XOv4ahHUSsTDlNkN-4) the Figma worksheet with description of available color tokens.",
+              "examples": [
+                "{'text':{'primary':{'_light':{'value':'rgba(16,17,18,0.80)'},'_dark':{'value':'rgba(222,217,217)'}}}}"
+              ]
+            },
+            "NEXT_PUBLIC_CONTRACT_CODE_IDES": {
+              "type": "string",
+              "description": "Used to build up links to IDEs with contract source code.",
+              "examples": [
+                "[{'title':'Remix IDE','url':'https://remix.blockscout.com/?address={hash}&blockscout={domain}','icon_url':'https://example.com/icon.svg'}]"
+              ]
+            },
+            "NEXT_PUBLIC_CONTRACT_INFO_API_HOST": {
+              "type": "string",
+              "description": "Contract Info API endpoint url",
+              "examples": [
+                "https://contracts-info.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_CROSS_CHAIN_TXS_ENABLED": {
+              "type": "string",
+              "description": "The flag that enables the feature",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_DATA_AVAILABILITY_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable blob transactions views.",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS": {
+              "type": "string",
+              "description": "An array of dropdown items containing the button text, icon name and dappId in Dappscout or an external url",
+              "examples": [
+                "[{'text':'Swap','icon':'swap','dappId':'swap','isEssentialDapp':true},{'text':'Payment link','icon':'payment_link','dappId':'peanut-protocol'}]"
+              ]
+            },
+            "NEXT_PUBLIC_DEX_POOLS_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable the feature",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_FAULT_PROOF_ENABLED": {
+              "type": "string",
+              "description": "Set to `true` for chains with fault proof system enabled (Optimistic stack only)",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_FAVICON_GENERATOR_API_KEY": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced FAVICON_GENERATOR_API_KEY] RealFaviconGenerator [API key](https://realfavicongenerator.net/api/)",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_FEATURED_NETWORKS": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) or file content string representation. It contains list of featured networks that will be shown in the network menu. See [below](#featured-network-configuration-properties) list of available properties for particular network",
+              "examples": [
+                "https://example.com/featured_networks_config.json` \\"
+              ]
+            },
+            "NEXT_PUBLIC_FEATURED_NETWORKS_ALL_LINK": {
+              "type": "string",
+              "description": "Link to the all chains resource. Will be displayed at the bottom of featured networks list.",
+              "examples": [
+                "https://example.com"
+              ]
+            },
+            "NEXT_PUBLIC_FEATURED_NETWORKS_MODE": {
+              "type": "string",
+              "description": "list`",
+              "default": "Works only if NEXT_PUBLIC_FEATURED_NETWORKS is set",
+              "examples": [
+                "list"
+              ]
+            },
+            "NEXT_PUBLIC_FLASHBLOCKS_SOCKET_URL": {
+              "type": "string",
+              "description": "Public WebSocket endpoint to stream Flashblocks data",
+              "examples": [
+                "wss://mainnet.flashblocks.base.org/ws"
+              ]
+            },
+            "NEXT_PUBLIC_FONT_FAMILY_BODY": {
+              "type": "string",
+              "description": "Main typeface to use in page content elements.",
+              "examples": [
+                "{'name':'Raleway','url':'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap'}"
+              ]
+            },
+            "NEXT_PUBLIC_FONT_FAMILY_HEADING": {
+              "type": "string",
+              "description": "Special typeface to use in page headings (`<h1>`, `<h2>`, etc.)",
+              "examples": [
+                "{'name':'Montserrat','url':'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap'}"
+              ]
+            },
+            "NEXT_PUBLIC_FOOTER_LINKS": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) or file content string representation. It contains list of link groups to be displayed in the footer. See [below](#footer-links-configuration-properties) list of available properties for particular group",
+              "examples": [
+                "https://example.com/footer_links_config.json` \\"
+              ]
+            },
+            "NEXT_PUBLIC_GAME_BADGE_CLAIM_LINK": {
+              "type": "string",
+              "description": "Provide to enable the easter egg badge feature",
+              "examples": [
+                "https://example.com"
+              ]
+            },
+            "NEXT_PUBLIC_GAS_REFUEL_PROVIDER_CONFIG": {
+              "type": "string",
+              "description": "Get gas button config. See [below](#get-gas-button-configuration-properties)",
+              "examples": [
+                "{ name: 'Need gas?', dapp_id: 'smol-refuel', url_template: 'https://smolrefuel.com/?outboundChain={chainId}', logo: 'https://example.com/icon.png' }"
+              ]
+            },
+            "NEXT_PUBLIC_GAS_TRACKER_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable \"Gas tracker\" in the app",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_GAS_TRACKER_UNITS": {
+              "type": "string",
+              "description": "`gwei`>",
+              "examples": [
+                "For testnets: `[ 'gwei' ]`, for mainnets: `[ 'usd', 'gwei' ]"
+              ]
+            },
+            "NEXT_PUBLIC_GOOGLE_ANALYTICS_PROPERTY_ID": {
+              "type": "string",
+              "description": "Property ID for [Google Analytics](https://analytics.google.com/) service",
+              "examples": [
+                "UA-XXXXXX-X"
+              ]
+            },
+            "NEXT_PUBLIC_GRAPHIQL_TRANSACTION": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Removed, as the latest transaction hash has now being obtained from the API.] Txn hash for default query at GraphQl API.",
+              "examples": [
+                "0x4a0ed8ddf751a7cb5297f827699117b0f6d21a0b2907594d300dc9fed75c7e62"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_GROWTH_BOOK_CLIENT_KEY": {
+              "type": "string",
+              "description": "Client SDK key for [GrowthBook](https://www.growthbook.io/) service",
+              "examples": [
+                "<your-secret>"
+              ]
+            },
+            "NEXT_PUBLIC_HAS_BEACON_CHAIN": {
+              "type": "string",
+              "description": "Set to true for networks with the beacon chain",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HAS_CONTRACT_AUDIT_REPORTS": {
+              "type": "string",
+              "description": "Set to `true` to enable Submit Audit form on the contract page",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HAS_MUD_FRAMEWORK": {
+              "type": "string",
+              "description": "Set to `true` for instances that use MUD framework (Optimistic stack only)",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HAS_USER_OPS": {
+              "type": "string",
+              "description": "Set to true to show user operations related data and pages",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HELIA_VERIFIED_FETCH_ENABLED": {
+              "type": "string",
+              "description": "Indicates that the [Helia verified fetch](https://github.com/ipfs/helia-verified-fetch/tree/main/packages/verified-fetch) should be used for retrieving content of NFT assets (currently limited to images) directly from IPFS network using trustless gateways.",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_HIDE_INDEXING_ALERT_BLOCKS": {
+              "type": "string",
+              "description": "Set to `true` to hide indexing alert in the page header about indexing chain's blocks",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HIDE_INDEXING_ALERT_INT_TXS": {
+              "type": "string",
+              "description": "Set to `true` to hide indexing alert in the page footer about indexing block's internal transactions",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HIDE_NATIVE_COIN_PRICE": {
+              "type": "string",
+              "description": "Set to `true` to hide the native coin price in the top bar",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_HOMEPAGE_CHARTS": {
+              "type": "string",
+              "description": "'daily_operational_txs' \\",
+              "default": "'secondary_coin_price' \\",
+              "examples": [
+                "'market_cap' \\"
+              ]
+            },
+            "NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG": {
+              "type": "string",
+              "description": "Configuration of hero banner appearance.",
+              "examples": [
+                "See [below](#hero-banner-configuration-properties)"
+              ]
+            },
+            "NEXT_PUBLIC_HOMEPAGE_HIGHLIGHTS_CONFIG": {
+              "type": "string",
+              "description": "URL of the file (in `.json` format only) that contains the configuration for banners on the application's homepage, showcasing some of its key functionality. See the full config format [below](#highlights-banner-configuration-properties). The config should contain at least 2 banners, but only 3 banners will be visible at the same time. A larger number of banners in the config allows for random banner rotation upon page load.",
+              "examples": [
+                "See [below](#highlights-banner-configuration-properties)"
+              ]
+            },
+            "NEXT_PUBLIC_HOMEPAGE_PLATE_BACKGROUND": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: v2.4.0+] Background css value for hero plate on the homepage (escape \"#\" symbol if you use HEX color codes or use rgba-value instead).",
+              "default": "radial-gradient(103.03% 103.03% at 0% 0%, rgba(183, 148, 244, 0.8) 0%, rgba(0, 163, 196, 0.8) 100%), var(--chakra-colors-blue-400)",
+              "examples": [
+                "radial-gradient(at 15% 86%, hsla(350,65%,70%,1) 0px, transparent 50%)` \\"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_HOMEPAGE_PLATE_TEXT_COLOR": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG] Text color of the hero plate on the homepage (escape \"#\" symbol if you use HEX color codes or use rgba-value instead).",
+              "default": "white",
+              "examples": [
+                "\\#DCFE76"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_HOMEPAGE_SHOW_AVG_BLOCK_TIME": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_HOMEPAGE_STATS] Set to false if average block time is useless for the network",
+              "default": "true",
+              "examples": [
+                "false"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_HOMEPAGE_SHOW_GAS_TRACKER": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_GAS_TRACKER_ENABLED] Set to false if network doesn't have gas tracker",
+              "default": "true",
+              "examples": [
+                "false"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_HOMEPAGE_STATS": {
+              "type": "string",
+              "description": "'total_blocks'  \\",
+              "default": "'total_txs' \\",
+              "examples": [
+                "'total_operational_txs' \\"
+              ]
+            },
+            "NEXT_PUBLIC_HOT_CONTRACTS_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable the feature",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_INTERCHAIN_INDEXER_API_HOST": {
+              "type": "string",
+              "description": "Interchain indexer API service host used to fetch cross-chain transaction data and metadata",
+              "examples": [
+                "https://interchain-indexer.k8s-dev.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_INTEROP_ENABLED": {
+              "type": "string",
+              "description": "Enables \"Interop messages\" page (Optimistic stack only)",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_IS_ACCOUNT_SUPPORTED": {
+              "type": "string",
+              "description": "Set to true if network has account feature",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_IS_OPTIMISTIC_L2_NETWORK": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_ROLLUP_TYPE] Set to true for optimistic L2 solutions",
+              "examples": [
+                "true"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_IS_SUAVE_CHAIN": {
+              "type": "string",
+              "description": "Set to true for blockchains with [SUAVE architecture](https://writings.flashbots.net/mevm-suave-centauri-and-beyond)",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_IS_TESTNET": {
+              "type": "string",
+              "description": "Set to true if network is testnet",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_IS_ZKEVM_L2_NETWORK": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_ROLLUP_TYPE] Set to true for zkevm L2 solutions",
+              "examples": [
+                "true"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_L1_BASE_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Renamed to NEXT_PUBLIC_ROLLUP_L1_BASE_URL] Blockscout base URL for L1 network",
+              "examples": [
+                "'http://eth-goerli.blockscout.com'"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_LOGOUT_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Variable is no longer required] Account logout url. Required if account is supported for the app instance.",
+              "examples": [
+                "https://blockscoutcom.us.auth0.com/v2/logout"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE": {
+              "type": "string",
+              "description": "Array<string>`"
+            },
+            "NEXT_PUBLIC_MARKETPLACE_BANNER_CONTENT_URL": {
+              "type": "string",
+              "description": "URL of the banner HTML content",
+              "examples": [
+                "https://example.com/banner"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_BANNER_LINK_URL": {
+              "type": "string",
+              "description": "URL of the page the banner leads to",
+              "examples": [
+                "https://example.com"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_CATEGORIES_URL": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) which contains the list of categories to be displayed on the marketplace page in the specified order. If no URL is provided, then the list of categories will be compiled based on the `categories` fields from the marketplace (apps) configuration file",
+              "examples": [
+                "https://example.com/marketplace_categories.json"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_CONFIG_URL": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) which contains list of apps that will be shown on the marketplace page. See [below](#marketplace-app-configuration-properties) list of available properties for an app. Can be replaced with NEXT_PUBLIC_ADMIN_SERVICE_API_HOST",
+              "examples": [
+                "https://example.com/marketplace_config.json"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_ENABLED": {
+              "type": "string",
+              "description": "`true` means that the marketplace page will be enabled",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_ESSENTIAL_DAPPS_AD_ENABLED": {
+              "type": "string",
+              "description": "The flag enables ad in essential dapps. *Feature is enabled by default; pass `false` to disable it.*",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_ESSENTIAL_DAPPS_CONFIG": {
+              "type": "string",
+              "description": "Configuration of the essential dapps to be displayed on the Marketplace page",
+              "examples": [
+                "{'swap': {'chains': ['1', '10', '100', '11155111'], 'fee': '0.004', 'integrator': 'blockscout'}}"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_FEATURED_APP": {
+              "type": "string",
+              "description": "ID of the featured application to be displayed on the banner on the Marketplace page",
+              "examples": [
+                "uniswap"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_GRAPH_LINKS_URL": {
+              "type": "string",
+              "description": "URL of the file (`.json` format only) which contains the list of The Graph links to be displayed on the Marketplace page",
+              "examples": [
+                "https://example.com/graph_links.json"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_RATING_AIRTABLE_API_KEY": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Removed; now the ratings come from the API] Airtable API key for dapp ratings",
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_MARKETPLACE_RATING_AIRTABLE_BASE_ID": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Removed; now the ratings come from the API] Airtable base ID with dapp ratings",
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_MARKETPLACE_SECURITY_REPORTS_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Removed; we don't support this feature anymore] URL of configuration file (`.json` format only) which contains app security reports for displaying security scores on the Marketplace page",
+              "examples": [
+                "https://example.com/marketplace_security_reports.json"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_MARKETPLACE_SUBMIT_FORM": {
+              "type": "string",
+              "description": "Link to form where authors can submit their dapps to the marketplace",
+              "examples": [
+                "https://airtable.com/shrqUAcjgGJ4jU88C"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_SUGGEST_IDEAS_FORM": {
+              "type": "string",
+              "description": "Link to form where users can suggest ideas for the marketplace",
+              "examples": [
+                "https://airtable.com/appiy5yijZpMMSKjT/pag3t82DUCyhGRZZO/form"
+              ]
+            },
+            "NEXT_PUBLIC_MARKETPLACE_TITLES": {
+              "type": "string",
+              "description": "Used to override default titles of the Marketplace and dapps",
+              "default": "{ 'entity_name': 'Dapp', 'menu_item': 'Dapps', 'title': 'Dappscout', 'subtitle_essential_dapps': 'Essential dapps', 'subtitle_list': 'Explore dapps' }",
+              "examples": [
+                "{ 'entity_name': 'App', 'menu_item': 'Apps', 'title': 'Marketplace', 'subtitle_essential_dapps': 'Essential apps', 'subtitle_list': 'Explore apps' }"
+              ]
+            },
+            "NEXT_PUBLIC_MAX_CONTENT_WIDTH_ENABLED": {
+              "type": "string",
+              "description": "Set to `true` to restrict the page content width on extra-large screens.",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_MEGA_ETH_SOCKET_URL_METRICS": {
+              "type": "string",
+              "description": "Public WebSocket endpoint for streaming statistics data, used to display information on the uptime dashboard page.",
+              "examples": [
+                "wss://testnet-dashboard.megaeth.com/metrics"
+              ]
+            },
+            "NEXT_PUBLIC_MEGA_ETH_SOCKET_URL_RPC": {
+              "type": "string",
+              "description": "Public WebSocket endpoint for streaming RPC node data, including mini-block data.",
+              "examples": [
+                "wss://carrot.megaeth.com/mafia/ws"
+              ]
+            },
+            "NEXT_PUBLIC_METADATA_ADDRESS_TAGS_UPDATE_ENABLED": {
+              "type": "string",
+              "description": "Enables requests to the Metadata Service to schedule an update for address tags after the user visits the address page in the app.",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_METADATA_SERVICE_API_HOST": {
+              "type": "string",
+              "description": "Metadata Service API endpoint url",
+              "examples": [
+                "https://metadata.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_METASUITES_ENABLED": {
+              "type": "string",
+              "description": "Set to true to enable integration",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_MIXPANEL_CONFIG_OVERRIDES": {
+              "type": "string",
+              "description": "Pass a JSON-like string that represents a subset of the [Mixpanel SDK configuration](https://docs.mixpanel.com/docs/tracking-methods/sdks/javascript#library-configuration) to override the project's default properties.",
+              "examples": [
+                "{\"record_sessions_percent\": 0.5}"
+              ]
+            },
+            "NEXT_PUBLIC_MIXPANEL_PROJECT_TOKEN": {
+              "type": "string",
+              "description": "Project token for [Mixpanel](https://mixpanel.com/) analytics service",
+              "examples": [
+                "<your-secret>"
+              ]
+            },
+            "NEXT_PUBLIC_MULTICHAIN_AGGREGATOR_API_HOST": {
+              "type": "string",
+              "description": "Multichain aggregator API service host",
+              "examples": [
+                "https://multichain-aggregator.k8s-dev.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_MULTICHAIN_BALANCE_PROVIDER_CONFIG": {
+              "type": "string",
+              "description": "Multichain portfolio application config See [below](#multichain-button-configuration-properties)",
+              "examples": [
+                "[{ name: 'zerion', url_template: 'https://app.zerion.io/{address}/overview', logo: 'https://example.com/icon.svg'}]"
+              ]
+            },
+            "NEXT_PUBLIC_MULTICHAIN_CLUSTER": {
+              "type": "string",
+              "description": "Chain's cluster name; used to construct the full URL for requests to the aggregator API service",
+              "examples": [
+                "interop"
+              ]
+            },
+            "NEXT_PUBLIC_MULTICHAIN_ENABLED": {
+              "type": "string",
+              "description": "The flag that enables the feature",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_MULTICHAIN_STATS_API_HOST": {
+              "type": "string",
+              "description": "Multichain statistics API service host",
+              "examples": [
+                "http://multichain-search-stats.k8s-dev.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_NAME_SERVICE_API_HOST": {
+              "type": "string",
+              "description": "Name Service API endpoint url",
+              "examples": [
+                "https://bens.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_NAME_SERVICE_PROTOCOLS": {
+              "type": "string",
+              "description": "List of the protocols used by the chain. The protocol ids can be obtained from [/api/v1/protocols](https://bens.services.blockscout.com/api/v1/protocols) resource.",
+              "default": "['ens']",
+              "examples": [
+                "['rns']"
+              ]
+            },
+            "NEXT_PUBLIC_NAVIGATION_HIDDEN_LINKS": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Use NEXT_PUBLIC_API_DOCS_TABS instead to hide tabs on the API docs page.] List of external links hidden in the navigation. Supported ids are `eth_rpc_api`, `rpc_api`",
+              "examples": [
+                "['eth_rpc_api']"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_NAVIGATION_HIGHLIGHTED_ROUTES": {
+              "type": "string",
+              "description": "List of menu item routes that should have a lightning label",
+              "examples": [
+                "['/accounts']"
+              ]
+            },
+            "NEXT_PUBLIC_NAVIGATION_LAYOUT": {
+              "type": "string",
+              "description": "horizontal`",
+              "examples": [
+                "vertical"
+              ]
+            },
+            "NEXT_PUBLIC_NAVIGATION_PROMO_BANNER_CONFIG": {
+              "type": "string",
+              "description": "Configuration of promo banner in the navigation menu. See [below](#navigation-promo-banner-configuration-properties) list of available properties for particular banner type",
+              "examples": [
+                "{'img_url': 'https://example.com/promo.svg', 'text': 'Promo text', 'bg_color': {'light': 'rgb(250, 245, 255)', 'dark': 'rgb(68, 51, 122)'}, 'text_color': {'light': 'rgb(107, 70, 193)', 'dark': 'rgb(233, 216, 253)'}, 'link_url': 'https://example.com'}"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_ADDITIONAL_TOKEN_TYPES": {
+              "type": "string",
+              "description": "List of additional **ERC-20-like (fungible)** token types supported by the explorer UI (extends token type filters/labels). *Note: the token type id must also be supported by the backend API responses and filters.*",
+              "default": "[]",
+              "examples": [
+                "'[{\"id\":\"ERC-777\",\"name\":\"ERC-777\"}]'"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_CURRENCY_DECIMALS": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "default": "18",
+              "examples": [
+                "6"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_CURRENCY_GWEI_NAME": {
+              "type": "string",
+              "description": "Name of the giga-unit of the native currency (e.g., 'gwei' for Ethereum, where 1 gwei = 10^9 of the smallest unit). Used for displaying gas prices in a more readable format throughout the UI.",
+              "default": "gwei",
+              "examples": [
+                "gDuck"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_CURRENCY_NAME": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "examples": [
+                "Ether"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "examples": [
+                "ETH"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_CURRENCY_WEI_NAME": {
+              "type": "string",
+              "description": "Name of the smallest unit of the native currency (e.g., 'wei' for Ethereum, where 1 ETH = 10^18 wei). Used for displaying gas prices and transaction fees in the smallest denomination.",
+              "default": "wei",
+              "examples": [
+                "duck"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_EXPLORERS": {
+              "type": "string",
+              "description": "Used to build up links to transactions, blocks, addresses in other chain explorers.",
+              "examples": [
+                "[{'title':'Anyblock','baseUrl':'https://explorer.anyblock.tools','paths':{'tx':'/ethereum/poa/core/tx'}}]"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_GOVERNANCE_TOKEN_SYMBOL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_NETWORK_SECONDARY_COIN_SYMBOL] Network governance token symbol",
+              "examples": [
+                "GNO"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_NETWORK_ICON": {
+              "type": "string",
+              "description": "Network icon; used as a replacement for regular network logo when nav bar is collapsed; if not provided, placeholder will be shown; *Note* the icon size should be at least 60px by 60px",
+              "examples": [
+                "https://placekitten.com/60/60"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_ICON_DARK": {
+              "type": "string",
+              "description": "Network icon for dark color mode; if not provided, **inverted** regular icon will be used instead",
+              "examples": [
+                "https://placekitten.com/60/60"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_ID": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "examples": [
+                "99"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_LOGO": {
+              "type": "string",
+              "description": "Network logo; if not provided, placeholder will be shown; *Note* the logo height should be 24px and width less than 120px",
+              "examples": [
+                "https://placekitten.com/240/40"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_LOGO_DARK": {
+              "type": "string",
+              "description": "Network logo for dark color mode; if not provided, **inverted** regular logo will be used instead",
+              "examples": [
+                "https://placekitten.com/240/40"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_MULTIPLE_GAS_CURRENCIES": {
+              "type": "string",
+              "description": "Set to `true` for networks where users can pay transaction fees in either the native coin or ERC-20 tokens.",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_NAME": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "examples": [
+                "Gnosis Chain"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_RPC_URL": {
+              "type": "string",
+              "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+              "examples": [
+                "https://core.poa.network"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_SECONDARY_COIN_SYMBOL": {
+              "type": "string",
+              "description": "Network secondary coin symbol.",
+              "examples": [
+                "GNO"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_SHORT_NAME": {
+              "type": "string",
+              "description": "Used for SEO attributes (e.g, page description)",
+              "examples": [
+                "OoG"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_TOKEN_STANDARD_NAME": {
+              "type": "string",
+              "description": "Name of the standard for creating tokens",
+              "default": "ERC",
+              "examples": [
+                "BEP"
+              ]
+            },
+            "NEXT_PUBLIC_NETWORK_VERIFICATION_TYPE": {
+              "type": "string",
+              "description": "`mining` \\",
+              "default": "Verification type in the network. Irrelevant for Arbitrum (verification type is always `posting`) and ZkEvm (verification type is always `sequencing`) L2s"
+            },
+            "NEXT_PUBLIC_OG_DESCRIPTION": {
+              "type": "string",
+              "description": "Custom OG description",
+              "examples": [
+                "Open-source block explorer by Blockscout. Search transactions, verify smart contracts, analyze addresses, and track network activity. Complete blockchain data and APIs for the %network_title% network."
+              ]
+            },
+            "NEXT_PUBLIC_OG_ENHANCED_DATA_ENABLED": {
+              "type": "string",
+              "description": "Set to `true` to populate OG tags (title, description) with API data for social preview robot requests",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_OG_IMAGE_URL": {
+              "type": "string",
+              "description": "OG image url. Minimum image size is 200 x 20 pixels (recommended: 1200 x 600); maximum supported file size is 8 MB; 2:1 aspect ratio; supported formats: image/jpeg, image/gif, image/png",
+              "default": "static/og_placeholder.png",
+              "examples": [
+                "https://placekitten.com/1200/600"
+              ]
+            },
+            "NEXT_PUBLIC_OPTIMISTIC_L2_WITHDRAWAL_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Renamed to NEXT_PUBLIC_ROLLUP_L2_WITHDRAWAL_URL] URL for optimistic L2 -> L1 withdrawals",
+              "examples": [
+                "https://app.optimism.io/bridge/withdraw"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_OTHER_LINKS": {
+              "type": "string",
+              "description": "List of links for the \"Other\" navigation menu",
+              "examples": [
+                "[{'url':'https://blockscout.com','text':'Blockscout'}]"
+              ]
+            },
+            "NEXT_PUBLIC_PROMOTE_BLOCKSCOUT_IN_TITLE": {
+              "type": "string",
+              "description": "Set to `true` to promote Blockscout in meta and OG titles",
+              "default": "true",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_PUZZLE_GAME_BADGE_CLAIM_LINK": {
+              "type": "string",
+              "description": "Provide to enable the easter egg puzzle badge feature",
+              "examples": [
+                "https://example.com"
+              ]
+            },
+            "NEXT_PUBLIC_REWARDS_SERVICE_API_HOST": {
+              "type": "string",
+              "description": "API URL",
+              "examples": [
+                "https://example.com"
+              ]
+            },
+            "NEXT_PUBLIC_RE_CAPTCHA_APP_SITE_KEY": {
+              "type": "string",
+              "description": "Google reCAPTCHA v2 site key",
+              "examples": [
+                "<your-site-key>"
+              ]
+            },
+            "NEXT_PUBLIC_RE_CAPTCHA_V3_APP_SITE_KEY": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced with NEXT_PUBLIC_RE_CAPTCHA_APP_SITE_KEY] Google reCAPTCHA v3 site key",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_ROLLBAR_CLIENT_TOKEN": {
+              "type": "string",
+              "description": "Client token for your Rollbar project",
+              "examples": [
+                "<your-secret>"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_DA_CELESTIA_CELENIUM_URL": {
+              "type": "string",
+              "description": "URL for the Selenium explorer. It is used to create links to the Data Availability Blobs page. The URL should contain the full path without any search parameters related to the blob, as these will be constructed at runtime for each blob separately. Available only for Optimistic or Arbitrum roll-ups.",
+              "examples": [
+                "https://mocha.celenium.io/blob"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_DA_CELESTIA_NAMESPACE": {
+              "type": "string",
+              "description": "Hex-string for creating a link to the transaction batch on the [Celenium explorer](https://celenium.io). \"0x\"-format and 60 symbol length. Available only for Arbitrum roll-ups.",
+              "examples": [
+                "0x00000000000000000000000000000000000000ca1de12a9905be97beaf"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_HOMEPAGE_SHOW_LATEST_BLOCKS": {
+              "type": "string",
+              "description": "Set to `true` to display \"Latest blocks\" widget instead of \"Latest batches\" on the home page",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_L1_BASE_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced with NEXT_PUBLIC_ROLLUP_PARENT_CHAIN] Blockscout base URL for parent network.",
+              "examples": [
+                "'http://eth-goerli.blockscout.com'"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_ROLLUP_L2_WITHDRAWAL_URL": {
+              "type": "string",
+              "description": "URL for rollup to parent chain withdrawals (Optimistic stack only)",
+              "examples": [
+                "https://app.optimism.io/bridge/withdraw"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_LAYER_NUMBER": {
+              "type": "string",
+              "description": "Layer number of the rollup",
+              "default": "2",
+              "examples": [
+                "3"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_OUTPUT_ROOTS_ENABLED": {
+              "type": "string",
+              "description": "Enables \"Output roots\" page (Optimistic stack only)",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_PARENT_CHAIN": {
+              "type": "string",
+              "description": "Configuration parameters for the parent chain.",
+              "examples": [
+                "{'baseUrl':'https://explorer.duckchain.io'}"
+              ]
+            },
+            "NEXT_PUBLIC_ROLLUP_PARENT_CHAIN_NAME": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced with `NEXT_PUBLIC_ROLLUP_PARENT_CHAIN`] Set to customize L1 transaction status labels in the UI (e.g., \"Sent to <chain-name>\"). This setting is applicable only for Arbitrum-based chains.",
+              "examples": [
+                "DuckChain"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_ROLLUP_STAGE_INDEX": {
+              "type": "string",
+              "description": "2`"
+            },
+            "NEXT_PUBLIC_ROLLUP_TYPE": {
+              "type": "string",
+              "description": "'arbitrum' \\",
+              "default": "'zkEvm' \\",
+              "examples": [
+                "'zkSync' \\"
+              ]
+            },
+            "NEXT_PUBLIC_SAFE_TX_SERVICE_URL": {
+              "type": "string",
+              "description": "The Safe transaction service URL. See full list of supported networks [here](https://docs.safe.global/api-supported-networks).",
+              "examples": [
+                "uniswap"
+              ]
+            },
+            "NEXT_PUBLIC_SAVE_ON_GAS_ENABLED": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Feature is deprecated.] Set to \"true\" to enable the feature",
+              "examples": [
+                "true"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_SENTRY_DSN": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Feature is no longer supported] Client key for your Sentry.io app",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_SENTRY_ENABLE_TRACING": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Feature is no longer supported] Enables tracing and performance monitoring in Sentry.io",
+              "default": "false",
+              "examples": [
+                "true"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_SEO_ENHANCED_DATA_ENABLED": {
+              "type": "string",
+              "description": "Set to `true` to pre-render page titles (e.g Token page) on the server side and inject page h1-tag to the markup before it is sent to the browser.",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_STATS_API_BASE_PATH": {
+              "type": "string",
+              "description": "Base path for Stats API endpoint url",
+              "examples": [
+                "/poa/core"
+              ]
+            },
+            "NEXT_PUBLIC_STATS_API_HOST": {
+              "type": "string",
+              "description": "Stats API endpoint url",
+              "examples": [
+                "https://stats.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_SWAP_BUTTON_URL": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Replaced by NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS] Application ID in the marketplace or website URL",
+              "examples": [
+                "uniswap"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_TAC_OPERATION_LIFECYCLE_API_HOST": {
+              "type": "string",
+              "description": "URL for the TAC Operation Lifecycle service.",
+              "examples": [
+                "https://tac-operation-lifecycle.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_TAC_TON_EXPLORER_URL": {
+              "type": "string",
+              "description": "URL of the Ton chain explorer. This is used to build links to transactions and addresses on the Ton chain.",
+              "examples": [
+                "https://tonscan.org"
+              ]
+            },
+            "NEXT_PUBLIC_TRANSACTION_INTERPRETATION_PROVIDER": {
+              "type": "string",
+              "description": "`noves` \\",
+              "default": "Transaction interpretation provider that displays human readable transaction description"
+            },
+            "NEXT_PUBLIC_TX_EXTERNAL_TRANSACTIONS_CONFIG": {
+              "type": "string",
+              "description": "Configuration of the external transactions links that should be added to the transaction details.",
+              "examples": [
+                "{ chain_name: 'ethereum', chain_logo_url: 'https://example.com/logo.png', explorer_url_template: 'https://explorer.com/tx/{hash}' }"
+              ]
+            },
+            "NEXT_PUBLIC_USER_OPS_INDEXER_API_HOST": {
+              "type": "string",
+              "description": "The user operations indexer API host; pass to show API documentation for the service",
+              "examples": [
+                "https://user-ops-indexer-base-mainnet.k8s-prod-2.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_USE_NEXT_JS_PROXY": {
+              "type": "string",
+              "description": "Tells the app to proxy all APIs request through the NextJS app. **We strongly advise not to use it in the production environment**, since it can lead to performance issues of the NodeJS server",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_VALIDATORS_CHAIN_TYPE": {
+              "type": "string",
+              "description": "'blackfort' \\",
+              "default": "Chain type",
+              "examples": [
+                "Required"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_ADDRESS_BECH_32_PREFIX": {
+              "type": "string",
+              "description": "Human-readable prefix of `bech32` address format.",
+              "examples": [
+                "duck"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_ADDRESS_FORMAT": {
+              "type": "string",
+              "description": "\"bech32\">`",
+              "examples": [
+                "'[\"base16\"]'"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_ADDRESS_HIDDEN_VIEWS": {
+              "type": "string",
+              "description": "Address views that should not be displayed. See below the list of the possible id values.",
+              "examples": [
+                "'[\"top_accounts\"]'"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_ADDRESS_IDENTICON_TYPE": {
+              "type": "string",
+              "description": "\"jazzicon\" \\",
+              "default": "\"blockie\" \\",
+              "examples": [
+                "\"nouns\""
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_ADDRESS_NATIVE_TOKEN_ADDRESS": {
+              "type": "string",
+              "description": "The address of a native ERC-20 token that shadows the balance of the native coin; used to exclude its balance from the net worth value of user tokens.",
+              "examples": [
+                "0x471EcE3750Da237f93B8E339c536989b8978a438"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_BLOCK_HIDDEN_FIELDS": {
+              "type": "string",
+              "description": "Array of the block fields ids that should be hidden. See below the list of the possible id values.",
+              "examples": [
+                "'[\"burnt_fees\",\"total_reward\"]'"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_BLOCK_PENDING_UPDATE_ALERT_ENABLED": {
+              "type": "string",
+              "description": "The flag enables indication of the incomplete data for the block in the list and detailed views of the re-indexing block and its transactions. *Feature is enabled by default; pass `false` to disable it.*",
+              "default": "true",
+              "examples": [
+                "false"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_CONTRACT_DECODED_BYTECODE_ENABLED": {
+              "type": "string",
+              "description": "If set to true, the deployed bytecode for unverified contracts will be parsed on the client side to retrieve the source code. If successful, the source code will be displayed in the snippet along with the content type selector. This feature works only for Scilla contracts.",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_CONTRACT_EXTRA_VERIFICATION_METHODS": {
+              "type": "string",
+              "description": "'solidity-foundry'>`"
+            },
+            "NEXT_PUBLIC_VIEWS_CONTRACT_LANGUAGE_FILTERS": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: -] 'vyper' \\",
+              "default": "'scilla' \\",
+              "examples": [
+                "'geas' \\"
+              ],
+              "deprecated": true
+            },
+            "NEXT_PUBLIC_VIEWS_CONTRACT_SOLIDITYSCAN_ENABLED": {
+              "type": "string",
+              "description": "Set to `true` if SolidityScan reports are supported",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_NFT_MARKETPLACES": {
+              "type": "string",
+              "description": "Used to build up links to NFT collections and NFT instances in external marketplaces.",
+              "examples": [
+                "[{'name':'OpenSea','collection_url':'https://opensea.io/assets/ethereum/{hash}','instance_url':'https://opensea.io/assets/ethereum/{hash}/{id}','logo_url':'https://opensea.io/static/images/logos/opensea-logo.svg'}]"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_TOKEN_SCAM_TOGGLE_ENABLED": {
+              "type": "string",
+              "description": "Show the \"Hide scam tokens\" toggle in the site settings dropdown. This option controls the visibility of tokens with a poor reputation in the search results.",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_TX_ADDITIONAL_FIELDS": {
+              "type": "string",
+              "description": "Array of the additional fields ids that should be added to the transaction details. See below the list of the possible id values.",
+              "examples": [
+                "'[\"fee_per_gas\"]'"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_TX_GROUPED_FEES": {
+              "type": "string",
+              "description": "In the detailed view group transaction fees under one collapsible section.",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_VIEWS_TX_HIDDEN_FIELDS": {
+              "type": "string",
+              "description": "Array of the transaction fields ids that should be hidden. See below the list of the possible id values.",
+              "examples": [
+                "'[\"value\",\"tx_fee\"]'"
+              ]
+            },
+            "NEXT_PUBLIC_VISUALIZE_API_BASE_PATH": {
+              "type": "string",
+              "description": "Base path for Visualize API endpoint url",
+              "examples": [
+                "/poa/core"
+              ]
+            },
+            "NEXT_PUBLIC_VISUALIZE_API_HOST": {
+              "type": "string",
+              "description": "Visualize API endpoint url",
+              "examples": [
+                "https://visualizer.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_WALLET_CONNECT_FEATURED_WALLET_IDS": {
+              "type": "string",
+              "description": "List of [featured wallet IDs](https://docs.reown.com/appkit/react/core/options#featuredwalletids) in the \"Connect your wallet\" modal. To obtain the wallet ID, please use [WalletGuild](https://walletguide.walletconnect.network).",
+              "examples": [
+                "['c286eebc742a537cd1d6818363e9dc53b21759a1e8e5d9b263d0c03ec7703576']"
+              ]
+            },
+            "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID": {
+              "type": "string",
+              "description": "Project id for [Reown AppKit](https://cloud.reown.com//) integration",
+              "examples": [
+                "<your-secret>"
+              ]
+            },
+            "NEXT_PUBLIC_WEB3_DISABLE_ADD_TOKEN_TO_WALLET": {
+              "type": "string",
+              "description": "Set to `true` to hide icon \"Add to your wallet\" next to token addresses",
+              "examples": [
+                "true"
+              ]
+            },
+            "NEXT_PUBLIC_WEB3_WALLETS": {
+              "type": "string",
+              "description": "'coinbase' \\",
+              "default": "'rabby' \\",
+              "examples": [
+                "'trust' \\"
+              ]
+            },
+            "NEXT_PUBLIC_XSTAR_SCORE_URL": {
+              "type": "string",
+              "description": "XStar XHS score documentation URL for the address tag. Enables the XStar score feature.",
+              "examples": [
+                "https://docs.xname.app/the-solution-adaptive-proof-of-humanity-on-blockchain/xhs-scoring-algorithm"
+              ]
+            },
+            "NEXT_PUBLIC_ZETACHAIN_EXTERNAL_SEARCH_CONFIG": {
+              "type": "string",
+              "description": "List of objects with regex, template and name fields to build redirect links for external searches. The first matching regex will be used to generate the URL from the provided hash.",
+              "examples": [
+                "'[{\"regex\":\"^0x[0-9a-fA-F]{64}$\",\"template\":\"https://example.com/cosmos/tx/{hash}\",\"name\":\"Cosmos SDK style transaction\"}]'"
+              ]
+            },
+            "NEXT_PUBLIC_ZETACHAIN_SERVICE_API_HOST": {
+              "type": "string",
+              "description": "ZetaChain cross-chain transactions service API endpoint url",
+              "examples": [
+                "https://zetachain-cctx.services.blockscout.com"
+              ]
+            },
+            "NEXT_PUBLIC_ZETACHAIN_SERVICE_CHAINS_CONFIG_URL": {
+              "type": "string",
+              "description": "URL of configuration file (`.json` format only) which contains chains info for the supported chains.",
+              "examples": [
+                "https://example.com/zetachain_chains_config.json"
+              ]
+            },
+            "OTEL_SDK_ENABLED": {
+              "type": "string",
+              "description": "Run-time flag to enable the feature",
+              "default": "false",
+              "examples": [
+                "true"
+              ]
+            },
+            "SENTRY_CSP_REPORT_URI": {
+              "type": "string",
+              "description": "DEPRECATED. [DEPRECATED: Feature is no longer supported] URL for sending CSP-reports to your Sentry.io app",
+              "examples": [
+                "<your-secret>"
+              ],
+              "deprecated": true
+            }
+          }
+        },
+        "extraEnv": {
+          "$ref": "#/definitions/extraEnv"
+        },
+        "envFromSecret": {
+          "$ref": "#/definitions/envMap"
+        },
+        "envFrom": {
+          "$ref": "#/definitions/envFrom"
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "description": "Blockscout stats service configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable stats service"
+        },
+        "image": {
+          "$ref": "#/definitions/image"
+        },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "service": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ClusterIP",
+                "NodePort",
+                "LoadBalancer",
+                "ExternalName"
+              ]
+            },
+            "port": {
+              "type": "integer"
+            },
+            "metricsPort": {
+              "type": "integer",
+              "description": "Metrics port for Prometheus"
+            }
+          }
+        },
+        "podAnnotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "podSecurityContext": {
+          "type": "object"
+        },
+        "securityContext": {
+          "type": "object"
+        },
+        "basePath": {
+          "type": "string",
+          "description": "Base path for stats service"
+        },
+        "ingress": {
+          "$ref": "#/definitions/ingress"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "files": {
+          "type": "object",
+          "description": "Files to mount to stats pod",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "list": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "mountPath": {
+              "type": "string"
+            }
+          }
+        },
+        "livenessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "readinessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "env": {
+          "$ref": "#/definitions/envMap"
+        },
+        "envFromSecret": {
+          "$ref": "#/definitions/envMap"
+        },
+        "extraEnv": {
+          "$ref": "#/definitions/extraEnv"
+        }
+      }
+    },
+    "userOpsIndexer": {
+      "type": "object",
+      "description": "User operations indexer configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable user ops indexer"
+        },
+        "image": {
+          "$ref": "#/definitions/image"
+        },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "service": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ClusterIP",
+                "NodePort",
+                "LoadBalancer",
+                "ExternalName"
+              ]
+            },
+            "port": {
+              "type": "integer"
+            },
+            "grpc": {
+              "type": "object",
+              "description": "gRPC service configuration",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "port": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metricsPort": {
+              "type": "integer",
+              "description": "Metrics port for Prometheus"
+            }
+          }
+        },
+        "podAnnotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "podSecurityContext": {
+          "type": "object"
+        },
+        "securityContext": {
+          "type": "object"
+        },
+        "ingress": {
+          "$ref": "#/definitions/ingress"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "livenessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "readinessProbe": {
+          "$ref": "#/definitions/probe"
+        },
+        "env": {
+          "$ref": "#/definitions/envMap"
+        },
+        "envFromSecret": {
+          "$ref": "#/definitions/envMap"
+        },
+        "extraEnv": {
+          "$ref": "#/definitions/extraEnv"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "description": "Service account configuration",
+      "properties": {
+        "create": {
+          "type": "boolean",
+          "description": "Create a service account"
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "Service account name override"
+        }
+      }
+    },
+    "nodeSelector": {
+      "type": "object",
+      "description": "Node labels for pod assignment",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "tolerations": {
+      "type": "array",
+      "description": "Tolerations for pod assignment",
+      "items": {
+        "type": "object"
+      }
+    },
+    "affinity": {
+      "type": "object",
+      "description": "Affinity rules for pod assignment"
+    }
+  }
+}

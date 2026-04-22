@@ -1,0 +1,1931 @@
+{
+  "FAVICON_GENERATOR_API_KEY": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.37.0",
+    "description": "[DEPRECATED: We don't use RealFaviconGenerator anymore] RealFaviconGenerator [API key](https://realfavicongenerator.net/api/)",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.16.0+",
+    "type": "string"
+  },
+  "FAVICON_MASTER_URL": {
+    "default": "NEXT_PUBLIC_NETWORK_ICON",
+    "deprecated": false,
+    "description": "-",
+    "example": "https://placekitten.com/180/180",
+    "required": false,
+    "since": "v1.11.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ACCOUNT_API_KEYS_BUTTON": {
+    "default": "",
+    "deprecated": false,
+    "description": "string`",
+    "example": "true",
+    "required": false,
+    "since": "https://example.com",
+    "type": "boolean \\"
+  },
+  "NEXT_PUBLIC_ACCOUNT_AUTH_PROVIDER": {
+    "default": "",
+    "deprecated": false,
+    "description": "dynamic`",
+    "example": "auth0",
+    "required": false,
+    "since": "dynamic",
+    "type": "auth0 \\"
+  },
+  "NEXT_PUBLIC_ACCOUNT_DYNAMIC_ENVIRONMENT_ID": {
+    "default": "",
+    "deprecated": false,
+    "description": "Environment ID of the Dynamic project.",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v2.7.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ADDRESS_3RD_PARTY_WIDGETS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Array of widget ids to be displayed",
+    "example": "['widget-1', 'widget-2']",
+    "required": false,
+    "since": "v2.2.0+",
+    "type": "Array<string>"
+  },
+  "NEXT_PUBLIC_ADDRESS_3RD_PARTY_WIDGETS_CONFIG_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) which contains mapping of widget names to their configuration. See [below](#address-3rd-party-widget-configuration-properties) list of available properties for a widget.",
+    "example": "https://example.com/address_3rd_party_widgets_config.json",
+    "required": false,
+    "since": "v2.2.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ADDRESS_USERNAME_TAG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Address profile API tag configuration properties. See [below](#user-profile-api-configuration-properties).",
+    "example": "uniswap",
+    "required": false,
+    "since": "v1.35.0+",
+    "type": "{api_url: string; tag_link_template: string; tag_icon: string; tag_bg_color: string; tag_text_color: string}"
+  },
+  "NEXT_PUBLIC_ADMIN_SERVICE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Admin Service API endpoint url",
+    "example": "https://admin-rs.services.blockscout.com",
+    "required": true,
+    "since": "v1.1.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ADVANCED_FILTER_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Set to true to enable \"Advanced filter\" page in the app",
+    "example": "false",
+    "required": true,
+    "since": "v1.37.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_AD_ADBUTLER_CONFIG_DESKTOP": {
+    "default": "",
+    "deprecated": false,
+    "description": "Placement config for desktop Adbutler banner",
+    "example": "{'id':'123456','width':'728','height':'90'}",
+    "required": false,
+    "since": "v1.3.0+",
+    "type": "{ id: string; width: string; height: string }"
+  },
+  "NEXT_PUBLIC_AD_ADBUTLER_CONFIG_MOBILE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Placement config for mobile Adbutler banner",
+    "example": "{'id':'654321','width':'300','height':'100'}",
+    "required": false,
+    "since": "v1.3.0+",
+    "type": "{ id: string; width: number; height: number }"
+  },
+  "NEXT_PUBLIC_AD_BANNER_ADDITIONAL_PROVIDER": {
+    "default": "",
+    "deprecated": false,
+    "description": "Additional ads provider to mix with the main one",
+    "example": "adbutler",
+    "required": false,
+    "since": "v1.28.0+",
+    "type": "adbutler"
+  },
+  "NEXT_PUBLIC_AD_BANNER_ENABLE_SPECIFY": {
+    "default": "",
+    "deprecated": false,
+    "description": "Enables Specify ads in addition to the main ad banner provider",
+    "example": "true",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_AD_BANNER_PROVIDER": {
+    "default": "none",
+    "deprecated": false,
+    "description": "`adbutler` \\",
+    "example": "Ads provider",
+    "required": false,
+    "since": "",
+    "type": "slise` \\"
+  },
+  "NEXT_PUBLIC_AD_TEXT_PROVIDER": {
+    "default": "",
+    "deprecated": false,
+    "description": "`none`",
+    "example": "coinzilla",
+    "required": false,
+    "since": "none",
+    "type": "coinzilla` \\"
+  },
+  "NEXT_PUBLIC_API_BASE_PATH": {
+    "default": "",
+    "deprecated": false,
+    "description": "Base path for Main API endpoint url",
+    "example": "/poa/core",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_API_DOCS_ALERT_MESSAGE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used for displaying custom alerts on the API documentation page. Could be a regular string or a HTML code.",
+    "example": "Hello world! 🤪",
+    "required": false,
+    "since": "v2.7.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_API_DOCS_TABS": {
+    "default": "['rest_api','eth_rpc_api','rpc_api','graphql_api']",
+    "deprecated": false,
+    "description": "Controls which tabs appear on the API documentation page. Possible values for `TabId` are `rest_api`, `eth_rpc_api`, `rpc_api`, and `graphql_api`. **Note** that this variable has a default value, so the feature is enabled by default. Pass an empty array to disable it.",
+    "example": "[]",
+    "required": false,
+    "since": "v2.3.x+",
+    "type": "Array<TabId>"
+  },
+  "NEXT_PUBLIC_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Main API host",
+    "example": "blockscout.com",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_API_KEYS_ALERT_MESSAGE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used for displaying custom alerts on the API keys page. Could be a regular string or a HTML code.",
+    "example": "Hello world! 🤪",
+    "required": false,
+    "since": "v2.7.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_API_PORT": {
+    "default": "",
+    "deprecated": false,
+    "description": "Port where API is running on the host",
+    "example": "3001",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "number"
+  },
+  "NEXT_PUBLIC_API_PROTOCOL": {
+    "default": "",
+    "deprecated": false,
+    "description": "https`",
+    "example": "https",
+    "required": false,
+    "since": "http",
+    "type": "http \\"
+  },
+  "NEXT_PUBLIC_API_SPEC_URL": {
+    "default": "https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml",
+    "deprecated": true,
+    "deprecatedSince": "v2.7.0+",
+    "description": "[DEPRECATED: The URL is now constructed automatically based on the configuration received from the API.] Spec of Blockscout core API to be displayed on the page.",
+    "example": "https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL": {
+    "default": "",
+    "deprecated": false,
+    "description": "wss`",
+    "example": "wss",
+    "required": false,
+    "since": "ws",
+    "type": "ws \\"
+  },
+  "NEXT_PUBLIC_APP_ENV": {
+    "default": "production",
+    "deprecated": false,
+    "description": "App env (e.g development, staging, production, etc.).",
+    "example": "staging",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_APP_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "App host",
+    "example": "blockscout.com",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_APP_INSTANCE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Name of app instance. Used for app monitoring purposes. If not provided, it will be constructed from `NEXT_PUBLIC_APP_HOST`",
+    "example": "wonderful_kepler",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_APP_PORT": {
+    "default": "3000",
+    "deprecated": false,
+    "description": "Port where app is running",
+    "example": "3001",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "number"
+  },
+  "NEXT_PUBLIC_APP_PROTOCOL": {
+    "default": "",
+    "deprecated": false,
+    "description": "https`",
+    "example": "https",
+    "required": false,
+    "since": "http",
+    "type": "http \\"
+  },
+  "NEXT_PUBLIC_AUTH0_CLIENT_ID": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Variable is no longer required] Client id for [Auth0](https://auth0.com/) provider",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_AUTH_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Variable is no longer required] Account auth base url; it is used for building login URL (`${ NEXT_PUBLIC_AUTH_URL }/auth/auth0`) and logout return URL (`${ NEXT_PUBLIC_AUTH_URL }/auth/logout`); if not provided the base app URL will be used instead",
+    "example": "https://blockscout.com",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_BEACON_CHAIN_CURRENCY_SYMBOL": {
+    "default": "NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL",
+    "deprecated": false,
+    "description": "Beacon network currency symbol",
+    "example": "ETH",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_BEACON_CHAIN_VALIDATOR_URL_TEMPLATE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Url template to build a link to validator. Should contain `{pk}` string that will be replaced with the validator's public key",
+    "example": "https://example.com/beacon/{pk}/validator",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_BEACON_CHAIN_WITHDRAWALS_ONLY": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true for networks that have only withdrawals (no deposits)",
+    "example": "true",
+    "required": false,
+    "since": "v2.6.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_BRIDGED_TOKENS_BRIDGES": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used for displaying text about bridges types on the tokens page.",
+    "example": "[{'type':'omni','title':'OmniBridge','short_title':'OMNI'}]",
+    "required": true,
+    "since": "v1.14.0+",
+    "type": "Array<TokenBridge>` where `TokenBridge` can have following [properties](#token-bridge-configuration-properties)"
+  },
+  "NEXT_PUBLIC_BRIDGED_TOKENS_CHAINS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used for displaying filter by the chain from which token where bridged. Also, used for creating links to original tokens in other explorers.",
+    "example": "[{'id':'1','title':'Ethereum','short_title':'ETH','base_url':'https://eth.blockscout.com/token'}]",
+    "required": true,
+    "since": "v1.14.0+",
+    "type": "Array<BridgedTokenChain>` where `BridgedTokenChain` can have following [properties](#bridged-token-chain-configuration-properties)"
+  },
+  "NEXT_PUBLIC_CELO_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Indicates that it is a Celo-based chain.",
+    "example": "true",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_CELO_L2_UPGRADE_BLOCK": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.2.0",
+    "description": "[DEPRECATED: Removed; configuration done on the API side] Indicates the block number when the Celo-type chain transitioned to L2. This is used to display links to the Epoch block page from a regular block page.",
+    "example": "26369280",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "number"
+  },
+  "NEXT_PUBLIC_CLUSTERS_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Clusters.xyz API endpoint for fetching cluster data, directory listings, and cross-chain address mappings",
+    "example": "https://example.com/clusters-api",
+    "required": true,
+    "since": "v2.4.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_CLUSTERS_CDN_URL": {
+    "default": "https://cdn.clusters.xyz",
+    "deprecated": false,
+    "description": "CDN base URL for serving cluster profile images and avatars displayed in search results and cluster pages",
+    "example": "https://your-cdn.example.com",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_COLOR_THEME_DEFAULT": {
+    "default": "'dark'",
+    "deprecated": false,
+    "description": "'dim' \\",
+    "example": "Preferred color theme of the app",
+    "required": false,
+    "since": "",
+    "type": "'light' \\"
+  },
+  "NEXT_PUBLIC_COLOR_THEME_OVERRIDES": {
+    "default": "",
+    "deprecated": false,
+    "description": "Color overrides for the default theme; pass a JSON-like string that represents a subset of the `DEFAULT_THEME_COLORS` object (see `toolkit/theme/foundations/colors.ts`) to customize the app's main colors. See [here](https://www.figma.com/design/4In0X8UADoZaTfZ34HaZ3K/Blockscout-design-system?node-id=29124-23813&t=XOv4ahHUSsTDlNkN-4) the Figma worksheet with description of available color tokens.",
+    "example": "{'text':{'primary':{'_light':{'value':'rgba(16,17,18,0.80)'},'_dark':{'value':'rgba(222,217,217)'}}}}",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_CONTRACT_CODE_IDES": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used to build up links to IDEs with contract source code.",
+    "example": "[{'title':'Remix IDE','url':'https://remix.blockscout.com/?address={hash}&blockscout={domain}','icon_url':'https://example.com/icon.svg'}]",
+    "required": false,
+    "since": "v1.23.0+",
+    "type": "Array<ContractCodeIde>` where `ContractCodeIde` can have following [properties](#contract-code-ide-configuration-properties)"
+  },
+  "NEXT_PUBLIC_CONTRACT_INFO_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Contract Info API endpoint url",
+    "example": "https://contracts-info.services.blockscout.com",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_CROSS_CHAIN_TXS_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "The flag that enables the feature",
+    "example": "true",
+    "required": true,
+    "since": "v2.7.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_DATA_AVAILABILITY_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true to enable blob transactions views.",
+    "example": "true",
+    "required": true,
+    "since": "v1.28.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS": {
+    "default": "",
+    "deprecated": false,
+    "description": "An array of dropdown items containing the button text, icon name and dappId in Dappscout or an external url",
+    "example": "[{'text':'Swap','icon':'swap','dappId':'swap','isEssentialDapp':true},{'text':'Payment link','icon':'payment_link','dappId':'peanut-protocol'}]",
+    "required": false,
+    "since": "v1.31.0+",
+    "type": "[{ text: string; icon?: string; dappId?: string, url?: string, isEssentialDapp?: boolean }]"
+  },
+  "NEXT_PUBLIC_DEX_POOLS_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true to enable the feature",
+    "example": "true",
+    "required": true,
+    "since": "v1.37.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_FAULT_PROOF_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to `true` for chains with fault proof system enabled (Optimistic stack only)",
+    "example": "true",
+    "required": false,
+    "since": "v1.31.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_FAVICON_GENERATOR_API_KEY": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.16.0",
+    "description": "[DEPRECATED: Replaced FAVICON_GENERATOR_API_KEY] RealFaviconGenerator [API key](https://realfavicongenerator.net/api/)",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.11.0",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_FEATURED_NETWORKS": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) or file content string representation. It contains list of featured networks that will be shown in the network menu. See [below](#featured-network-configuration-properties) list of available properties for particular network",
+    "example": "https://example.com/featured_networks_config.json` \\",
+    "required": false,
+    "since": "[{'title':'Astar(EVM)','url':'https://astar.blockscout.com/','group':'Mainnets','icon':'https://example.com/astar.svg'}]",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_FEATURED_NETWORKS_ALL_LINK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Link to the all chains resource. Will be displayed at the bottom of featured networks list.",
+    "example": "https://example.com",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_FEATURED_NETWORKS_MODE": {
+    "default": "Works only if NEXT_PUBLIC_FEATURED_NETWORKS is set",
+    "deprecated": false,
+    "description": "list`",
+    "example": "list",
+    "required": false,
+    "since": "tabs",
+    "type": "tabs \\"
+  },
+  "NEXT_PUBLIC_FLASHBLOCKS_SOCKET_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "Public WebSocket endpoint to stream Flashblocks data",
+    "example": "wss://mainnet.flashblocks.base.org/ws",
+    "required": true,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_FONT_FAMILY_BODY": {
+    "default": "",
+    "deprecated": false,
+    "description": "Main typeface to use in page content elements.",
+    "example": "{'name':'Raleway','url':'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap'}",
+    "required": false,
+    "since": "v1.35.0+",
+    "type": "FontFamily`, see full description [below](#font-family-configuration-properties)"
+  },
+  "NEXT_PUBLIC_FONT_FAMILY_HEADING": {
+    "default": "",
+    "deprecated": false,
+    "description": "Special typeface to use in page headings (`<h1>`, `<h2>`, etc.)",
+    "example": "{'name':'Montserrat','url':'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap'}",
+    "required": false,
+    "since": "v1.35.0+",
+    "type": "FontFamily`, see full description [below](#font-family-configuration-properties)"
+  },
+  "NEXT_PUBLIC_FOOTER_LINKS": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) or file content string representation. It contains list of link groups to be displayed in the footer. See [below](#footer-links-configuration-properties) list of available properties for particular group",
+    "example": "https://example.com/footer_links_config.json` \\",
+    "required": false,
+    "since": "[{'title':'My chain','links':[{'text':'About','url':'https://example.com/about'},{'text':'Contacts','url':'https://example.com/contacts'}]}]",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_GAME_BADGE_CLAIM_LINK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Provide to enable the easter egg badge feature",
+    "example": "https://example.com",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_GAS_REFUEL_PROVIDER_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Get gas button config. See [below](#get-gas-button-configuration-properties)",
+    "example": "{ name: 'Need gas?', dapp_id: 'smol-refuel', url_template: 'https://smolrefuel.com/?outboundChain={chainId}', logo: 'https://example.com/icon.png' }",
+    "required": false,
+    "since": "v1.33.0+",
+    "type": "{ name: string; url_template: string; dapp_id?: string; logo?: string }"
+  },
+  "NEXT_PUBLIC_GAS_TRACKER_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Set to true to enable \"Gas tracker\" in the app",
+    "example": "false",
+    "required": true,
+    "since": "v1.25.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_GAS_TRACKER_UNITS": {
+    "default": "",
+    "deprecated": false,
+    "description": "`gwei`>",
+    "example": "For testnets: `[ 'gwei' ]`, for mainnets: `[ 'usd', 'gwei' ]",
+    "required": false,
+    "since": "[ 'gwei' ]",
+    "type": "Array<`usd` \\"
+  },
+  "NEXT_PUBLIC_GOOGLE_ANALYTICS_PROPERTY_ID": {
+    "default": "",
+    "deprecated": false,
+    "description": "Property ID for [Google Analytics](https://analytics.google.com/) service",
+    "example": "UA-XXXXXX-X",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_GRAPHIQL_TRANSACTION": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.5.0+",
+    "description": "[DEPRECATED: Removed, as the latest transaction hash has now being obtained from the API.] Txn hash for default query at GraphQl API.",
+    "example": "0x4a0ed8ddf751a7cb5297f827699117b0f6d21a0b2907594d300dc9fed75c7e62",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_GROWTH_BOOK_CLIENT_KEY": {
+    "default": "",
+    "deprecated": false,
+    "description": "Client SDK key for [GrowthBook](https://www.growthbook.io/) service",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.22.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_HAS_BEACON_CHAIN": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true for networks with the beacon chain",
+    "example": "true",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HAS_CONTRACT_AUDIT_REPORTS": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to enable Submit Audit form on the contract page",
+    "example": "true",
+    "required": false,
+    "since": "v1.25.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HAS_MUD_FRAMEWORK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to `true` for instances that use MUD framework (Optimistic stack only)",
+    "example": "true",
+    "required": false,
+    "since": "v1.33.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HAS_USER_OPS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true to show user operations related data and pages",
+    "example": "true",
+    "required": false,
+    "since": "v1.23.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HELIA_VERIFIED_FETCH_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Indicates that the [Helia verified fetch](https://github.com/ipfs/helia-verified-fetch/tree/main/packages/verified-fetch) should be used for retrieving content of NFT assets (currently limited to images) directly from IPFS network using trustless gateways.",
+    "example": "false",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HIDE_INDEXING_ALERT_BLOCKS": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to hide indexing alert in the page header about indexing chain's blocks",
+    "example": "true",
+    "required": false,
+    "since": "v1.17.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HIDE_INDEXING_ALERT_INT_TXS": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to hide indexing alert in the page footer about indexing block's internal transactions",
+    "example": "true",
+    "required": false,
+    "since": "v1.17.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HIDE_NATIVE_COIN_PRICE": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to hide the native coin price in the top bar",
+    "example": "true",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_CHARTS": {
+    "default": "'secondary_coin_price' \\",
+    "deprecated": false,
+    "description": "'daily_operational_txs' \\",
+    "example": "'market_cap' \\",
+    "required": false,
+    "since": "'tvl'>",
+    "type": "Array<'daily_txs' \\"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Configuration of hero banner appearance.",
+    "example": "See [below](#hero-banner-configuration-properties)",
+    "required": false,
+    "since": "v1.35.0+",
+    "type": "HeroBannerConfig`, see details [below](#hero-banner-configuration-properties)"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_HIGHLIGHTS_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of the file (in `.json` format only) that contains the configuration for banners on the application's homepage, showcasing some of its key functionality. See the full config format [below](#highlights-banner-configuration-properties). The config should contain at least 2 banners, but only 3 banners will be visible at the same time. A larger number of banners in the config allows for random banner rotation upon page load.",
+    "example": "See [below](#highlights-banner-configuration-properties)",
+    "required": false,
+    "since": "v2.6.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_PLATE_BACKGROUND": {
+    "default": "radial-gradient(103.03% 103.03% at 0% 0%, rgba(183, 148, 244, 0.8) 0%, rgba(0, 163, 196, 0.8) 100%), var(--chakra-colors-blue-400)",
+    "deprecated": true,
+    "deprecatedSince": "v1.1.0+",
+    "description": "[DEPRECATED: v2.4.0+] Background css value for hero plate on the homepage (escape \"#\" symbol if you use HEX color codes or use rgba-value instead).",
+    "example": "radial-gradient(at 15% 86%, hsla(350,65%,70%,1) 0px, transparent 50%)` \\",
+    "required": false,
+    "since": "no-repeat bottom 20% right 0px/100% url(https://placekitten/1400/200)",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_PLATE_TEXT_COLOR": {
+    "default": "white",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG] Text color of the hero plate on the homepage (escape \"#\" symbol if you use HEX color codes or use rgba-value instead).",
+    "example": "\\#DCFE76",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_SHOW_AVG_BLOCK_TIME": {
+    "default": "true",
+    "deprecated": true,
+    "deprecatedSince": "v1.35.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_HOMEPAGE_STATS] Set to false if average block time is useless for the network",
+    "example": "false",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_SHOW_GAS_TRACKER": {
+    "default": "true",
+    "deprecated": true,
+    "deprecatedSince": "v1.25.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_GAS_TRACKER_ENABLED] Set to false if network doesn't have gas tracker",
+    "example": "false",
+    "required": false,
+    "since": "",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_HOMEPAGE_STATS": {
+    "default": "'total_txs' \\",
+    "deprecated": false,
+    "description": "'total_blocks'  \\",
+    "example": "'total_operational_txs' \\",
+    "required": false,
+    "since": "'latest_l1_state_batch' \\",
+    "type": "Array<'latest_batch' \\"
+  },
+  "NEXT_PUBLIC_HOT_CONTRACTS_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true to enable the feature",
+    "example": "true",
+    "required": true,
+    "since": "v2.6.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_INTERCHAIN_INDEXER_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Interchain indexer API service host used to fetch cross-chain transaction data and metadata",
+    "example": "https://interchain-indexer.k8s-dev.blockscout.com",
+    "required": true,
+    "since": "v2.7.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_INTEROP_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Enables \"Interop messages\" page (Optimistic stack only)",
+    "example": "true",
+    "required": false,
+    "since": "v1.39.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_IS_ACCOUNT_SUPPORTED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true if network has account feature",
+    "example": "true",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_IS_OPTIMISTIC_L2_NETWORK": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.24.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_ROLLUP_TYPE] Set to true for optimistic L2 solutions",
+    "example": "true",
+    "required": false,
+    "since": "v1.17.0",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_IS_SUAVE_CHAIN": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true for blockchains with [SUAVE architecture](https://writings.flashbots.net/mevm-suave-centauri-and-beyond)",
+    "example": "true",
+    "required": true,
+    "since": "v1.14.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_IS_TESTNET": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to true if network is testnet",
+    "example": "true",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_IS_ZKEVM_L2_NETWORK": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.24.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_ROLLUP_TYPE] Set to true for zkevm L2 solutions",
+    "example": "true",
+    "required": false,
+    "since": "v1.17.0",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_L1_BASE_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.24.0",
+    "description": "[DEPRECATED: Renamed to NEXT_PUBLIC_ROLLUP_L1_BASE_URL] Blockscout base URL for L1 network",
+    "example": "'http://eth-goerli.blockscout.com'",
+    "required": false,
+    "since": "",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_LOGOUT_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Variable is no longer required] Account logout url. Required if account is supported for the app instance.",
+    "example": "https://blockscoutcom.us.auth0.com/v2/logout",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Array<string>`",
+    "example": "",
+    "required": false,
+    "since": "Hello world! 🤪",
+    "type": "string \\"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_BANNER_CONTENT_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of the banner HTML content",
+    "example": "https://example.com/banner",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_BANNER_LINK_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of the page the banner leads to",
+    "example": "https://example.com",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_CATEGORIES_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) which contains the list of categories to be displayed on the marketplace page in the specified order. If no URL is provided, then the list of categories will be compiled based on the `categories` fields from the marketplace (apps) configuration file",
+    "example": "https://example.com/marketplace_categories.json",
+    "required": false,
+    "since": "v1.23.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_CONFIG_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) which contains list of apps that will be shown on the marketplace page. See [below](#marketplace-app-configuration-properties) list of available properties for an app. Can be replaced with NEXT_PUBLIC_ADMIN_SERVICE_API_HOST",
+    "example": "https://example.com/marketplace_config.json",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "`true` means that the marketplace page will be enabled",
+    "example": "true",
+    "required": true,
+    "since": "v1.24.1+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_ESSENTIAL_DAPPS_AD_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "The flag enables ad in essential dapps. *Feature is enabled by default; pass `false` to disable it.*",
+    "example": "false",
+    "required": false,
+    "since": "v2.5.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_ESSENTIAL_DAPPS_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Configuration of the essential dapps to be displayed on the Marketplace page",
+    "example": "{'swap': {'chains': ['1', '10', '100', '11155111'], 'fee': '0.004', 'integrator': 'blockscout'}}",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "EssentialDappsConfig`, see details [below](#essential-dapps-configuration-properties)"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_FEATURED_APP": {
+    "default": "",
+    "deprecated": false,
+    "description": "ID of the featured application to be displayed on the banner on the Marketplace page",
+    "example": "uniswap",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_GRAPH_LINKS_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of the file (`.json` format only) which contains the list of The Graph links to be displayed on the Marketplace page",
+    "example": "https://example.com/graph_links.json",
+    "required": false,
+    "since": "v1.36.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_RATING_AIRTABLE_API_KEY": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.3.0",
+    "description": "[DEPRECATED: Removed; now the ratings come from the API] Airtable API key for dapp ratings",
+    "example": "",
+    "required": false,
+    "since": "v1.33.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_RATING_AIRTABLE_BASE_ID": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.3.0",
+    "description": "[DEPRECATED: Removed; now the ratings come from the API] Airtable base ID with dapp ratings",
+    "example": "",
+    "required": false,
+    "since": "v1.33.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_SECURITY_REPORTS_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.3.0",
+    "description": "[DEPRECATED: Removed; we don't support this feature anymore] URL of configuration file (`.json` format only) which contains app security reports for displaying security scores on the Marketplace page",
+    "example": "https://example.com/marketplace_security_reports.json",
+    "required": false,
+    "since": "v1.28.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_SUBMIT_FORM": {
+    "default": "",
+    "deprecated": false,
+    "description": "Link to form where authors can submit their dapps to the marketplace",
+    "example": "https://airtable.com/shrqUAcjgGJ4jU88C",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_SUGGEST_IDEAS_FORM": {
+    "default": "",
+    "deprecated": false,
+    "description": "Link to form where users can suggest ideas for the marketplace",
+    "example": "https://airtable.com/appiy5yijZpMMSKjT/pag3t82DUCyhGRZZO/form",
+    "required": false,
+    "since": "v1.24.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MARKETPLACE_TITLES": {
+    "default": "{ 'entity_name': 'Dapp', 'menu_item': 'Dapps', 'title': 'Dappscout', 'subtitle_essential_dapps': 'Essential dapps', 'subtitle_list': 'Explore dapps' }",
+    "deprecated": false,
+    "description": "Used to override default titles of the Marketplace and dapps",
+    "example": "{ 'entity_name': 'App', 'menu_item': 'Apps', 'title': 'Marketplace', 'subtitle_essential_dapps': 'Essential apps', 'subtitle_list': 'Explore apps' }",
+    "required": false,
+    "since": "v2.5.0+",
+    "type": "{ entity_name?: string; menu_item?: string; title?: string; subtitle_essential_dapps?: string; subtitle_list?: string }"
+  },
+  "NEXT_PUBLIC_MAX_CONTENT_WIDTH_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Set to `true` to restrict the page content width on extra-large screens.",
+    "example": "false",
+    "required": false,
+    "since": "v1.34.1+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_MEGA_ETH_SOCKET_URL_METRICS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Public WebSocket endpoint for streaming statistics data, used to display information on the uptime dashboard page.",
+    "example": "wss://testnet-dashboard.megaeth.com/metrics",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MEGA_ETH_SOCKET_URL_RPC": {
+    "default": "",
+    "deprecated": false,
+    "description": "Public WebSocket endpoint for streaming RPC node data, including mini-block data.",
+    "example": "wss://carrot.megaeth.com/mafia/ws",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_METADATA_ADDRESS_TAGS_UPDATE_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Enables requests to the Metadata Service to schedule an update for address tags after the user visits the address page in the app.",
+    "example": "false",
+    "required": false,
+    "since": "v2.2.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_METADATA_SERVICE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Metadata Service API endpoint url",
+    "example": "https://metadata.services.blockscout.com",
+    "required": true,
+    "since": "v1.30.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_METASUITES_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to true to enable integration",
+    "example": "true",
+    "required": true,
+    "since": "v1.26.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_MIXPANEL_CONFIG_OVERRIDES": {
+    "default": "",
+    "deprecated": false,
+    "description": "Pass a JSON-like string that represents a subset of the [Mixpanel SDK configuration](https://docs.mixpanel.com/docs/tracking-methods/sdks/javascript#library-configuration) to override the project's default properties.",
+    "example": "{\"record_sessions_percent\": 0.5}",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MIXPANEL_PROJECT_TOKEN": {
+    "default": "",
+    "deprecated": false,
+    "description": "Project token for [Mixpanel](https://mixpanel.com/) analytics service",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.1.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MULTICHAIN_AGGREGATOR_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Multichain aggregator API service host",
+    "example": "https://multichain-aggregator.k8s-dev.blockscout.com",
+    "required": true,
+    "since": "v2.5.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MULTICHAIN_BALANCE_PROVIDER_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Multichain portfolio application config See [below](#multichain-button-configuration-properties)",
+    "example": "[{ name: 'zerion', url_template: 'https://app.zerion.io/{address}/overview', logo: 'https://example.com/icon.svg'}]",
+    "required": false,
+    "since": "v1.31.0+",
+    "type": "[{ name: string; url_template: string; dapp_id?: string; logo: string }]"
+  },
+  "NEXT_PUBLIC_MULTICHAIN_CLUSTER": {
+    "default": "",
+    "deprecated": false,
+    "description": "Chain's cluster name; used to construct the full URL for requests to the aggregator API service",
+    "example": "interop",
+    "required": true,
+    "since": "v2.5.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_MULTICHAIN_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "The flag that enables the feature",
+    "example": "true",
+    "required": true,
+    "since": "v2.5.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_MULTICHAIN_STATS_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Multichain statistics API service host",
+    "example": "http://multichain-search-stats.k8s-dev.blockscout.com",
+    "required": true,
+    "since": "v2.5.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NAME_SERVICE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Name Service API endpoint url",
+    "example": "https://bens.services.blockscout.com",
+    "required": true,
+    "since": "v1.22.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NAME_SERVICE_PROTOCOLS": {
+    "default": "['ens']",
+    "deprecated": false,
+    "description": "List of the protocols used by the chain. The protocol ids can be obtained from [/api/v1/protocols](https://bens.services.blockscout.com/api/v1/protocols) resource.",
+    "example": "['rns']",
+    "required": false,
+    "since": "v2.7.0+",
+    "type": "Array<string>"
+  },
+  "NEXT_PUBLIC_NAVIGATION_HIDDEN_LINKS": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.3.0",
+    "description": "[DEPRECATED: Use NEXT_PUBLIC_API_DOCS_TABS instead to hide tabs on the API docs page.] List of external links hidden in the navigation. Supported ids are `eth_rpc_api`, `rpc_api`",
+    "example": "['eth_rpc_api']",
+    "required": false,
+    "since": "v1.16.0+",
+    "type": "Array<LinkId>"
+  },
+  "NEXT_PUBLIC_NAVIGATION_HIGHLIGHTED_ROUTES": {
+    "default": "",
+    "deprecated": false,
+    "description": "List of menu item routes that should have a lightning label",
+    "example": "['/accounts']",
+    "required": false,
+    "since": "v1.31.0+",
+    "type": "Array<string>"
+  },
+  "NEXT_PUBLIC_NAVIGATION_LAYOUT": {
+    "default": "",
+    "deprecated": false,
+    "description": "horizontal`",
+    "example": "vertical",
+    "required": false,
+    "since": "horizontal",
+    "type": "vertical \\"
+  },
+  "NEXT_PUBLIC_NAVIGATION_PROMO_BANNER_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Configuration of promo banner in the navigation menu. See [below](#navigation-promo-banner-configuration-properties) list of available properties for particular banner type",
+    "example": "{'img_url': 'https://example.com/promo.svg', 'text': 'Promo text', 'bg_color': {'light': 'rgb(250, 245, 255)', 'dark': 'rgb(68, 51, 122)'}, 'text_color': {'light': 'rgb(107, 70, 193)', 'dark': 'rgb(233, 216, 253)'}, 'link_url': 'https://example.com'}",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_ADDITIONAL_TOKEN_TYPES": {
+    "default": "[]",
+    "deprecated": false,
+    "description": "List of additional **ERC-20-like (fungible)** token types supported by the explorer UI (extends token type filters/labels). *Note: the token type id must also be supported by the backend API responses and filters.*",
+    "example": "'[{\"id\":\"ERC-777\",\"name\":\"ERC-777\"}]'",
+    "required": false,
+    "since": "v2.6.0+",
+    "type": "Array<{id: string; name: string;}>"
+  },
+  "NEXT_PUBLIC_NETWORK_CURRENCY_DECIMALS": {
+    "default": "18",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "6",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_CURRENCY_GWEI_NAME": {
+    "default": "gwei",
+    "deprecated": false,
+    "description": "Name of the giga-unit of the native currency (e.g., 'gwei' for Ethereum, where 1 gwei = 10^9 of the smallest unit). Used for displaying gas prices in a more readable format throughout the UI.",
+    "example": "gDuck",
+    "required": false,
+    "since": "v2.5.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_CURRENCY_NAME": {
+    "default": "",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "Ether",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL": {
+    "default": "",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "ETH",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_CURRENCY_WEI_NAME": {
+    "default": "wei",
+    "deprecated": false,
+    "description": "Name of the smallest unit of the native currency (e.g., 'wei' for Ethereum, where 1 ETH = 10^18 wei). Used for displaying gas prices and transaction fees in the smallest denomination.",
+    "example": "duck",
+    "required": false,
+    "since": "v1.23.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_EXPLORERS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used to build up links to transactions, blocks, addresses in other chain explorers.",
+    "example": "[{'title':'Anyblock','baseUrl':'https://explorer.anyblock.tools','paths':{'tx':'/ethereum/poa/core/tx'}}]",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "Array<NetworkExplorer>` where `NetworkExplorer` can have following [properties](#network-explorer-configuration-properties)"
+  },
+  "NEXT_PUBLIC_NETWORK_GOVERNANCE_TOKEN_SYMBOL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.29.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_NETWORK_SECONDARY_COIN_SYMBOL] Network governance token symbol",
+    "example": "GNO",
+    "required": false,
+    "since": "v1.12.0",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_ICON": {
+    "default": "",
+    "deprecated": false,
+    "description": "Network icon; used as a replacement for regular network logo when nav bar is collapsed; if not provided, placeholder will be shown; *Note* the icon size should be at least 60px by 60px",
+    "example": "https://placekitten.com/60/60",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_ICON_DARK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Network icon for dark color mode; if not provided, **inverted** regular icon will be used instead",
+    "example": "https://placekitten.com/60/60",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_ID": {
+    "default": "",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "99",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "number"
+  },
+  "NEXT_PUBLIC_NETWORK_LOGO": {
+    "default": "",
+    "deprecated": false,
+    "description": "Network logo; if not provided, placeholder will be shown; *Note* the logo height should be 24px and width less than 120px",
+    "example": "https://placekitten.com/240/40",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_LOGO_DARK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Network logo for dark color mode; if not provided, **inverted** regular logo will be used instead",
+    "example": "https://placekitten.com/240/40",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_MULTIPLE_GAS_CURRENCIES": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` for networks where users can pay transaction fees in either the native coin or ERC-20 tokens.",
+    "example": "true",
+    "required": false,
+    "since": "v1.33.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_NETWORK_NAME": {
+    "default": "",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "Gnosis Chain",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_RPC_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "See in [Blockchain parameters](#blockchain-parameters) section",
+    "example": "https://core.poa.network",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_SECONDARY_COIN_SYMBOL": {
+    "default": "",
+    "deprecated": false,
+    "description": "Network secondary coin symbol.",
+    "example": "GNO",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_SHORT_NAME": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used for SEO attributes (e.g, page description)",
+    "example": "OoG",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_TOKEN_STANDARD_NAME": {
+    "default": "ERC",
+    "deprecated": false,
+    "description": "Name of the standard for creating tokens",
+    "example": "BEP",
+    "required": false,
+    "since": "v1.31.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_NETWORK_VERIFICATION_TYPE": {
+    "default": "Verification type in the network. Irrelevant for Arbitrum (verification type is always `posting`) and ZkEvm (verification type is always `sequencing`) L2s",
+    "deprecated": false,
+    "description": "`mining` \\",
+    "example": "",
+    "required": false,
+    "since": "mining",
+    "type": "validation` \\"
+  },
+  "NEXT_PUBLIC_OG_DESCRIPTION": {
+    "default": "",
+    "deprecated": false,
+    "description": "Custom OG description",
+    "example": "Open-source block explorer by Blockscout. Search transactions, verify smart contracts, analyze addresses, and track network activity. Complete blockchain data and APIs for the %network_title% network.",
+    "required": false,
+    "since": "v1.12.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_OG_ENHANCED_DATA_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to populate OG tags (title, description) with API data for social preview robot requests",
+    "example": "true",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_OG_IMAGE_URL": {
+    "default": "static/og_placeholder.png",
+    "deprecated": false,
+    "description": "OG image url. Minimum image size is 200 x 20 pixels (recommended: 1200 x 600); maximum supported file size is 8 MB; 2:1 aspect ratio; supported formats: image/jpeg, image/gif, image/png",
+    "example": "https://placekitten.com/1200/600",
+    "required": false,
+    "since": "v1.12.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_OPTIMISTIC_L2_WITHDRAWAL_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.24.0",
+    "description": "[DEPRECATED: Renamed to NEXT_PUBLIC_ROLLUP_L2_WITHDRAWAL_URL] URL for optimistic L2 -> L1 withdrawals",
+    "example": "https://app.optimism.io/bridge/withdraw",
+    "required": false,
+    "since": "v1.17.0",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_OTHER_LINKS": {
+    "default": "",
+    "deprecated": false,
+    "description": "List of links for the \"Other\" navigation menu",
+    "example": "[{'url':'https://blockscout.com','text':'Blockscout'}]",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "Array<{url: string; text: string}>"
+  },
+  "NEXT_PUBLIC_PROMOTE_BLOCKSCOUT_IN_TITLE": {
+    "default": "true",
+    "deprecated": false,
+    "description": "Set to `true` to promote Blockscout in meta and OG titles",
+    "example": "true",
+    "required": false,
+    "since": "v1.12.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_PUZZLE_GAME_BADGE_CLAIM_LINK": {
+    "default": "",
+    "deprecated": false,
+    "description": "Provide to enable the easter egg puzzle badge feature",
+    "example": "https://example.com",
+    "required": false,
+    "since": "v2.2.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_REWARDS_SERVICE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "API URL",
+    "example": "https://example.com",
+    "required": false,
+    "since": "v1.36.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_RE_CAPTCHA_APP_SITE_KEY": {
+    "default": "",
+    "deprecated": false,
+    "description": "Google reCAPTCHA v2 site key",
+    "example": "<your-site-key>",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_RE_CAPTCHA_V3_APP_SITE_KEY": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Replaced with NEXT_PUBLIC_RE_CAPTCHA_APP_SITE_KEY] Google reCAPTCHA v3 site key",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.36.x",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLBAR_CLIENT_TOKEN": {
+    "default": "",
+    "deprecated": false,
+    "description": "Client token for your Rollbar project",
+    "example": "<your-secret>",
+    "required": true,
+    "since": "v1.37.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_DA_CELESTIA_CELENIUM_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL for the Selenium explorer. It is used to create links to the Data Availability Blobs page. The URL should contain the full path without any search parameters related to the blob, as these will be constructed at runtime for each blob separately. Available only for Optimistic or Arbitrum roll-ups.",
+    "example": "https://mocha.celenium.io/blob",
+    "required": false,
+    "since": "v2.0.2+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_DA_CELESTIA_NAMESPACE": {
+    "default": "",
+    "deprecated": false,
+    "description": "Hex-string for creating a link to the transaction batch on the [Celenium explorer](https://celenium.io). \"0x\"-format and 60 symbol length. Available only for Arbitrum roll-ups.",
+    "example": "0x00000000000000000000000000000000000000ca1de12a9905be97beaf",
+    "required": false,
+    "since": "v1.38.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_HOMEPAGE_SHOW_LATEST_BLOCKS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to `true` to display \"Latest blocks\" widget instead of \"Latest batches\" on the home page",
+    "example": "true",
+    "required": false,
+    "since": "v1.36.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_ROLLUP_L1_BASE_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.7.0+",
+    "description": "[DEPRECATED: Replaced with NEXT_PUBLIC_ROLLUP_PARENT_CHAIN] Blockscout base URL for parent network.",
+    "example": "'http://eth-goerli.blockscout.com'",
+    "required": false,
+    "since": "v1.24.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_L2_WITHDRAWAL_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL for rollup to parent chain withdrawals (Optimistic stack only)",
+    "example": "https://app.optimism.io/bridge/withdraw",
+    "required": false,
+    "since": "v1.24.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_LAYER_NUMBER": {
+    "default": "2",
+    "deprecated": false,
+    "description": "Layer number of the rollup",
+    "example": "3",
+    "required": false,
+    "since": "v2.7.0+",
+    "type": "number"
+  },
+  "NEXT_PUBLIC_ROLLUP_OUTPUT_ROOTS_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Enables \"Output roots\" page (Optimistic stack only)",
+    "example": "true",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_ROLLUP_PARENT_CHAIN": {
+    "default": "",
+    "deprecated": false,
+    "description": "Configuration parameters for the parent chain.",
+    "example": "{'baseUrl':'https://explorer.duckchain.io'}",
+    "required": true,
+    "since": "v1.38.0+",
+    "type": "ParentChain`, see details [below](#parent-chain-configuration-properties)"
+  },
+  "NEXT_PUBLIC_ROLLUP_PARENT_CHAIN_NAME": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Replaced with `NEXT_PUBLIC_ROLLUP_PARENT_CHAIN`] Set to customize L1 transaction status labels in the UI (e.g., \"Sent to <chain-name>\"). This setting is applicable only for Arbitrum-based chains.",
+    "example": "DuckChain",
+    "required": false,
+    "since": "v1.37.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ROLLUP_STAGE_INDEX": {
+    "default": "",
+    "deprecated": false,
+    "description": "2`",
+    "example": "",
+    "required": false,
+    "since": "1",
+    "type": "1 \\"
+  },
+  "NEXT_PUBLIC_ROLLUP_TYPE": {
+    "default": "'zkEvm' \\",
+    "deprecated": false,
+    "description": "'arbitrum' \\",
+    "example": "'zkSync' \\",
+    "required": false,
+    "since": "'scroll'",
+    "type": "'optimistic' \\"
+  },
+  "NEXT_PUBLIC_SAFE_TX_SERVICE_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "The Safe transaction service URL. See full list of supported networks [here](https://docs.safe.global/api-supported-networks).",
+    "example": "uniswap",
+    "required": false,
+    "since": "v1.26.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_SAVE_ON_GAS_ENABLED": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.7.0+",
+    "description": "[DEPRECATED: Feature is deprecated.] Set to \"true\" to enable the feature",
+    "example": "true",
+    "required": false,
+    "since": "v1.35.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_SENTRY_DSN": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Feature is no longer supported] Client key for your Sentry.io app",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_SENTRY_ENABLE_TRACING": {
+    "default": "false",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Feature is no longer supported] Enables tracing and performance monitoring in Sentry.io",
+    "example": "true",
+    "required": false,
+    "since": "v1.17.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_SEO_ENHANCED_DATA_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Set to `true` to pre-render page titles (e.g Token page) on the server side and inject page h1-tag to the markup before it is sent to the browser.",
+    "example": "true",
+    "required": false,
+    "since": "v1.30.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_STATS_API_BASE_PATH": {
+    "default": "",
+    "deprecated": false,
+    "description": "Base path for Stats API endpoint url",
+    "example": "/poa/core",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_STATS_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Stats API endpoint url",
+    "example": "https://stats.services.blockscout.com",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_SWAP_BUTTON_URL": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v1.31.0",
+    "description": "[DEPRECATED: Replaced by NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS] Application ID in the marketplace or website URL",
+    "example": "uniswap",
+    "required": false,
+    "since": "v1.24.0",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_TAC_OPERATION_LIFECYCLE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL for the TAC Operation Lifecycle service.",
+    "example": "https://tac-operation-lifecycle.blockscout.com",
+    "required": true,
+    "since": "v2.1.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_TAC_TON_EXPLORER_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of the Ton chain explorer. This is used to build links to transactions and addresses on the Ton chain.",
+    "example": "https://tonscan.org",
+    "required": true,
+    "since": "v2.1.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_TRANSACTION_INTERPRETATION_PROVIDER": {
+    "default": "Transaction interpretation provider that displays human readable transaction description",
+    "deprecated": false,
+    "description": "`noves` \\",
+    "example": "",
+    "required": false,
+    "since": "none",
+    "type": "blockscout` \\"
+  },
+  "NEXT_PUBLIC_TX_EXTERNAL_TRANSACTIONS_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "Configuration of the external transactions links that should be added to the transaction details.",
+    "example": "{ chain_name: 'ethereum', chain_logo_url: 'https://example.com/logo.png', explorer_url_template: 'https://explorer.com/tx/{hash}' }",
+    "required": false,
+    "since": "v1.38.0+",
+    "type": "{ chain_name: string; chain_logo_url: string; explorer_url_template: string; }"
+  },
+  "NEXT_PUBLIC_USER_OPS_INDEXER_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "The user operations indexer API host; pass to show API documentation for the service",
+    "example": "https://user-ops-indexer-base-mainnet.k8s-prod-2.blockscout.com",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_USE_NEXT_JS_PROXY": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Tells the app to proxy all APIs request through the NextJS app. **We strongly advise not to use it in the production environment**, since it can lead to performance issues of the NodeJS server",
+    "example": "true",
+    "required": false,
+    "since": "v1.8.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VALIDATORS_CHAIN_TYPE": {
+    "default": "Chain type",
+    "deprecated": false,
+    "description": "'blackfort' \\",
+    "example": "Required",
+    "required": false,
+    "since": "",
+    "type": "'stability' \\"
+  },
+  "NEXT_PUBLIC_VIEWS_ADDRESS_BECH_32_PREFIX": {
+    "default": "",
+    "deprecated": false,
+    "description": "Human-readable prefix of `bech32` address format.",
+    "example": "duck",
+    "required": false,
+    "since": "v1.36.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_VIEWS_ADDRESS_FORMAT": {
+    "default": "",
+    "deprecated": false,
+    "description": "\"bech32\">`",
+    "example": "'[\"base16\"]'",
+    "required": false,
+    "since": "'[\"bech32\", \"base16\"]'",
+    "type": "Array<\"base16\" \\"
+  },
+  "NEXT_PUBLIC_VIEWS_ADDRESS_HIDDEN_VIEWS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Address views that should not be displayed. See below the list of the possible id values.",
+    "example": "'[\"top_accounts\"]'",
+    "required": false,
+    "since": "v1.15.0+",
+    "type": "Array<AddressViewId>"
+  },
+  "NEXT_PUBLIC_VIEWS_ADDRESS_IDENTICON_TYPE": {
+    "default": "\"blockie\" \\",
+    "deprecated": false,
+    "description": "\"jazzicon\" \\",
+    "example": "\"nouns\"",
+    "required": false,
+    "since": "Default style of address identicon appearance. Choose between [GitHub](https://github.blog/2013-08-14-identicons/), [Metamask Jazzicon](https://metamask.github.io/jazzicon/), [Gradient Avatar](https://github.com/varld/gradient-avatar), [Ethereum Blocky](https://mycryptohq.github.io/ethereum-blockies-base64/) and [Nouns](https://nouns.wtf)",
+    "type": "\"github\" \\"
+  },
+  "NEXT_PUBLIC_VIEWS_ADDRESS_NATIVE_TOKEN_ADDRESS": {
+    "default": "",
+    "deprecated": false,
+    "description": "The address of a native ERC-20 token that shadows the balance of the native coin; used to exclude its balance from the net worth value of user tokens.",
+    "example": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_VIEWS_BLOCK_HIDDEN_FIELDS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Array of the block fields ids that should be hidden. See below the list of the possible id values.",
+    "example": "'[\"burnt_fees\",\"total_reward\"]'",
+    "required": false,
+    "since": "v1.10.0+",
+    "type": "Array<BlockFieldId>"
+  },
+  "NEXT_PUBLIC_VIEWS_BLOCK_PENDING_UPDATE_ALERT_ENABLED": {
+    "default": "true",
+    "deprecated": false,
+    "description": "The flag enables indication of the incomplete data for the block in the list and detailed views of the re-indexing block and its transactions. *Feature is enabled by default; pass `false` to disable it.*",
+    "example": "false",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VIEWS_CONTRACT_DECODED_BYTECODE_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "If set to true, the deployed bytecode for unverified contracts will be parsed on the client side to retrieve the source code. If successful, the source code will be displayed in the snippet along with the content type selector. This feature works only for Scilla contracts.",
+    "example": "true",
+    "required": false,
+    "since": "v2.3.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VIEWS_CONTRACT_EXTRA_VERIFICATION_METHODS": {
+    "default": "",
+    "deprecated": false,
+    "description": "'solidity-foundry'>`",
+    "example": "",
+    "required": false,
+    "since": "['solidity-hardhat']",
+    "type": "Array<'solidity-hardhat' \\"
+  },
+  "NEXT_PUBLIC_VIEWS_CONTRACT_LANGUAGE_FILTERS": {
+    "default": "'scilla' \\",
+    "deprecated": true,
+    "deprecatedSince": "Pass an array of contract languages that will be displayed as options in the filter on the verified contract page.",
+    "description": "[DEPRECATED: -] 'vyper' \\",
+    "example": "'geas' \\",
+    "required": false,
+    "since": "'stylus_rust'>",
+    "type": "Array<'solidity' \\"
+  },
+  "NEXT_PUBLIC_VIEWS_CONTRACT_SOLIDITYSCAN_ENABLED": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to `true` if SolidityScan reports are supported",
+    "example": "true",
+    "required": false,
+    "since": "v1.19.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VIEWS_NFT_MARKETPLACES": {
+    "default": "",
+    "deprecated": false,
+    "description": "Used to build up links to NFT collections and NFT instances in external marketplaces.",
+    "example": "[{'name':'OpenSea','collection_url':'https://opensea.io/assets/ethereum/{hash}','instance_url':'https://opensea.io/assets/ethereum/{hash}/{id}','logo_url':'https://opensea.io/static/images/logos/opensea-logo.svg'}]",
+    "required": false,
+    "since": "v1.15.0+",
+    "type": "Array<NftMarketplace>` where `NftMarketplace` can have following [properties](#nft-marketplace-properties)"
+  },
+  "NEXT_PUBLIC_VIEWS_TOKEN_SCAM_TOGGLE_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Show the \"Hide scam tokens\" toggle in the site settings dropdown. This option controls the visibility of tokens with a poor reputation in the search results.",
+    "example": "true",
+    "required": false,
+    "since": "v1.38.0+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VIEWS_TX_ADDITIONAL_FIELDS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Array of the additional fields ids that should be added to the transaction details. See below the list of the possible id values.",
+    "example": "'[\"fee_per_gas\"]'",
+    "required": false,
+    "since": "v1.15.0+",
+    "type": "Array<TxAdditionalFieldsId>"
+  },
+  "NEXT_PUBLIC_VIEWS_TX_GROUPED_FEES": {
+    "default": "",
+    "deprecated": false,
+    "description": "In the detailed view group transaction fees under one collapsible section.",
+    "example": "true",
+    "required": false,
+    "since": "v2.3.5+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_VIEWS_TX_HIDDEN_FIELDS": {
+    "default": "",
+    "deprecated": false,
+    "description": "Array of the transaction fields ids that should be hidden. See below the list of the possible id values.",
+    "example": "'[\"value\",\"tx_fee\"]'",
+    "required": false,
+    "since": "v1.15.0+",
+    "type": "Array<TxFieldsId>"
+  },
+  "NEXT_PUBLIC_VISUALIZE_API_BASE_PATH": {
+    "default": "",
+    "deprecated": false,
+    "description": "Base path for Visualize API endpoint url",
+    "example": "/poa/core",
+    "required": false,
+    "since": "v1.29.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_VISUALIZE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "Visualize API endpoint url",
+    "example": "https://visualizer.services.blockscout.com",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_WALLET_CONNECT_FEATURED_WALLET_IDS": {
+    "default": "",
+    "deprecated": false,
+    "description": "List of [featured wallet IDs](https://docs.reown.com/appkit/react/core/options#featuredwalletids) in the \"Connect your wallet\" modal. To obtain the wallet ID, please use [WalletGuild](https://walletguide.walletconnect.network).",
+    "example": "['c286eebc742a537cd1d6818363e9dc53b21759a1e8e5d9b263d0c03ec7703576']",
+    "required": false,
+    "since": "v2.6.0+",
+    "type": "Array<string>"
+  },
+  "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID": {
+    "default": "",
+    "deprecated": false,
+    "description": "Project id for [Reown AppKit](https://cloud.reown.com//) integration",
+    "example": "<your-secret>",
+    "required": true,
+    "since": "v1.0.x+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_WEB3_DISABLE_ADD_TOKEN_TO_WALLET": {
+    "default": "",
+    "deprecated": false,
+    "description": "Set to `true` to hide icon \"Add to your wallet\" next to token addresses",
+    "example": "true",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "boolean"
+  },
+  "NEXT_PUBLIC_WEB3_WALLETS": {
+    "default": "'rabby' \\",
+    "deprecated": false,
+    "description": "'coinbase' \\",
+    "example": "'trust' \\",
+    "required": false,
+    "since": "'okx'>",
+    "type": "Array<'metamask' \\"
+  },
+  "NEXT_PUBLIC_XSTAR_SCORE_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "XStar XHS score documentation URL for the address tag. Enables the XStar score feature.",
+    "example": "https://docs.xname.app/the-solution-adaptive-proof-of-humanity-on-blockchain/xhs-scoring-algorithm",
+    "required": false,
+    "since": "v1.36.0+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ZETACHAIN_EXTERNAL_SEARCH_CONFIG": {
+    "default": "",
+    "deprecated": false,
+    "description": "List of objects with regex, template and name fields to build redirect links for external searches. The first matching regex will be used to generate the URL from the provided hash.",
+    "example": "'[{\"regex\":\"^0x[0-9a-fA-F]{64}$\",\"template\":\"https://example.com/cosmos/tx/{hash}\",\"name\":\"Cosmos SDK style transaction\"}]'",
+    "required": false,
+    "since": "v2.4.0+",
+    "type": "Array<{ regex: string; template: string }>"
+  },
+  "NEXT_PUBLIC_ZETACHAIN_SERVICE_API_HOST": {
+    "default": "",
+    "deprecated": false,
+    "description": "ZetaChain cross-chain transactions service API endpoint url",
+    "example": "https://zetachain-cctx.services.blockscout.com",
+    "required": false,
+    "since": "v2.3.2+",
+    "type": "string"
+  },
+  "NEXT_PUBLIC_ZETACHAIN_SERVICE_CHAINS_CONFIG_URL": {
+    "default": "",
+    "deprecated": false,
+    "description": "URL of configuration file (`.json` format only) which contains chains info for the supported chains.",
+    "example": "https://example.com/zetachain_chains_config.json",
+    "required": false,
+    "since": "v2.3.2+",
+    "type": "string"
+  },
+  "OTEL_SDK_ENABLED": {
+    "default": "false",
+    "deprecated": false,
+    "description": "Run-time flag to enable the feature",
+    "example": "true",
+    "required": true,
+    "since": "v1.18.0+",
+    "type": "boolean"
+  },
+  "SENTRY_CSP_REPORT_URI": {
+    "default": "",
+    "deprecated": true,
+    "deprecatedSince": "v2.4.0+",
+    "description": "[DEPRECATED: Feature is no longer supported] URL for sending CSP-reports to your Sentry.io app",
+    "example": "<your-secret>",
+    "required": false,
+    "since": "v1.0.x+",
+    "type": "string"
+  }
+}

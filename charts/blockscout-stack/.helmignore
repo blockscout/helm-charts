@@ -21,3 +21,5 @@
 .idea/
 *.tmproj
 .vscode/
+# Sync scripts (not part of the chart)
+scripts/
