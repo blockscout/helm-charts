@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-blockscout
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-blockscout
     {{- include "blockscout-stack.labels" . | nindent 4 }}
@@ -266,6 +267,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
     {{- include "blockscout-stack.labels" . | nindent 4 }}
@@ -301,7 +303,7 @@ spec:
         - name: {{ .Chart.Name }}-blockscout
           securityContext:
             {{- toYaml .Values.blockscout.securityContext | nindent 12 }}
-          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}-indexer"
+          image: "{{ .Values.blockscout.image.repository }}:{{ .Values.blockscout.image.tag }}"
           resources:
             {{- toYaml .Values.blockscout.resources | nindent 12 }}
           imagePullPolicy: {{ .Values.blockscout.image.pullPolicy }}
