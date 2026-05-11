@@ -63,3 +63,33 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Merge global and component pod annotations.
+Component annotations override global keys.
+Usage:
+  include "blockscout-stack.podAnnotations" (dict "root" . "component" .Values.frontend)
+*/}}
+{{- define "blockscout-stack.podAnnotations" -}}
+{{- $root := .root -}}
+{{- $component := .component | default dict -}}
+{{- $annotations := mergeOverwrite (dict) ($root.Values.podAnnotations | default dict) ($component.podAnnotations | default dict) -}}
+{{- with $annotations -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Merge global and component pod labels.
+Component labels override global keys.
+Usage:
+  include "blockscout-stack.podLabels" (dict "root" . "component" .Values.frontend)
+*/}}
+{{- define "blockscout-stack.podLabels" -}}
+{{- $root := .root -}}
+{{- $component := .component | default dict -}}
+{{- $labels := mergeOverwrite (dict) ($root.Values.podLabels | default dict) ($component.podLabels | default dict) -}}
+{{- with $labels -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end }}

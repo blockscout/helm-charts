@@ -23,13 +23,16 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with (include "blockscout-stack.podAnnotations" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ include "blockscout-stack.fullname" . }}-blockscout
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with (include "blockscout-stack.podLabels" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -282,13 +285,16 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with (include "blockscout-stack.podAnnotations" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with (include "blockscout-stack.podLabels" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -468,13 +474,16 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/blockscout-secret.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+      {{- with (include "blockscout-stack.podAnnotations" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app: {{ .Release.Name }}-blockscout-resizer
         app.stack: {{ include "blockscout-stack.fullname" . }}-blockscout-elixir
         {{- include "blockscout-stack.selectorLabels" . | nindent 8 }}
+      {{- with (include "blockscout-stack.podLabels" (dict "root" . "component" .Values.blockscout) | fromYaml) }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
