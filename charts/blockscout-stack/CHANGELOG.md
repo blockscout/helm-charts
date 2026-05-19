@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 4.4.4
+
+### Fix
+
+- Fixing basic-auth secret change
 
 ## 4.4.3
 
