@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.5.1
+
+### Fix
+
+-Fix for initial migration job secret on first run
+
 ## 4.5.0
 
 ### Feature
