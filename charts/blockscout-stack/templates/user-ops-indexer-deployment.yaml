@@ -69,8 +69,10 @@ spec:
           - name: USER_OPS_INDEXER__METRICS__ROUTE
             value: '/metrics'
           {{- range $key, $value := .Values.userOpsIndexer.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.userOpsIndexer.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
