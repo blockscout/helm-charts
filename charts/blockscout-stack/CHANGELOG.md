@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.5.0
+
+### Feature
+
+- Allow dropping default env vars in `blockscout.env`, `frontend.env`, `stats.env` and `userOpsIndexer.env` by setting their value to empty/null in values.yaml. Note: non-string `false`/`0` will also be dropped, so boolean and numeric env values must be quoted as strings (e.g. `"false"`, `"0"`).
+
 ## 4.4.4
 
 ### Fix

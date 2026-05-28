@@ -66,8 +66,10 @@ spec:
             value: "indexer"
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.blockscout.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}

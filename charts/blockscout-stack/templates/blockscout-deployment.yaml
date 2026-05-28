@@ -80,8 +80,10 @@ spec:
             value: {{ .Values.blockscout.ingress.hostname | quote }}
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.blockscout.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
@@ -201,8 +203,10 @@ spec:
             value: {{ include "blockscout-stack.fullname" . }}-blockscout-headless
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.blockscout.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
@@ -386,8 +390,10 @@ spec:
             value: {{ .Values.config.network.currency.symbol | quote }}
           {{- end }}
           {{- range $key, $value := .Values.blockscout.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.blockscout.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}

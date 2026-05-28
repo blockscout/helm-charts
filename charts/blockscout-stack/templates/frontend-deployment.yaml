@@ -103,8 +103,10 @@ spec:
           {{- end }}
           {{- end }}
           {{- range $key, $value := .Values.frontend.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.frontend.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}

@@ -65,8 +65,10 @@ spec:
             value: "{{ .Values.stats.basePath }}"
           {{- end }}
           {{- range $key, $value := .Values.stats.env }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
           {{- end }}
           {{- range .Values.stats.extraEnv }}
           - {{ toYaml . | nindent 12 | trim }}
