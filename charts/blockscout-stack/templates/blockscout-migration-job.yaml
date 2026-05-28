@@ -78,7 +78,7 @@ spec:
           envFrom:
           {{- if .Values.blockscout.envFromSecret }}
           - secretRef:
-              name: {{ include "blockscout-stack.fullname" . }}-blockscout-env
+              name: {{ include "blockscout-stack.fullname" . }}-blockscout-migration-env
           {{- end }}
           {{- range .Values.blockscout.envFrom }}
           - {{ toYaml . | nindent 12 | trim }}
