@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
   labels:
+    app: {{ include "smart-contract-verification.fullname" . }}-eth-bytecode-db
     {{- include "smart-contract-verification.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.ethBytecodeDb.service.type }}

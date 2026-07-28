@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ include "smart-contract-verification.fullname" . }}-sig-provider
   labels:
+    app: {{ include "smart-contract-verification.fullname" . }}-sig-provider
     {{- include "smart-contract-verification.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.sigProvider.service.type }}
