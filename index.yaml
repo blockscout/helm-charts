@@ -2353,6 +2353,16 @@ entries:
   smart-contract-verification:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-07-28T13:54:59.092744704Z"
+    description: A Helm chart for Kubernetes
+    digest: a6723d60979f90b579b6b775f56c220205f7d27fa47a0e16cc74619a637cb677
+    name: smart-contract-verification
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/smart-contract-verification-0.1.1/smart-contract-verification-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-08-02T06:22:19.013330276Z"
     description: A Helm chart for Kubernetes
     digest: 7044038a9f526d03cb3ba67c813f62ae4ccef5db9c6728c9a659b8f5d2b76630
@@ -2530,4 +2540,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-28T11:27:33.377079213Z"
+generated: "2026-07-28T13:54:59.0931592Z"
