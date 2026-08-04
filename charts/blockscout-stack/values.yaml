@@ -103,6 +103,8 @@ blockscout:
   separateApi:
     enabled: false
     replicaCount: 2
+    deploymentStrategy:
+      type: Recreate
     resources:
       limits:
         cpu: 1
