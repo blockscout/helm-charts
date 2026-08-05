@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 4.5.2
+
+### Feature
+
+- Make indexer deployment strategy configurable via `blockscout.separateApi.deploymentStrategy` with `Recreate` as default. This ensures the indexer pod is fully terminated before a new one starts, preventing two indexers from processing blocks simultaneously during updates.
+
 ## 4.5.1
 
 ### Fix
