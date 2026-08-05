@@ -279,6 +279,8 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.blockscout.replicaCount }}
+  strategy:
+    {{- toYaml .Values.blockscout.separateApi.deploymentStrategy | nindent 4 }}
   selector:
     matchLabels:
       app: {{ include "blockscout-stack.fullname" . }}-blockscout-indexer
