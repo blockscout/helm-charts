@@ -1,0 +1,147 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "config": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+              "currency": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "decimals": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["name", "symbol", "decimals"]
+              }
+            },
+            "required": ["currency", "id"]
+          },
+          "account": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": ["enabled"]
+          },
+          "testnet": {
+            "type": "boolean"
+          }
+        },
+        "required": ["network", "account", "testnet"]
+      },
+      "blockscout": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "repository": {
+                "type": "string"
+              },
+              "tag": {
+                "type": "string"
+              }
+            },
+            "required": ["repository", "tag"]
+          },
+          "ingress": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": ["enabled"]
+          },
+          "env": {
+            "type": "object",
+            "properties": {
+              "ETHEREUM_JSONRPC_VARIANT": {
+                "type": "string"
+              },
+              "HEART_BEAT_TIMEOUT": {
+                "type": "integer"
+              },
+              "HEALTHY_BLOCKS_PERIOD": {
+                "type": "integer"
+              },
+              "TXS_STATS_DAYS_TO_COMPILE_AT_INIT": {
+                "type": "integer"
+              },
+              "DISABLE_EXCHANGE_RATES": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ETHEREUM_JSONRPC_VARIANT",
+              "HEART_BEAT_TIMEOUT",
+              "HEALTHY_BLOCKS_PERIOD",
+              "TXS_STATS_DAYS_TO_COMPILE_AT_INIT",
+              "DISABLE_EXCHANGE_RATES"
+            ]
+          }
+        },
+        "required": ["enabled", "image", "ingress", "env"]
+      }
+    },
+    "required": ["config", "blockscout"],
+    "if": {
+      "properties": {
+        "config": {
+          "properties": {
+            "testnet": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "then": {
+      "properties": {
+        "blockscout": {
+          "properties": {
+            "env": {
+              "properties": {
+                "DISABLE_EXCHANGE_RATES": {
+                  "const": "true"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "else": {
+      "properties": {
+        "blockscout": {
+          "properties": {
+            "env": {
+              "properties": {
+                "DISABLE_EXCHANGE_RATES": {
+                  "const": "false"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
