@@ -11,6 +11,12 @@ fullnameOverride: ""
 ## Common labels to add to all resources
 ##
 commonLabels: {}
+## Annotations to add to all pods
+##
+podAnnotations: {}
+## Labels to add to all pods
+##
+podLabels: {}
 ## Reference to one or more secrets to be used when pulling images
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 ##
@@ -160,6 +166,8 @@ blockscout:
     - bin/blockscout start
   ## Annotations to add to blockscout pod
   podAnnotations: {}
+  ## Labels to add to blockscout pod
+  podLabels: {}
 
   ## Annotations to add to blockscout deployment
   annotations: {}
@@ -249,6 +257,8 @@ frontend:
   replicaCount: 2
   ## Annotations to add to frontend pod
   podAnnotations: {}
+  ## Labels to add to frontend pod
+  podLabels: {}
 
   ## Annotations to add to frontend deployment
   annotations: {}
@@ -358,6 +368,8 @@ stats:
     metricsPort: 6060
 
   podAnnotations: {}
+  ## Labels to add to stats pod
+  podLabels: {}
 
   ## Annotations to add to stats deployment
   annotations: {}
@@ -449,6 +461,8 @@ userOpsIndexer:
     metricsPort: 6060
 
   podAnnotations: {}
+  ## Labels to add to user-ops-indexer pod
+  podLabels: {}
 
   ## Annotations to add to user-ops-indexer deployment
   annotations: {}
