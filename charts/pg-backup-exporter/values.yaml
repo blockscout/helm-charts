@@ -108,6 +108,15 @@ prometheusRule:
       annotations:
         description: "Last successful WAL archive was {{ $value }} seconds ago on {{ $labels.job }}."
         summary: "PostgreSQL WAL archiving is lagging"
+    - alert: MinioBackupBucketLowSpace
+      expr: minio_cluster_capacity_usable_free_bytes{cluster="k8s-pg"} / minio_cluster_capacity_usable_total_bytes{cluster="k8s-pg"} < 0.05
+      for: 1h
+      labels:
+        severity: critical
+        service: "minio"
+      annotations:
+        description: "MinIO backup bucket ({{ $labels.instance }}) has less than 5% free space ({{ $value | humanizePercentage }}). wal-g cannot upload base backups and WAL."
+        summary: "MinIO backup bucket is nearly full"
 
 nodeSelector: {}
 
