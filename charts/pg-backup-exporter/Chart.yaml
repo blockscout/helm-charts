@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pg-backup-exporter
+description: A Prometheus exporter for wal-g base backup state of postgres-operator clusters
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

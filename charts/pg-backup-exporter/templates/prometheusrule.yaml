@@ -1,0 +1,13 @@
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "pg-backup-exporter.fullname" . }}
+  labels:
+    {{- include "pg-backup-exporter.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: pg-backup-monitoring
+      rules:
+        {{- toYaml .Values.prometheusRule.rules | nindent 8 }}
+{{- end }}

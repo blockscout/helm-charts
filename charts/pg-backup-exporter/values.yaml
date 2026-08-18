@@ -1,0 +1,116 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/blockscout/pg-backup-exporter
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# S3/MinIO settings. Defaults match the k8s-pg postgres-operator.
+s3:
+  endpoint: "minio.minio-backup.svc.cluster.local:80"
+  bucket: "k8s-pg-postgresql-backup"
+  region: "fsn1"
+  accessKey: "k8s-pg-postgresql"
+  secretKey: ""
+  secure: false
+
+refresh:
+  every: "72h"
+  retryEvery: "6h"
+  concurrency: 2
+  listTimeout: "30m"
+  requestTimeout: "10m"
+  discoveryEvery: "10m"
+
+# Restrict discovery to a single namespace (empty = all namespaces).
+namespace: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65532
+
+service:
+  type: ClusterIP
+  port: 9351
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+serviceMonitor:
+  enabled: true
+  interval: 60
+  path: /metrics
+  timeout: 30
+
+prometheusRule:
+  enabled: true
+  rules:
+    - alert: PostgresqlBaseBackupStale
+      expr: pg_backup_last_basebackup_timestamp_seconds == 0 OR (time() - pg_backup_last_basebackup_timestamp_seconds) > 7 * 86400
+      for: 1h
+      labels:
+        severity: critical
+        service: "pg-backup-exporter"
+      annotations:
+        description: "PostgreSQL cluster {{ $labels.namespace }}/{{ $labels.name }} has no base backup newer than 7 days (last backup: {{ $labels.pg_backup_last_basebackup_timestamp_seconds | humanizeTimestamp }})."
+        summary: "PostgreSQL base backup is stale"
+    - alert: PostgresqlBaseBackupRefreshFailed
+      expr: pg_backup_last_refresh_success == 0
+      for: 12h
+      labels:
+        severity: warning
+        service: "pg-backup-exporter"
+      annotations:
+        description: "Could not list base backups for cluster {{ $labels.namespace }}/{{ $labels.name }} from S3/MinIO."
+        summary: "PostgreSQL backup listing failed"
+    - alert: PostgresqlWalArchivingFailed
+      expr: increase(pg_stat_archiver_failed_count[1h]) > 0
+      for: 15m
+      labels:
+        severity: critical
+        service: "postgresql"
+      annotations:
+        description: "WAL archiving has failed {{ $value }} time(s) in the last hour on {{ $labels.job }}."
+        summary: "PostgreSQL WAL archiving is failing"
+    - alert: PostgresqlWalArchivingLag
+      expr: pg_stat_archiver_last_archive_age > 6 * 3600
+      for: 1h
+      labels:
+        severity: warning
+        service: "postgresql"
+      annotations:
+        description: "Last successful WAL archive was {{ $value }} seconds ago on {{ $labels.job }}."
+        summary: "PostgreSQL WAL archiving is lagging"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
