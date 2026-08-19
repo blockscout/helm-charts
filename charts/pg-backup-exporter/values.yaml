@@ -19,9 +19,9 @@ s3:
   secure: false
 
 refresh:
-  every: "72h"
+  every: "12h"
   retryEvery: "6h"
-  concurrency: 2
+  concurrency: 4
   listTimeout: "30m"
   requestTimeout: "10m"
   discoveryEvery: "10m"
