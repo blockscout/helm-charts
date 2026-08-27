@@ -22,8 +22,47 @@ spec:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new batches"
           description: "Latest batch at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.batchTimeMultiplier }} average batch time ago."
 
+      - alert: BlockscoutNoNewDeposits
+        expr: time() - latest_deposit_timestamp{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > {{ .Values.config.prometheus.rules.depositTimeMultiplier }}*average_deposit_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} and average_deposit_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > 0
+        for: 2h
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new deposits"
+          description: "Latest deposit at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.depositTimeMultiplier }} average deposit time ago."
+
+      - alert: BlockscoutNoNewWithdrawals
+        expr: time() - latest_withdrawal_timestamp{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > {{ .Values.config.prometheus.rules.withdrawalTimeMultiplier }}*average_withdrawal_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} and average_withdrawal_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > 0
+        for: 2h
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has no new withdrawals"
+          description: "Latest withdrawal at {{`{{ $labels.job }}`}} was for more than {{ .Values.config.prometheus.rules.withdrawalTimeMultiplier }} average withdrawal time ago."
+
+      - alert: BlockscoutBlockIndexingDelayHigh
+        expr: blocks_realtime_indexing_delay_seconds{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }},percentile="p90"} > {{ .Values.config.prometheus.rules.blockIndexingDelayThreshold }}
+        for: 15m
+        labels:
+          severity: warning
+          service: "blockscout-stack"
+          {{- with .Values.config.prometheus.rules.labels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        annotations:
+          summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has high block indexing delay"
+          description: "The p90 real-time block indexing delay for {{`{{ $labels.job }}`}} is {{`{{ $value | printf \"%.0f\" }}`}}s, exceeding the {{ .Values.config.prometheus.rules.blockIndexingDelayThreshold }}s threshold for more than 15m."
+
       - alert: BlockscoutMissingBlocksIncreasing
-        expr: delta(missing_blocks_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[2h]) > 100
+        expr: delta(missing_blocks_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[{{ .Values.config.prometheus.rules.missingBlockWindow }}h]) / ({{ .Values.config.prometheus.rules.missingBlockWindow }}*3600*1000/average_block_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}) * 100 > {{ .Values.config.prometheus.rules.missingBlockPercentThreshold }} and average_block_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > 0
         for: 2h
         labels:
           severity: critical
@@ -33,24 +72,11 @@ spec:
           {{- end }}
         annotations:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has missing blocks"
-          description: "The number of missing blocks increased by {{`{{ $value | printf \"%.0f\" }}`}} in the last 2 hours. The indexer is falling behind and blocks are not being indexed. Check RPC node availability and indexer logs."
-
-      - alert: BlockscoutMissingBlocksIncreasingDaily
-        expr: delta(missing_blocks_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[24h]) > 50
-        for: 2h
-        labels:
-          severity: warning
-          service: "blockscout-stack"
-          {{- with .Values.config.prometheus.rules.labels }}
-          {{- toYaml . | nindent 10 }}
-          {{- end }}
-        annotations:
-          summary: "Missing blocks increasing daily for {{`{{ $labels.job }}`}} ({{`{{ $labels.namespace }}`}})"
-          description: "The number of missing blocks increased by {{`{{ $value | printf \"%.0f\" }}`}} over the last 24 hours."
+          description: "{{`{{ $value | printf \"%.2f\" }}`}}% of the blocks expected over the last {{ .Values.config.prometheus.rules.missingBlockWindow }}h are missing (threshold: {{ .Values.config.prometheus.rules.missingBlockPercentThreshold }}%). The indexer is falling behind and blocks are not being indexed. Check RPC node availability and indexer logs."
 
       {{- if ne (toString (default "false" .Values.blockscout.env.INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER)) "true" }}
       - alert: BlockscoutMissingInternalTransactionsIncreasing
-        expr: delta(missing_internal_transactions_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[12h]) > 100
+        expr: delta(missing_internal_transactions_count{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}[{{ .Values.config.prometheus.rules.missingInternalTransactionsWindow }}h]) / ({{ .Values.config.prometheus.rules.missingInternalTransactionsWindow }}*3600*1000/average_block_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}}) * 100 > {{ .Values.config.prometheus.rules.missingInternalTransactionsPercentThreshold }} and average_block_time{job="{{ include "blockscout-stack.fullname" . }}"{{- if .Values.blockscout.separateApi.enabled }},service="{{ include "blockscout-stack.fullname" . }}-blockscout-indexer-svc"{{- end }}} > 0
         for: 3h
         labels:
           severity: warning
@@ -60,6 +86,6 @@ spec:
           {{- end }}
         annotations:
           summary: "Instance {{`{{ $labels.job }}`}} in namespace {{`{{ $labels.namespace }}`}} has missing internal transactions"
-          description: "The number of missing internal transactions increased by {{`{{ $value | printf \"%.0f\" }}`}} in the last 12 hours."
+          description: "{{`{{ $value | printf \"%.2f\" }}`}}% of the blocks' worth of internal transactions expected over the last {{ .Values.config.prometheus.rules.missingInternalTransactionsWindow }}h are missing (threshold: {{ .Values.config.prometheus.rules.missingInternalTransactionsPercentThreshold }}%)."
       {{- end }}
 {{- end }}

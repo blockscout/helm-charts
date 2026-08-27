@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 4.5.3
+
+### Feature
+
+- Add `BlockscoutNoNewDeposits` and `BlockscoutNoNewWithdrawals` Prometheus alerts, mirroring `BlockscoutNoNewBatches` but for the `latest_deposit_timestamp`/`average_deposit_time` and `latest_withdrawal_timestamp`/`average_withdrawal_time` metrics. Thresholds are configurable via `config.prometheus.rules.depositTimeMultiplier` and `config.prometheus.rules.withdrawalTimeMultiplier`, both defaulting to `100`.
+- Switch `BlockscoutMissingBlocksIncreasing` and `BlockscoutMissingInternalTransactionsIncreasing` from absolute-count thresholds to a percentage of blocks expected in a configurable lookback window (expected block count derived from `average_block_time`, which is in ms). `BlockscoutMissingBlocksIncreasingDaily` is removed, folded into `BlockscoutMissingBlocksIncreasing`. New config: `config.prometheus.rules.missingBlockWindow` (hours, default `2`) and `missingBlockPercentThreshold` (default `1`); `missingInternalTransactionsWindow` (hours, default `12`) and `missingInternalTransactionsPercentThreshold` (default `5`).
+- Add `BlockscoutBlockIndexingDelayHigh` Prometheus alert, firing when `blocks_realtime_indexing_delay_seconds{percentile="p90"}` exceeds `config.prometheus.rules.blockIndexingDelayThreshold` (seconds, default `60`) for more than 15m.
+
 ## 4.5.2
 
 ### Feature

@@ -73,7 +73,21 @@ config:
       ## If latest block timestamp is older than healthyBlockPeriod instance is considered unhealthy and alert is created
       healthyBlockPeriod: 300
       ## Alert is created if there is no new batches for more than batchTimeMultiplier x average_batch_time
-      batchTimeMultiplier: 2
+      batchTimeMultiplier: 100
+      ## Alert is created if there is no new deposits for more than depositTimeMultiplier x average_deposit_time
+      depositTimeMultiplier: 100
+      ## Alert is created if there is no new withdrawals for more than withdrawalTimeMultiplier x average_withdrawal_time
+      withdrawalTimeMultiplier: 100
+      ## Lookback window (in hours) used to compute the % of blocks missing (missing_blocks_count delta vs expected block count, derived from average_block_time)
+      missingBlockWindow: 2
+      ## Alert is created if more than missingBlockPercentThreshold % of the blocks expected over missingBlockWindow are missing
+      missingBlockPercentThreshold: 1
+      ## Lookback window (in hours) used to compute the % of missing internal transactions (missing_internal_transactions_count delta vs expected block count, derived from average_block_time)
+      missingInternalTransactionsWindow: 12
+      ## Alert is created if more than missingInternalTransactionsPercentThreshold % of the blocks' worth of internal transactions expected over missingInternalTransactionsWindow are missing
+      missingInternalTransactionsPercentThreshold: 5
+      ## Alert is created if the p90 real-time block indexing delay (blocks_realtime_indexing_delay_seconds{percentile="p90"}, in seconds) exceeds blockIndexingDelayThreshold for more than 15m
+      blockIndexingDelayThreshold: 300
       labels: {}
 ## Configuration options for backend
 ##
