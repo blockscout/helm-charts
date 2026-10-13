@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-svc
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer-svc
     {{- include "blockscout-stack.labels" . | nindent 4 }}

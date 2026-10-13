@@ -3,6 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-user-ops-indexer
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
 spec:

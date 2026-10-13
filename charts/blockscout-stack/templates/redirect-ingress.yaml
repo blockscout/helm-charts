@@ -3,6 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-redirect-ingress
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
   annotations:

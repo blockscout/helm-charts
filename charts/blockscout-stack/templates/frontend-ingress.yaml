@@ -17,6 +17,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}-frontend-ingress
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout-stack.labels" . | nindent 4 }}
   {{- $annotations := dict }}
