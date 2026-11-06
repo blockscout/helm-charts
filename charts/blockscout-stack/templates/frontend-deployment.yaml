@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "blockscout-stack.fullname" . }}-frontend
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "blockscout-stack.fullname" . }}-frontend
     {{- include "blockscout-stack.labels" . | nindent 4 }}
