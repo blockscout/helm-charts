@@ -85,6 +85,21 @@ resources:
     cpu: 500m
     memory: 256Mi
 
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 180
+  periodSeconds: 30
+  timeoutSeconds: 20
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 180
+  periodSeconds: 30
+  timeoutSeconds: 20
+
 volumes: []
 # - name: foo
 #   secret:

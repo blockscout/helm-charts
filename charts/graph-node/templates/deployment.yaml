@@ -85,19 +85,9 @@ spec:
               containerPort: 8020
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 180
-            periodSeconds: 30
-            timeoutSeconds: 20
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 180
-            periodSeconds: 30
-            timeoutSeconds: 20
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
