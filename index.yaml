@@ -1933,6 +1933,16 @@ entries:
   graph-node:
   - apiVersion: v2
     appVersion: 0.38.0
+    created: "2026-11-11T11:38:03.970275606Z"
+    description: A Helm chart for Kubernetes to run graph-node
+    digest: d29778694c98978621258e7df7b1de6e35764ae03abd0ac4d46a7dbbf7986428
+    name: graph-node
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/graph-node-0.4.0/graph-node-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 0.38.0
     created: "2026-04-15T11:08:47.657692502Z"
     description: A Helm chart for Kubernetes to run graph-node
     digest: e9be3fa6ec894125d241e66993803e5e33f4c78d69b0d61a07a8f67dba107dec
@@ -2570,4 +2580,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-02T15:14:36.426453383Z"
+generated: "2026-11-11T11:38:03.970876392Z"
