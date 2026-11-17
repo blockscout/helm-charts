@@ -1,0 +1,5 @@
+{{- $root := . -}}
+{{- $component := .Values.components.ingestionGeneral -}}
+{{- if $component.enabled }}
+{{- include "posthog.deployment" (dict "root" $root "name" "ingestion-general" "component" $component) }}
+{{- end }}
