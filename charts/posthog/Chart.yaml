@@ -1,0 +1,19 @@
+apiVersion: v2
+name: posthog
+description: A Helm chart for deploying open-source self-hosted PostHog on Kubernetes.
+type: application
+version: 0.1.0
+appVersion: "master"
+kubeVersion: ">= 1.24-0"
+home: https://posthog.com
+sources:
+  - https://github.com/blockscout/helm-charts/tree/main/charts/posthog
+maintainers:
+  - name: Blockscout Team
+    email: ops@blockscout.com
+keywords:
+  - posthog
+  - analytics
+  - feature-flags
+  - product-analytics
+icon: https://posthog.com/static/brand/logo-posthog-dark.svg

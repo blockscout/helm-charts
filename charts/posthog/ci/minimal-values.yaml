@@ -1,0 +1,18 @@
+siteUrl: "https://posthog.example.com"
+secretKey:
+  existingSecret: posthog-secrets
+encryptionSaltKeys:
+  existingSecret: posthog-secrets
+databaseUrl:
+  existingSecret: posthog-database-url
+externalPostgresql:
+  host: postgres.example.com
+  user: posthog
+  password:
+    existingSecret: posthog-postgres
+externalObjectStorage:
+  endpoint: http://minio.example.com:9000
+  accessKey:
+    existingSecret: posthog-s3
+  secretKey:
+    existingSecret: posthog-s3

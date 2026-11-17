@@ -1,0 +1,23 @@
+{{- $root := . -}}
+{{- $component := .Values.components.browserless -}}
+{{- if $component.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "posthog.fullname" $root }}-browserless
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "browserless") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ $component.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "browserless") | nindent 4 }}
+---
+{{- $browserlessEnv := list (dict "name" "TOKEN" "valueFrom" (dict "secretKeyRef" (dict "name" ($root.Values.browserless.token.existingSecret | default $root.Values.secretKey.existingSecret) "key" ($root.Values.browserless.token.key | default $root.Values.secretKey.key)))) (dict "name" "LOG_LEVEL" "value" "warn") (dict "name" "DEBUG" "value" "-*") -}}
+{{- $mergedComponent := merge (dict "env" $browserlessEnv) $component -}}
+{{- include "posthog.deployment" (dict "root" $root "name" "browserless" "component" $mergedComponent) }}
+{{- end }}

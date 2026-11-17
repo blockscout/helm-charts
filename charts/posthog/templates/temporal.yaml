@@ -1,0 +1,92 @@
+{{- if .Values.temporal.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "posthog.fullname" . }}-temporal
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "temporal") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.temporal.service.frontendPort }}
+      targetPort: frontend
+      protocol: TCP
+      name: frontend
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "temporal") | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "posthog.fullname" . }}-temporal
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "temporal") | nindent 4 }}
+spec:
+  replicas: {{ .Values.temporal.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "temporal") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "temporal") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: temporal
+          image: {{ include "posthog.image" (list . .Values.temporal.image) | quote }}
+          imagePullPolicy: {{ .Values.temporal.image.pullPolicy }}
+          ports:
+            - name: frontend
+              containerPort: 7233
+              protocol: TCP
+          env:
+            - name: DB
+              value: "postgres12"
+            - name: DB_PORT
+              value: {{ .Values.externalPostgresql.port | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.externalPostgresql.user | quote }}
+            - name: POSTGRES_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalPostgresql.password.existingSecret | quote }}
+                  key: {{ .Values.externalPostgresql.password.key | quote }}
+            - name: POSTGRES_SEEDS
+              value: {{ .Values.externalPostgresql.host | quote }}
+            - name: DYNAMIC_CONFIG_FILE_PATH
+              value: /etc/temporal/config/dynamicconfig/development-sql.yaml
+            - name: ENABLE_ES
+              value: "false"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - nc -z $(hostname) 7233
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - nc -z $(hostname) 7233
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.temporal.resources | nindent 12 }}
+          volumeMounts:
+            - name: dynamicconfig
+              mountPath: /etc/temporal/config/dynamicconfig
+      volumes:
+        - name: dynamicconfig
+          configMap:
+            name: {{ include "posthog.fullname" . }}-temporal-dynamicconfig
+{{- end }}

@@ -1,0 +1,49 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+{{- $fullname := include "posthog.fullname" . -}}
+{{- $commonLabels := include "posthog.labels" . -}}
+{{- $monitoring := .Values.monitoring.serviceMonitor -}}
+
+# Redpanda metrics are exposed on the admin port (9644).
+{{- if .Values.redpanda.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullname }}-redpanda
+  labels:
+    {{- $commonLabels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "posthog.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: redpanda
+  endpoints:
+    - port: admin
+      path: /metrics
+      interval: {{ $monitoring.interval }}
+      scrapeTimeout: {{ $monitoring.scrapeTimeout }}
+{{- end }}
+
+# etcd metrics are exposed on the client port (2379).
+{{- if .Values.etcd.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullname }}-etcd
+  labels:
+    {{- $commonLabels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "posthog.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: etcd
+  endpoints:
+    - port: client
+      path: /metrics
+      interval: {{ $monitoring.interval }}
+      scrapeTimeout: {{ $monitoring.scrapeTimeout }}
+{{- end }}
+{{- end }}

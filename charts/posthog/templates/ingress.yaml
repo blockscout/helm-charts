@@ -1,0 +1,47 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "posthog.fullname" . -}}
+{{- $svcPort := .Values.components.web.service.port -}}
+{{- $className := .Values.ingress.className -}}
+{{- $host := .Values.ingress.host -}}
+{{- $tls := .Values.ingress.tls -}}
+{{- $routes := .Values.ingress.routes -}}
+
+{{- range $name, $route := $routes }}
+{{- if hasKey $route "paths" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-{{ $name | kebabcase }}
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $ "component" $name) | nindent 4 }}
+  {{- with mergeOverwrite (deepCopy (default (dict) $route.annotations)) $.Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if $className }}
+  ingressClassName: {{ $className | quote }}
+  {{- end }}
+  {{- if $tls.enabled }}
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+      secretName: {{ $tls.secretName | default (printf "%s-tls" $fullName) | quote }}
+  {{- end }}
+  rules:
+    - host: {{ $host | quote }}
+      http:
+        paths:
+          {{- range $route.paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType | default "Prefix" | quote }}
+            backend:
+              service:
+                name: {{ $fullName }}-{{ $name | kebabcase }}
+                port:
+                  number: {{ $route.servicePort }}
+          {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

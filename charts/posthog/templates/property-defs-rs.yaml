@@ -1,0 +1,5 @@
+{{- $root := . -}}
+{{- $component := .Values.components.propertyDefsRs -}}
+{{- if $component.enabled }}
+{{- include "posthog.deployment" (dict "root" $root "name" "property-defs-rs" "component" $component) }}
+{{- end }}
