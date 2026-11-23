@@ -50,13 +50,15 @@ internalRequestToken:
 browserless:
   token:
     existingSecret: ""
-    key: "BROWSERLESS_TOKEN"
+    # Empty selects secretKey.key when no dedicated Secret is configured.
+    key: ""
 
 # -- Livestream JWT secret. Defaults to SECRET_KEY when empty.
 livestream:
   jwtSecret:
     existingSecret: ""
-    key: "LIVESTREAM_JWT_SECRET"
+    # Empty selects secretKey.key when no dedicated Secret is configured.
+    key: ""
 
 # -- Email / SMTP settings for invites and password resets.
 email:
@@ -186,14 +188,14 @@ ingress:
       servicePort: 6738
     livestream:
       paths:
-        - path: /livestream
-          pathType: Prefix
+        - path: /livestream/?(.*)
+          pathType: ImplementationSpecific
       servicePort: 8080
       annotations:
         nginx.ingress.kubernetes.io/proxy-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-        nginx.ingress.kubernetes.io/rewrite-target: "/"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
 
 # -----------------------------------------------------------------------------
 # External PostgreSQL
@@ -213,6 +215,7 @@ externalPostgresql:
 # -----------------------------------------------------------------------------
 externalObjectStorage:
   endpoint: ""
+  # -- Browser-reachable S3 endpoint origin, without the bucket name. The SDK appends the bucket.
   publicEndpoint: ""
   region: "us-east-1"
   bucket: "posthog"
@@ -240,11 +243,9 @@ externalKafka:
     key: "password"
 
 # -----------------------------------------------------------------------------
-# External ClickHouse
-# Set enabled=false to deploy the built-in ClickHouse StatefulSet.
+# External ClickHouse, for example an Altinity ClickHouseInstallation.
 # -----------------------------------------------------------------------------
 externalClickhouse:
-  enabled: false
   host: ""
   database: "posthog"
   user: "default"
@@ -313,36 +314,6 @@ valkey:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-
-# -----------------------------------------------------------------------------
-# Internal ClickHouse StatefulSet
-# -----------------------------------------------------------------------------
-clickhouse:
-  enabled: true
-  image:
-    repository: ghcr.io/posthog/clickhouse-posthog
-    tag: "26.9.5.2-posthog-aca5bdabb92f"
-    digest: sha256:275f46ced5bf3c892053bea786109451cedd90276c0442bb6996d6abbd873564
-    pullPolicy: IfNotPresent
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: 500m
-      memory: 2Gi
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-  persistence:
-    enabled: true
-    size: 100Gi
-    storageClass: ""
-  service:
-    httpPort: 8123
-    nativePort: 9000
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  extraEnv: []
 
 # -----------------------------------------------------------------------------
 # Internal ZooKeeper StatefulSet
@@ -513,14 +484,25 @@ components:
     enabled: true
     replicaCount: 2
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - /bin/sh
       - -c
-      - ./bin/start-backend & ./bin/start-frontend
+      - export PROMETHEUS_MULTIPROC_DIR=$(mktemp -d) && exec python ./bin/granian_preload.py posthog.asgi:application
+    env:
+      - name: GRANIAN_INTERFACE
+        value: "asgi"
+      - name: GRANIAN_HOST
+        value: "0.0.0.0"
+      - name: GRANIAN_PORT
+        value: "8000"
+      - name: GRANIAN_WORKERS
+        value: "2"
+      - name: POSTHOG_GRANIAN_SHARED_SOCKET
+        value: "true"
     resources:
       requests:
         cpu: 500m
@@ -546,7 +528,6 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -561,9 +542,9 @@ components:
     enabled: true
     replicaCount: 1
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - ./bin/docker-worker-celery
@@ -595,7 +576,10 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
+    env:
+      # Helm post-install hooks run only after regular workloads are ready.
+      - name: POSTHOG_SKIP_MIGRATION_CHECKS
+        value: "1"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -607,9 +591,9 @@ components:
     enabled: true
     replicaCount: 1
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - ./bin/temporal-django-worker
@@ -679,7 +663,9 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
+    env:
+      - name: ADDRESS
+        value: "0.0.0.0:3000"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -721,7 +707,9 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
+    env:
+      - name: ADDRESS
+        value: "0.0.0.0:3001"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -805,7 +793,9 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
+    env:
+      - name: PLUGIN_SERVER_MODE
+        value: cdp_api
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -831,7 +821,9 @@ components:
       limits:
         cpu: 2000m
         memory: 2Gi
-    env: []
+    env:
+      - name: PLUGIN_SERVER_MODE
+        value: ingestion-v2-combined
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -893,7 +885,15 @@ components:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
-    env: []
+    env:
+      - name: LIVESTREAM_MMDB_PATH
+        value: /GeoLite2-City.mmdb
+      - name: LIVESTREAM_CONSUMERS_EVENT_TOPIC
+        value: events_plugin_ingestion
+      - name: LIVESTREAM_CONSUMERS_EVENT_GROUP_ID
+        value: livestream
+      - name: LIVESTREAM_CONSUMERS_SESSION_RECORDING_ENABLED
+        value: "false"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -1009,14 +1009,14 @@ jobs:
   migrate:
     enabled: true
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - sh
       - -c
-      - python manage.py migrate
+      - python manage.py migrate --noinput && python manage.py apply_persons_migrations --hobby
     activeDeadlineSeconds: 3600
     backoffLimit: 2
     ttlSecondsAfterFinished: 86400
@@ -1030,14 +1030,33 @@ jobs:
   clickhouseMigrate:
     enabled: true
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - sh
       - -c
-      - python manage.py migrate_clickhouse && python manage.py run_async_migrations
+      - |
+        set -e
+        python - <<'PY'
+        import os
+        import socket
+        import time
+
+        deadline = time.monotonic() + 600
+        while True:
+            try:
+                with socket.create_connection((os.environ["CLICKHOUSE_HOST"], 9000), timeout=5):
+                    print("ClickHouse native endpoint is ready")
+                    break
+            except OSError:
+                if time.monotonic() >= deadline:
+                    raise SystemExit("ClickHouse did not become ready within 600 seconds")
+                time.sleep(5)
+        PY
+        python manage.py migrate_clickhouse
+        python manage.py run_async_migrations
     activeDeadlineSeconds: 3600
     backoffLimit: 2
     ttlSecondsAfterFinished: 86400
@@ -1051,9 +1070,9 @@ jobs:
   asyncMigrationsCheck:
     enabled: true
     image:
-      repository: ghcr.io/posthog/posthog/posthog
-      tag: master
-      digest: sha256:1322b2cccac4a405bc1f6f855a22a25c1e1468cbfcb9a8e8962baf74f25cd3a6
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
       pullPolicy: IfNotPresent
     command:
       - python
@@ -1095,7 +1114,7 @@ jobs:
       digest: sha256:ae5ec4c12fffa61e7f785abfae666c854f882f26a679067f29bada3e61a1bfc4
       pullPolicy: IfNotPresent
     activeDeadlineSeconds: 600
-    backoffLimit: 3
+    backoffLimit: 20
     ttlSecondsAfterFinished: 3600
     resources:
       requests:

@@ -11,6 +11,7 @@ A Helm chart for deploying the open-source self-hosted [PostHog](https://posthog
 - Kubernetes >= 1.24
 - Helm >= 3.11 (chart was linted with Helm 4.x as well)
 - An external PostgreSQL cluster (version 15+)
+- An external ClickHouse cluster (an Altinity `ClickHouseInstallation` is recommended)
 - An external S3-compatible object store (e.g. MinIO)
 - An ingress controller (tested with ingress-nginx)
 
@@ -27,7 +28,7 @@ The chart deploys the following groups of workloads:
 | **Realtime** | `livestream` |
 | **PersonHog pipeline** | `personhog-replica`, `personhog-router`, `personhog-router-leader`, `personhog-leader`, `personhog-writer`, `personhog-identity`, `personhog-publisher`, `personhog-changelog-relay` |
 | **Browser automation** | `browserless` |
-| **Internal stateful** | Redis 7, Valkey, ClickHouse, ZooKeeper, Redpanda, etcd, Temporal |
+| **Internal stateful** | Redis 7, Valkey, ZooKeeper, Redpanda, etcd, Temporal |
 | **Init / migration jobs** | Kafka topic init, PersonHog etcd init, Django/ClickHouse migrations, async migrations check, PersonHog tables readiness |
 
 ## Image pinning
@@ -64,12 +65,25 @@ Two PostgreSQL databases are required:
 - `posthog` for the application
 - `temporal` + `temporal_visibility` for Temporal (if internal Temporal is used)
 
+### ClickHouse
+
+```yaml
+externalClickhouse:
+  host: clickhouse-posthog-clickhouse
+  database: posthog
+  user: default
+  secure: false
+  verify: false
+```
+
+The external cluster must contain PostHog's upstream cluster definitions, Kafka named collections, profiles and executable UDF configuration. The SCOUT-80 Altinity installation also provisions the UDF binaries and format schemas.
+
 ### Object storage
 
 ```yaml
 externalObjectStorage:
   endpoint: http://minio.example.com:9000
-  publicEndpoint: https://posthog.example.com/posthog
+  publicEndpoint: https://posthog.example.com
   region: us-east-1
   bucket: posthog
   forcePathStyle: true
@@ -81,7 +95,7 @@ externalObjectStorage:
     key: AWS_SECRET_ACCESS_KEY
 ```
 
-The bucket must be created and configured outside the chart. Public read access through `publicEndpoint` is handled by ingress-nginx.
+The bucket must be created and configured outside the chart. `publicEndpoint` is the endpoint origin without the bucket name; the S3 SDK appends the bucket. Public read access is handled by ingress-nginx, which must proxy `/posthog` to the S3 API without stripping that prefix.
 
 ## Required secrets
 
@@ -129,9 +143,12 @@ externalPostgresql:
     existingSecret: posthog-postgres
     key: password
 
+externalClickhouse:
+  host: clickhouse.example.com
+
 externalObjectStorage:
   endpoint: http://minio.example.com:9000
-  publicEndpoint: https://posthog.example.com/posthog
+  publicEndpoint: https://posthog.example.com
   bucket: posthog
   accessKey:
     existingSecret: posthog-s3
@@ -184,9 +201,9 @@ Set `monitoring.serviceMonitor.enabled=true` to create Prometheus `ServiceMonito
 
 ## Limitations
 
-- ClickHouse configuration files from the upstream repository are not mounted by default. For production tuning you may need to supply them via `clickhouse.extraEnv` or a custom ClickHouse subchart.
+- ClickHouse is external. PostHog-specific cluster configuration and executable UDF assets must be provisioned with that cluster.
 - Temporal visibility uses the same external PostgreSQL. For high-availability Temporal, run a separate Temporal cluster.
-- Redis, Valkey, ClickHouse, Redpanda, ZooKeeper and etcd are single-node by default. Scale them via `replicaCount` and persistence settings only after validating the upstream constraints.
+- Redis, Valkey, Redpanda, ZooKeeper and etcd are single-node by default. Scale them via `replicaCount` and persistence settings only after validating the upstream constraints.
 - Session replay, error tracking, AI and logs/traces are not implemented in this chart version.
 
 ## License

@@ -177,6 +177,10 @@ spec:
               value: "http://{{ $fullname }}-personhog-replica:{{ $c.services.replicaPort }}"
             - name: ROUTER_MODE
               value: "leader"
+            - name: IDENTITY_ENABLED
+              value: "true"
+            - name: IDENTITY_URL
+              value: "http://{{ $fullname }}-personhog-identity:{{ $c.services.identityPort }}"
             - name: ETCD_ENDPOINTS
               value: "http://{{ $fullname }}-etcd:2379"
             - name: ETCD_PREFIX
@@ -307,6 +311,8 @@ spec:
           env:
             - name: DATABASE_URL
               {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: PG_TARGET_TABLE
+              value: posthog_person
             - name: KAFKA_HOSTS
               value: {{ include "posthog.kafka.brokers" $root | quote }}
             - name: ETCD_ENDPOINTS

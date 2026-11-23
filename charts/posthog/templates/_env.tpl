@@ -81,12 +81,20 @@ Common environment variables shared by PostHog workloads.
 # PostgreSQL
 - name: DATABASE_URL
   {{- include "posthog.databaseUrl" . | nindent 2 }}
+# This chart keeps persons in the main database, matching the Hobby deployment.
+- name: PERSONS_DB_WRITER_URL
+  {{- include "posthog.databaseUrl" . | nindent 2 }}
+- name: PERSONS_DB_READER_URL
+  {{- include "posthog.databaseUrl" . | nindent 2 }}
+- name: PERSONS_DATABASE_URL
+  {{- include "posthog.databaseUrl" . | nindent 2 }}
+- name: BEHAVIORAL_COHORTS_DATABASE_URL
+  {{- include "posthog.databaseUrl" . | nindent 2 }}
 # ClickHouse
 - name: CLICKHOUSE_HOST
   value: {{ $chHost | quote }}
 - name: CLICKHOUSE_DATABASE
   value: {{ .Values.externalClickhouse.database | default "posthog" | quote }}
-{{- if .Values.externalClickhouse.enabled }}
 - name: CLICKHOUSE_USER
   value: {{ .Values.externalClickhouse.user | quote }}
 {{- if .Values.externalClickhouse.password.existingSecret }}
@@ -95,7 +103,6 @@ Common environment variables shared by PostHog workloads.
     secretKeyRef:
       name: {{ .Values.externalClickhouse.password.existingSecret | quote }}
       key: {{ .Values.externalClickhouse.password.key | quote }}
-{{- end }}
 {{- end }}
 - name: CLICKHOUSE_SECURE
   value: {{ .Values.externalClickhouse.secure | default false | quote }}
@@ -144,6 +151,10 @@ Common environment variables shared by PostHog workloads.
   value: {{ printf "%s-valkey" $fullname | quote }}
 - name: CDP_VALKEY_PORT
   value: "6379"
+- name: COOKIELESS_REDIS_HOST
+  value: {{ printf "%s-redis" $fullname | quote }}
+- name: COOKIELESS_REDIS_PORT
+  value: "6379"
 # Object storage
 - name: OBJECT_STORAGE_ENABLED
   value: "true"
@@ -174,7 +185,7 @@ Common environment variables shared by PostHog workloads.
 - name: PERSONHOG_ENABLED
   value: "true"
 - name: PERSONHOG_ADDR
-  value: {{ printf "http://%s-personhog-router:50052" $fullname | quote }}
+  value: {{ printf "%s-personhog-router:50052" $fullname | quote }}
 - name: PERSON_TABLE
   value: "posthog_person"
 - name: PERSON_DISTINCT_ID_TABLE

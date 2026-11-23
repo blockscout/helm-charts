@@ -206,10 +206,8 @@ metadata:
   name: {{ include "posthog.fullname" . }}-personhog-etcd-init
   labels:
     {{- include "posthog.componentLabels" (dict "root" . "component" "personhog-etcd-init") | nindent 4 }}
-  annotations:
-    "helm.sh/hook": post-install
-    "helm.sh/hook-weight": "2"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  # A regular Job: router/leader readiness depends on this key, so a post-install
+  # hook would deadlock when Helm is run with --wait.
 spec:
   activeDeadlineSeconds: {{ .Values.jobs.personhogEtcdInit.activeDeadlineSeconds }}
   backoffLimit: {{ .Values.jobs.personhogEtcdInit.backoffLimit }}

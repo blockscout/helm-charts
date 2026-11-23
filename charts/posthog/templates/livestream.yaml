@@ -3,7 +3,11 @@
 {{- if $component.enabled }}
 {{- include "posthog.service" (dict "root" $root "name" "livestream" "port" $component.service.port "enabled" true) }}
 ---
-{{- $livestreamEnv := list (dict "name" "LIVESTREAM_JWT_SECRET" "valueFrom" (dict "secretKeyRef" (dict "name" ($root.Values.livestream.jwtSecret.existingSecret | default $root.Values.secretKey.existingSecret) "key" ($root.Values.livestream.jwtSecret.key | default $root.Values.secretKey.key)))) -}}
-{{- $mergedComponent := merge (dict "env" $livestreamEnv) $component -}}
+{{- $livestreamEnv := list
+  (dict "name" "LIVESTREAM_JWT_SECRET" "valueFrom" (dict "secretKeyRef" (dict "name" ($root.Values.livestream.jwtSecret.existingSecret | default $root.Values.secretKey.existingSecret) "key" ($root.Values.livestream.jwtSecret.key | default $root.Values.secretKey.key))))
+  (dict "name" "LIVESTREAM_CONSUMERS_EVENT_BROKERS" "value" (include "posthog.kafka.brokers" $root))
+  (dict "name" "LIVESTREAM_CONSUMERS_EVENT_SECURITY_PROTOCOL" "value" ($root.Values.externalKafka.securityProtocol | default "PLAINTEXT"))
+-}}
+{{- $mergedComponent := merge (dict "env" (concat $livestreamEnv $component.env)) $component -}}
 {{- include "posthog.deployment" (dict "root" $root "name" "livestream" "component" $mergedComponent) }}
 {{- end }}

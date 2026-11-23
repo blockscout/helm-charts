@@ -139,11 +139,7 @@ Kafka URL helper (used by PostHog Django settings)
 ClickHouse host helper
 */}}
 {{- define "posthog.clickhouse.host" -}}
-{{- if .Values.externalClickhouse.enabled -}}
-{{- .Values.externalClickhouse.host -}}
-{{- else -}}
-{{- printf "%s-clickhouse" (include "posthog.fullname" .) -}}
-{{- end -}}
+{{- required "externalClickhouse.host is required" .Values.externalClickhouse.host -}}
 {{- end }}
 
 {{/*

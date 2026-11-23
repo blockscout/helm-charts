@@ -10,6 +10,8 @@ externalPostgresql:
   user: posthog
   password:
     existingSecret: posthog-postgres
+externalClickhouse:
+  host: clickhouse.example.com
 externalObjectStorage:
   endpoint: http://minio.example.com:9000
   accessKey:
