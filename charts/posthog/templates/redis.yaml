@@ -50,7 +50,7 @@ spec:
             - --maxmemory
             - {{ .Values.redis.maxmemory }}
             - --appendonly
-            - {{ if .Values.redis.persistence.enabled }}yes{{ else }}no{{ end }}
+            - {{ ternary "yes" "no" .Values.redis.persistence.enabled | quote }}
           ports:
             - name: redis
               containerPort: 6379

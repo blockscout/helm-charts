@@ -25,5 +25,9 @@ jobs:
       - name: Helm lint
         run: helm lint -f charts/posthog/ci/minimal-values.yaml charts/posthog
 
-      - name: Helm template
-        run: helm template -f charts/posthog/ci/minimal-values.yaml charts/posthog >/dev/null
+      - name: Helm template and strict manifest validation
+        run: |
+          helm template -f charts/posthog/ci/minimal-values.yaml charts/posthog >posthog-rendered.yaml
+          docker run --rm -v "$PWD:/work" -w /work \
+            ghcr.io/yannh/kubeconform@sha256:85dbef6b4b312b99133decc9c6fc9495e9fc5f92293d4ff3b7e1b30f5611823c \
+            -strict -ignore-missing-schemas posthog-rendered.yaml

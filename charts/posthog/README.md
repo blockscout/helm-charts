@@ -31,6 +31,8 @@ The chart deploys the following groups of workloads:
 | **Internal stateful** | Redis 7, Valkey, ZooKeeper, Redpanda, etcd, Temporal |
 | **Init / migration jobs** | Kafka topic init, PersonHog etcd init, Django/ClickHouse migrations, async migrations check, PersonHog tables readiness |
 
+`property-defs-rs` is a Kafka consumer and PostgreSQL writer. Its query API intentionally receives no production traffic upstream, so there is no `PROPERTY_DEFS_RPC_URL`; its Service exposes health and metrics endpoints. PersonHog etcd initialization Jobs include the Helm release revision in their names, so upgrades do not patch immutable Job pod templates.
+
 ## Image pinning
 
 Every container image is pinned by immutable digest in `values.yaml`. There is no use of `latest` or moving tags in the default configuration. When upgrading PostHog, update the digest of every related image together.
@@ -185,7 +187,7 @@ Default-deny NetworkPolicies are installed for both ingress and egress. Selectiv
 - DNS resolution to the cluster's `kube-dns` service in `kube-system` on ports 53/UDP and TCP
 - Pod-to-pod traffic inside the namespace
 - Traffic from ingress-nginx on the ports declared in `ingress.routes`
-- External PostgreSQL, ClickHouse, Kafka, S3 and SMTP when the corresponding `networkPolicy.*CIDRs` lists are configured
+- External PostgreSQL, ClickHouse (HTTP 8123 and native 9000 by default), Kafka, S3 and SMTP when the corresponding `networkPolicy.*CIDRs` lists are configured
 
 ## Monitoring
 

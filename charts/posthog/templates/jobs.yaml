@@ -74,6 +74,8 @@ spec:
             {{- toYaml .Values.jobs.clickhouseMigrate.command | nindent 12 }}
           env:
             {{- include "posthog.commonEnv" . | nindent 12 }}
+            - name: CLICKHOUSE_MIGRATE_WAIT_PORT
+              value: {{ .Values.jobs.clickhouseMigrate.waitPort | quote }}
           resources:
             {{- toYaml .Values.jobs.clickhouseMigrate.resources | nindent 12 }}
 {{- end }}
@@ -203,7 +205,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "posthog.fullname" . }}-personhog-etcd-init
+  name: {{ include "posthog.fullname" . }}-personhog-etcd-init-{{ .Release.Revision }}
   labels:
     {{- include "posthog.componentLabels" (dict "root" . "component" "personhog-etcd-init") | nindent 4 }}
   # A regular Job: router/leader readiness depends on this key, so a post-install
@@ -272,6 +274,8 @@ spec:
           image: {{ include "posthog.image" (list . .Values.jobs.personhogTablesReady.image) | quote }}
           imagePullPolicy: {{ .Values.jobs.personhogTablesReady.image.pullPolicy }}
           env:
+            - name: PGSSLMODE
+              value: {{ .Values.externalPostgresql.sslMode | quote }}
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:

@@ -55,15 +55,14 @@ spec:
       serviceAccountName: {{ include "posthog.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- with .Values.redpanda.ulimits }}
-      securityContext:
-        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
-      {{- end }}
       containers:
         - name: redpanda
           image: {{ include "posthog.image" (list . .Values.redpanda.image) | quote }}
           imagePullPolicy: {{ .Values.redpanda.image.pullPolicy }}
           command:
+            - rpk
+            - --config
+            - /var/lib/redpanda/data/redpanda.yaml
             - redpanda
             - start
             - --kafka-addr

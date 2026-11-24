@@ -18,6 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NetworkPolicies with default-deny ingress/egress and selective allow rules.
 - All container images pinned by immutable digest.
 - Helm hooks for Kafka topic init, Django/ClickHouse migrations, async migrations check and PersonHog tables readiness; a regular PersonHog etcd initialization Job avoids `--wait` deadlock.
-- Readiness/liveness probes for all workloads.
+- Readiness/liveness probes where supported by the upstream workloads.
 - Optional Prometheus ServiceMonitor resources.
 - Optional separate secrets for browserless and livestream tokens.

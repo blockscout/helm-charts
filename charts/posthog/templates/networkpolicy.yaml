@@ -165,8 +165,10 @@ spec:
     - Egress
   egress:
     - ports:
+        {{- range .Values.networkPolicy.clickhousePorts }}
         - protocol: TCP
-          port: {{ .Values.networkPolicy.clickhousePort }}
+          port: {{ . }}
+        {{- end }}
       to:
         {{- range .Values.networkPolicy.clickhouseCIDRs }}
         - ipBlock:

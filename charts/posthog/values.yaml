@@ -372,10 +372,6 @@ redpanda:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  ulimits:
-    nofile:
-      soft: 65536
-      hard: 65536
 
 # -----------------------------------------------------------------------------
 # Internal etcd StatefulSet (for PersonHog partition routing)
@@ -415,14 +411,6 @@ temporal:
     tag: "1.26.2"
     digest: sha256:2f9c8c3baf4dd796284b86bfd613d05e80193737a03e5ffa789aaae15fcb7206
     pullPolicy: IfNotPresent
-  adminToolsImage:
-    repository: temporalio/admin-tools
-    tag: "1.26.2"
-    digest: sha256:e15f5a4d62d0b1926896dc2979c554c4cbbd3a411e63442d443dfbc608d47c45
-  uiImage:
-    repository: temporalio/ui
-    tag: "2.47.2"
-    digest: sha256:b2b3cb4b39e5ea3b9e0d8a1d6f8747ddc1059c68b77804730c7705b7ba6ebf61
   replicaCount: 1
   resources:
     requests:
@@ -448,7 +436,10 @@ networkPolicy:
   postgresqlPort: 5432
   # -- CIDRs allowed to reach external ClickHouse.
   clickhouseCIDRs: []
-  clickhousePort: 8123
+  # Both HTTP and native ports are allowed; ClickHouse migration waits on nativePort by default.
+  clickhousePorts:
+    - 8123
+    - 9000
   # -- CIDRs allowed to reach external Kafka / Redpanda.
   kafkaCIDRs: []
   kafkaPort: 9092
@@ -514,7 +505,7 @@ components:
       port: 8000
     livenessProbe:
       httpGet:
-        path: /_health/
+        path: /_livez
         port: http
       initialDelaySeconds: 30
       periodSeconds: 10
@@ -522,7 +513,7 @@ components:
       failureThreshold: 3
     readinessProbe:
       httpGet:
-        path: /_health/
+        path: /_readyz?role=web
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
@@ -846,7 +837,35 @@ components:
       limits:
         cpu: 500m
         memory: 512Mi
-    env: []
+    service:
+      port: 3301
+    livenessProbe:
+      httpGet:
+        path: /_liveness
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /_readiness
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: BIND_HOST
+        value: 0.0.0.0
+      - name: BIND_PORT
+        value: "3301"
+      - name: SKIP_WRITES
+        value: "false"
+      - name: SKIP_READS
+        value: "false"
+      - name: FILTER_MODE
+        value: opt-out
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -1047,7 +1066,7 @@ jobs:
         deadline = time.monotonic() + 600
         while True:
             try:
-                with socket.create_connection((os.environ["CLICKHOUSE_HOST"], 9000), timeout=5):
+                with socket.create_connection((os.environ["CLICKHOUSE_HOST"], int(os.environ["CLICKHOUSE_MIGRATE_WAIT_PORT"])), timeout=5):
                     print("ClickHouse native endpoint is ready")
                     break
             except OSError:
@@ -1057,6 +1076,8 @@ jobs:
         PY
         python manage.py migrate_clickhouse
         python manage.py run_async_migrations
+    # -- Native ClickHouse port checked before running migrations.
+    waitPort: 9000
     activeDeadlineSeconds: 3600
     backoffLimit: 2
     ttlSecondsAfterFinished: 86400

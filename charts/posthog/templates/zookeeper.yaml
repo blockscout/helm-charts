@@ -73,8 +73,6 @@ spec:
               mountPath: /data
             - name: datalog
               mountPath: /datalog
-            - name: logs
-              mountPath: /logs
       {{- with .Values.zookeeper.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -110,15 +108,4 @@ spec:
         resources:
           requests:
             storage: {{ .Values.zookeeper.persistence.size }}
-    - metadata:
-        name: logs
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        {{- if .Values.zookeeper.persistence.storageClass }}
-        storageClassName: {{ .Values.zookeeper.persistence.storageClass | quote }}
-        {{- end }}
-        resources:
-          requests:
-            storage: 1Gi
 {{- end }}
