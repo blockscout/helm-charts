@@ -1,0 +1,5 @@
+{{- $root := . -}}
+{{- $component := .Values.components.temporalWorker -}}
+{{- if $component.enabled }}
+{{- include "posthog.deployment" (dict "root" $root "name" "temporal-worker" "component" $component) }}
+{{- end }}

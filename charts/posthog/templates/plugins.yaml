@@ -1,0 +1,7 @@
+{{- $root := . -}}
+{{- $component := .Values.components.plugins -}}
+{{- if $component.enabled }}
+{{- include "posthog.service" (dict "root" $root "name" "plugins" "port" $component.service.port "enabled" true) }}
+---
+{{- include "posthog.deployment" (dict "root" $root "name" "plugins" "component" $component) }}
+{{- end }}

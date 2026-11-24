@@ -1,0 +1,505 @@
+{{- if .Values.components.personhog.enabled }}
+{{- $root := . -}}
+{{- $c := .Values.components.personhog -}}
+{{- $fullname := include "posthog.fullname" . -}}
+# Services
+{{- range list (dict "name" "personhog-replica" "port" $c.services.replicaPort) (dict "name" "personhog-router" "port" $c.services.routerPort) (dict "name" "personhog-router-leader" "port" $c.services.routerLeaderPort) (dict "name" "personhog-leader" "port" $c.services.leaderPort) (dict "name" "personhog-identity" "port" $c.services.identityPort) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ .name }}
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" .name) | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" .name) | nindent 4 }}
+{{- end }}
+# Deployments
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-replica
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-replica") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-replica") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-replica") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-replica
+          image: {{ include "posthog.image" (list $root $c.images.replica) | quote }}
+          imagePullPolicy: {{ $c.images.replica.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ $c.services.replicaPort }}
+              protocol: TCP
+          env:
+            - name: GRPC_ADDRESS
+              value: "0.0.0.0:{{ $c.services.replicaPort }}"
+            - name: PRIMARY_DATABASE_URL
+              {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9100"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-router
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-router") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-router") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-router") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-router
+          image: {{ include "posthog.image" (list $root $c.images.router) | quote }}
+          imagePullPolicy: {{ $c.images.router.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ $c.services.routerPort }}
+              protocol: TCP
+          env:
+            - name: GRPC_ADDRESS
+              value: "0.0.0.0:{{ $c.services.routerPort }}"
+            - name: REPLICA_URL
+              value: "http://{{ $fullname }}-personhog-replica:{{ $c.services.replicaPort }}"
+            - name: BACKEND_TIMEOUT_MS
+              value: "5000"
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9101"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-router-leader
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-router-leader") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-router-leader") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-router-leader") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-router-leader
+          image: {{ include "posthog.image" (list $root $c.images.routerLeader) | quote }}
+          imagePullPolicy: {{ $c.images.routerLeader.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ $c.services.routerLeaderPort }}
+              protocol: TCP
+          env:
+            - name: GRPC_ADDRESS
+              value: "0.0.0.0:{{ $c.services.routerLeaderPort }}"
+            - name: REPLICA_URL
+              value: "http://{{ $fullname }}-personhog-replica:{{ $c.services.replicaPort }}"
+            - name: ROUTER_MODE
+              value: "leader"
+            - name: IDENTITY_ENABLED
+              value: "true"
+            - name: IDENTITY_URL
+              value: "http://{{ $fullname }}-personhog-identity:{{ $c.services.identityPort }}"
+            - name: ETCD_ENDPOINTS
+              value: "http://{{ $fullname }}-etcd:2379"
+            - name: ETCD_PREFIX
+              value: "/personhog/"
+            - name: BACKEND_TIMEOUT_MS
+              value: "5000"
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9104"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-leader
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-leader") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-leader") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-leader") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-leader
+          image: {{ include "posthog.image" (list $root $c.images.leader) | quote }}
+          imagePullPolicy: {{ $c.images.leader.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - POD_IP=$(hostname -i) exec /usr/local/bin/personhog-leader
+          ports:
+            - name: grpc
+              containerPort: {{ $c.services.leaderPort }}
+              protocol: TCP
+          env:
+            - name: GRPC_ADDRESS
+              value: "0.0.0.0:{{ $c.services.leaderPort }}"
+            - name: CACHE_MEMORY_CAPACITY
+              value: "100000"
+            - name: ETCD_ENDPOINTS
+              value: "http://{{ $fullname }}-etcd:2379"
+            - name: ETCD_PREFIX
+              value: "/personhog/"
+            - name: POD_NAME
+              value: "personhog-leader"
+            - name: KAFKA_HOSTS
+              value: {{ include "posthog.kafka.brokers" $root | quote }}
+            - name: FALLBACK_DATABASE_URL
+              {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: FALLBACK_TABLE
+              value: "posthog_person"
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9102"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-writer
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-writer") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-writer") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-writer") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-writer
+          image: {{ include "posthog.image" (list $root $c.images.writer) | quote }}
+          imagePullPolicy: {{ $c.images.writer.pullPolicy }}
+          env:
+            - name: DATABASE_URL
+              {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: PG_TARGET_TABLE
+              value: posthog_person
+            - name: KAFKA_HOSTS
+              value: {{ include "posthog.kafka.brokers" $root | quote }}
+            - name: ETCD_ENDPOINTS
+              value: "http://{{ $fullname }}-etcd:2379"
+            - name: ETCD_PREFIX
+              value: "/personhog/"
+            - name: KAFKA_CONSUMER_GROUP
+              value: "personhog-writer"
+            - name: FLUSH_INTERVAL_MS
+              value: "5000"
+            - name: FLUSH_BUFFER_SIZE
+              value: "1000"
+            - name: BUFFER_CAPACITY
+              value: "50000"
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9103"
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-identity
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-identity") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-identity") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-identity") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-identity
+          image: {{ include "posthog.image" (list $root $c.images.identity) | quote }}
+          imagePullPolicy: {{ $c.images.identity.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ $c.services.identityPort }}
+              protocol: TCP
+          env:
+            - name: GRPC_ADDRESS
+              value: "0.0.0.0:{{ $c.services.identityPort }}"
+            - name: PRIMARY_DATABASE_URL
+              {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: ROUTER_URL
+              value: "http://{{ $fullname }}-personhog-router-leader:{{ $c.services.routerLeaderPort }}"
+            - name: ETCD_ENDPOINTS
+              value: "http://{{ $fullname }}-etcd:2379"
+            - name: ETCD_PREFIX
+              value: "/personhog/"
+            - name: PERSON_TABLE
+              value: "posthog_person"
+            - name: PERSON_DISTINCT_ID_TABLE
+              value: "posthog_persondistinctid"
+            - name: FF_HASH_KEY_OVERRIDE_TABLE
+              value: "posthog_featureflaghashkeyoverride"
+            - name: LIFECYCLE_OP_TABLE
+              value: "lifecycle_op"
+            - name: LIFECYCLE_OP_PERSON_TABLE
+              value: "lifecycle_op_person"
+            - name: PERSON_PUBLISH_OUTBOX_TABLE
+              value: "person_publish_outbox"
+            - name: LIFECYCLE_OUTBOX_ENABLED
+              value: "true"
+            - name: RUST_LOG
+              value: "info"
+            - name: METRICS_PORT
+              value: "9108"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-publisher
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-publisher") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-publisher") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-publisher") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-publisher
+          image: {{ include "posthog.image" (list $root $c.images.publisher) | quote }}
+          imagePullPolicy: {{ $c.images.publisher.pullPolicy }}
+          env:
+            - name: PRIMARY_DATABASE_URL
+              {{- include "posthog.databaseUrl" $root | nindent 14 }}
+            - name: KAFKA_HOSTS
+              value: {{ include "posthog.kafka.brokers" $root | quote }}
+            - name: PERSON_DISTINCT_ID_TOPIC
+              value: "clickhouse_person_distinct_id"
+            - name: PERSON_TABLE
+              value: "posthog_person"
+            - name: PERSON_DISTINCT_ID_TABLE
+              value: "posthog_persondistinctid"
+            - name: FF_HASH_KEY_OVERRIDE_TABLE
+              value: "posthog_featureflaghashkeyoverride"
+            - name: LIFECYCLE_OP_TABLE
+              value: "lifecycle_op"
+            - name: LIFECYCLE_OP_PERSON_TABLE
+              value: "lifecycle_op_person"
+            - name: PERSON_PUBLISH_OUTBOX_TABLE
+              value: "person_publish_outbox"
+            - name: RUST_LOG
+              value: "info"
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-personhog-changelog-relay
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "personhog-changelog-relay") | nindent 4 }}
+spec:
+  replicas: {{ $c.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-changelog-relay") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "personhog-changelog-relay") | nindent 8 }}
+    spec:
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: personhog-changelog-relay
+          image: {{ include "posthog.image" (list $root $c.images.changelogRelay) | quote }}
+          imagePullPolicy: {{ $c.images.changelogRelay.pullPolicy }}
+          env:
+            - name: KAFKA_HOSTS
+              value: {{ include "posthog.kafka.brokers" $root | quote }}
+            - name: OUTPUT_KAFKA_HOSTS
+              value: {{ include "posthog.kafka.brokers" $root | quote }}
+            - name: ETCD_ENDPOINTS
+              value: "http://{{ $fullname }}-etcd:2379"
+            - name: ETCD_PREFIX
+              value: "/personhog/"
+            - name: RUST_LOG
+              value: "info"
+          resources:
+            {{- toYaml $c.resources | nindent 12 }}
+{{- end }}

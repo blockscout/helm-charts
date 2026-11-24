@@ -1,0 +1,33 @@
+name: Lint PostHog chart
+
+on:
+  pull_request:
+    paths:
+      - 'charts/posthog/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/posthog/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Helm lint
+        run: helm lint -f charts/posthog/ci/minimal-values.yaml charts/posthog
+
+      - name: Helm template and strict manifest validation
+        run: |
+          helm template -f charts/posthog/ci/minimal-values.yaml charts/posthog >posthog-rendered.yaml
+          docker run --rm -v "$PWD:/work" -w /work \
+            ghcr.io/yannh/kubeconform@sha256:85dbef6b4b312b99133decc9c6fc9495e9fc5f92293d4ff3b7e1b30f5611823c \
+            -strict -ignore-missing-schemas posthog-rendered.yaml

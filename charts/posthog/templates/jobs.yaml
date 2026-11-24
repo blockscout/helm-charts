@@ -1,0 +1,294 @@
+{{- if .Values.jobs.migrate.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-migrate
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "migrate") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.migrate.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.migrate.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.migrate.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "migrate") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: {{ include "posthog.image" (list . .Values.jobs.migrate.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.migrate.image.pullPolicy }}
+          command:
+            {{- toYaml .Values.jobs.migrate.command | nindent 12 }}
+          env:
+            {{- include "posthog.commonEnv" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.jobs.migrate.resources | nindent 12 }}
+{{- end }}
+---
+{{- if .Values.jobs.clickhouseMigrate.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-clickhouse-migrate
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "clickhouse-migrate") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.clickhouseMigrate.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.clickhouseMigrate.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.clickhouseMigrate.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "clickhouse-migrate") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: clickhouse-migrate
+          image: {{ include "posthog.image" (list . .Values.jobs.clickhouseMigrate.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.clickhouseMigrate.image.pullPolicy }}
+          command:
+            {{- toYaml .Values.jobs.clickhouseMigrate.command | nindent 12 }}
+          env:
+            {{- include "posthog.commonEnv" . | nindent 12 }}
+            - name: CLICKHOUSE_MIGRATE_WAIT_PORT
+              value: {{ .Values.jobs.clickhouseMigrate.waitPort | quote }}
+          resources:
+            {{- toYaml .Values.jobs.clickhouseMigrate.resources | nindent 12 }}
+{{- end }}
+---
+{{- if .Values.jobs.asyncMigrationsCheck.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-async-migrations-check
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "async-migrations-check") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "20"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.asyncMigrationsCheck.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.asyncMigrationsCheck.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.asyncMigrationsCheck.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "async-migrations-check") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: check
+          image: {{ include "posthog.image" (list . .Values.jobs.asyncMigrationsCheck.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.asyncMigrationsCheck.image.pullPolicy }}
+          command:
+            {{- toYaml .Values.jobs.asyncMigrationsCheck.command | nindent 12 }}
+          env:
+            {{- include "posthog.commonEnv" . | nindent 12 }}
+            - name: SKIP_ASYNC_MIGRATIONS_SETUP
+              value: "0"
+          resources:
+            {{- toYaml .Values.jobs.asyncMigrationsCheck.resources | nindent 12 }}
+{{- end }}
+---
+{{- if .Values.jobs.kafkaInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-kafka-init
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "kafka-init") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.kafkaInit.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.kafkaInit.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.kafkaInit.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "kafka-init") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: kafka-init
+          image: {{ include "posthog.image" (list . .Values.jobs.kafkaInit.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.kafkaInit.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -x
+              echo "Waiting for Kafka broker to accept connections..."
+              TIMEOUT=60
+              ELAPSED=0
+              until rpk topic list --brokers {{ include "posthog.kafka.brokers" . }} 2>/dev/null; do
+                echo "Kafka broker not ready yet (elapsed: ${ELAPSED}s)..."
+                sleep 2
+                ELAPSED=$((ELAPSED + 2))
+                if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
+                  echo "Timeout waiting for Kafka broker after ${TIMEOUT}s"
+                  rpk topic list --brokers {{ include "posthog.kafka.brokers" . }} || true
+                  exit 1
+                fi
+              done
+              echo "Kafka broker is accepting requests, creating topics..."
+              TOPICS="$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' /topics.txt) personhog_updates personhog_changelog_relay_dlq"
+              for topic in ${TOPICS}; do
+                if rpk topic create "${topic}" --brokers {{ include "posthog.kafka.brokers" . }} -p 1 -r 1 2>&1; then
+                  echo "Topic ${topic} created successfully"
+                else
+                  if rpk topic list --brokers {{ include "posthog.kafka.brokers" . }} | awk '{print $1}' | grep -qx "${topic}"; then
+                    echo "Topic ${topic} already exists, continuing"
+                  else
+                    echo "Failed to create topic ${topic}"
+                    exit 1
+                  fi
+                fi
+              done
+              echo "Final topic list:"
+              rpk topic list --brokers {{ include "posthog.kafka.brokers" . }}
+              echo "Topics ready"
+          volumeMounts:
+            - name: topics
+              mountPath: /topics.txt
+              subPath: topics.txt
+          resources:
+            {{- toYaml .Values.jobs.kafkaInit.resources | nindent 12 }}
+      volumes:
+        - name: topics
+          configMap:
+            name: {{ include "posthog.fullname" . }}-kafka-topics
+{{- end }}
+---
+{{- if and .Values.jobs.personhogEtcdInit.enabled .Values.components.personhog.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-personhog-etcd-init-{{ .Release.Revision }}
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "personhog-etcd-init") | nindent 4 }}
+  # A regular Job: router/leader readiness depends on this key, so a post-install
+  # hook would deadlock when Helm is run with --wait.
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.personhogEtcdInit.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.personhogEtcdInit.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.personhogEtcdInit.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "personhog-etcd-init") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: etcd-init
+          image: {{ include "posthog.image" (list . .Values.jobs.personhogEtcdInit.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.personhogEtcdInit.image.pullPolicy }}
+          command:
+            - etcdctl
+            - --endpoints=http://{{ include "posthog.fullname" . }}-etcd:2379
+            - put
+            - /personhog/config/changelog
+            - '{"topic":"personhog_updates","partitions":1,"epoch":1,"writer_group":"personhog-writer","retire_groups":["personhog-changelog-relay"],"draining":[]}'
+          resources:
+            {{- toYaml .Values.jobs.personhogEtcdInit.resources | nindent 12 }}
+{{- end }}
+---
+{{- if and .Values.jobs.personhogTablesReady.enabled .Values.components.personhog.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-personhog-tables-ready
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "personhog-tables-ready") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "11"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.personhogTablesReady.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.personhogTablesReady.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.personhogTablesReady.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "personhog-tables-ready") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: wait
+          image: {{ include "posthog.image" (list . .Values.jobs.personhogTablesReady.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.personhogTablesReady.image.pullPolicy }}
+          env:
+            - name: PGSSLMODE
+              value: {{ .Values.externalPostgresql.sslMode | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalPostgresql.password.existingSecret | quote }}
+                  key: {{ .Values.externalPostgresql.password.key | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              until psql -h {{ .Values.externalPostgresql.host }} -p {{ .Values.externalPostgresql.port }} -U {{ .Values.externalPostgresql.user }} -d {{ .Values.externalPostgresql.database }} -tAc "SELECT to_regclass('lifecycle_op_person') IS NOT NULL AND to_regclass('person_publish_outbox') IS NOT NULL" | grep -q t; do
+                echo "Waiting for the persons migrations"
+                sleep 5
+              done
+          resources:
+            {{- toYaml .Values.jobs.personhogTablesReady.resources | nindent 12 }}
+{{- end }}

@@ -1,0 +1,114 @@
+{{- if .Values.etcd.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "posthog.fullname" . }}-etcd
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "etcd") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.etcd.service.clientPort }}
+      targetPort: client
+      protocol: TCP
+      name: client
+    - port: {{ .Values.etcd.service.peerPort }}
+      targetPort: peer
+      protocol: TCP
+      name: peer
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "etcd") | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "posthog.fullname" . }}-etcd
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "etcd") | nindent 4 }}
+spec:
+  serviceName: {{ include "posthog.fullname" . }}-etcd
+  replicas: {{ .Values.etcd.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "etcd") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "etcd") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: etcd
+          image: {{ include "posthog.image" (list . .Values.etcd.image) | quote }}
+          imagePullPolicy: {{ .Values.etcd.image.pullPolicy }}
+          command:
+            - etcd
+            - --name
+            - etcd0
+            - --data-dir
+            - /etcd-data
+            - --advertise-client-urls
+            - http://{{ include "posthog.fullname" . }}-etcd:2379
+            - --listen-client-urls
+            - http://0.0.0.0:2379
+            - --listen-peer-urls
+            - http://0.0.0.0:2380
+          ports:
+            - name: client
+              containerPort: 2379
+              protocol: TCP
+            - name: peer
+              containerPort: 2380
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - etcdctl
+                - endpoint
+                - health
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - etcdctl
+                - endpoint
+                - health
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.etcd.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /etcd-data
+      {{- with .Values.etcd.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.etcd.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.etcd.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- if .Values.etcd.persistence.storageClass }}
+        storageClassName: {{ .Values.etcd.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.etcd.persistence.size }}
+{{- end }}

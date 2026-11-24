@@ -1,0 +1,21 @@
+{{- $root := . -}}
+{{- $component := .Values.components.web -}}
+{{- if $component.enabled }}
+{{- include "posthog.service" (dict "root" $root "name" "web" "port" $component.service.port "enabled" true) }}
+---
+{{- include "posthog.deployment" (dict "root" $root "name" "web" "component" $component) }}
+---
+{{- if $component.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "posthog.fullname" $root }}-web
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" $root "component" "web") | nindent 4 }}
+spec:
+  minAvailable: {{ $component.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" $root "component" "web") | nindent 6 }}
+{{- end }}
+{{- end }}

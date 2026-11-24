@@ -1,0 +1,1163 @@
+# Default values for posthog.
+# This is a YAML-formatted file.
+
+# -- Override the deployment and resource names.
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Common labels for all resources.
+commonLabels: {}
+
+# -- Pod annotations for all workloads.
+podAnnotations: {}
+
+# -- Image pull secrets.
+imagePullSecrets: []
+
+# -- ServiceAccount configuration.
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+  # -- Annotations to add to the service account.
+  annotations: {}
+  # -- The name of the service account to use.
+  name: ""
+
+# -- Site URL used by PostHog to generate shareable links and for webhooks.
+siteUrl: ""
+
+# -- Django SECRET_KEY. Must be set via an existingSecret reference.
+secretKey:
+  existingSecret: ""
+  key: "SECRET_KEY"
+
+# -- Additional encryption salt keys for PostHog features.
+encryptionSaltKeys:
+  existingSecret: ""
+  key: "ENCRYPTION_SALT_KEYS"
+
+# -- Internal API secret used for service-to-service calls. Defaults to SECRET_KEY when empty.
+internalApiSecret:
+  existingSecret: ""
+  key: "INTERNAL_API_SECRET"
+
+# -- Internal request token shared by Django web/worker and feature-flags service.
+internalRequestToken:
+  existingSecret: ""
+  key: "INTERNAL_REQUEST_TOKEN"
+
+# -- Browserless Chromium token. Defaults to SECRET_KEY when empty.
+browserless:
+  token:
+    existingSecret: ""
+    # Empty selects secretKey.key when no dedicated Secret is configured.
+    key: ""
+
+# -- Livestream JWT secret. Defaults to SECRET_KEY when empty.
+livestream:
+  jwtSecret:
+    existingSecret: ""
+    # Empty selects secretKey.key when no dedicated Secret is configured.
+    key: ""
+
+# -- Email / SMTP settings for invites and password resets.
+email:
+  enabled: false
+  host: ""
+  port: 587
+  user: ""
+  password:
+    existingSecret: ""
+    key: "SMTP_PASSWORD"
+  useTls: true
+  fromEmail: ""
+
+# -- Disable PostHog's own product telemetry.
+optOutCapture: true
+
+# -- Disable self-signup. Invites are managed by email.
+disabledSelfSignUp: true
+
+# -- Allow only specific IP blocks (CIDR list). Capture endpoints are excluded.
+allowedIpBlocks: ""
+
+# -- Trust all proxies behind ingress-nginx.
+trustAllProxies: true
+
+# -- Deployment environment label.
+deployment: "kubernetes"
+
+# -- Pre-created secret containing the full DATABASE_URL. When set, inline URL is not used.
+databaseUrl:
+  existingSecret: ""
+  key: "DATABASE_URL"
+
+# -- Common environment variables injected into every PostHog workload.
+extraEnv: []
+
+# -- Global node selector for all workloads.
+nodeSelector: {}
+
+# -- Global tolerations for all workloads.
+tolerations: []
+
+# -- Global affinity for all workloads.
+affinity: {}
+
+# -- Pod topology spread constraints.
+topologySpreadConstraints: []
+
+# -- Security context for pods.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# -- Security context for containers.
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+# -- Whether the instance is behind a reverse proxy / ingress.
+isBehindProxy: true
+
+# -----------------------------------------------------------------------------
+# Ingress
+# -----------------------------------------------------------------------------
+ingress:
+  enabled: true
+  # -- IngressClass name.
+  className: nginx
+  # -- Additional annotations for all ingress resources.
+  annotations: {}
+  # -- TLS configuration.
+  tls:
+    enabled: true
+    # -- TLS secret name. If empty, cert-manager will be expected to provision it.
+    secretName: ""
+  # -- Public hostname.
+  host: "posthog.local"
+  # -- Paths and their target service ports.
+  routes:
+    web:
+      paths:
+        - path: /
+          pathType: Prefix
+      servicePort: 8000
+    capture:
+      paths:
+        - path: /e
+          pathType: Prefix
+        - path: /i/v0
+          pathType: Prefix
+        - path: /i/v1/analytics/events
+          pathType: Prefix
+        - path: /batch
+          pathType: Prefix
+        - path: /capture
+          pathType: Prefix
+      servicePort: 3000
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    feature-flags:
+      paths:
+        - path: /flags
+          pathType: Prefix
+        - path: /api/feature_flag/local_evaluation
+          pathType: Prefix
+      servicePort: 3001
+    hypercache-server:
+      paths:
+        - path: /array
+          pathType: Prefix
+        - path: /surveys
+          pathType: Prefix
+        - path: /api/surveys
+          pathType: Prefix
+      servicePort: 3002
+    plugins:
+      paths:
+        - path: /public/webhooks
+          pathType: Prefix
+        - path: /public/m
+          pathType: Prefix
+      servicePort: 6738
+    livestream:
+      paths:
+        - path: /livestream/?(.*)
+          pathType: ImplementationSpecific
+      servicePort: 8080
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+
+# -----------------------------------------------------------------------------
+# External PostgreSQL
+# -----------------------------------------------------------------------------
+externalPostgresql:
+  host: ""
+  port: 5432
+  database: "posthog"
+  user: ""
+  password:
+    existingSecret: ""
+    key: "password"
+  sslMode: "require"
+
+# -----------------------------------------------------------------------------
+# External Object Storage (S3-compatible)
+# -----------------------------------------------------------------------------
+externalObjectStorage:
+  endpoint: ""
+  # -- Browser-reachable S3 endpoint origin, without the bucket name. The SDK appends the bucket.
+  publicEndpoint: ""
+  region: "us-east-1"
+  bucket: "posthog"
+  forcePathStyle: true
+  accessKey:
+    existingSecret: ""
+    key: "AWS_ACCESS_KEY_ID"
+  secretKey:
+    existingSecret: ""
+    key: "AWS_SECRET_ACCESS_KEY"
+
+# -----------------------------------------------------------------------------
+# External Kafka / Redpanda
+# Set enabled=false to deploy the built-in Redpanda single-node StatefulSet.
+# -----------------------------------------------------------------------------
+externalKafka:
+  enabled: false
+  brokers: ""
+  # -- SASL/SSL configuration when using external Kafka.
+  securityProtocol: "PLAINTEXT"
+  saslMechanism: "PLAIN"
+  saslUsername: ""
+  saslPassword:
+    existingSecret: ""
+    key: "password"
+
+# -----------------------------------------------------------------------------
+# External ClickHouse, for example an Altinity ClickHouseInstallation.
+# -----------------------------------------------------------------------------
+externalClickhouse:
+  host: ""
+  database: "posthog"
+  user: "default"
+  password:
+    existingSecret: ""
+    key: "password"
+  secure: false
+  verify: false
+
+# -----------------------------------------------------------------------------
+# Internal Redis
+# -----------------------------------------------------------------------------
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: 7.2-alpine
+    digest: sha256:a2c8f9d7c49c74ebd2945e3798c71606545c5f0d90d03e9ec4a2bb8d4f56df36
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  maxmemory: "512mb"
+  maxmemoryPolicy: allkeys-lru
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: ""
+  service:
+    port: 6379
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Internal Valkey (CDP shadow store)
+# -----------------------------------------------------------------------------
+valkey:
+  enabled: true
+  image:
+    repository: valkey/valkey
+    tag: 8.1-alpine
+    digest: sha256:ac81eb0a7b37e054000af8fdd5e6c3eb17249caa71eba79c003a145e518415e5
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  maxmemory: "512mb"
+  maxmemoryPolicy: allkeys-lru
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+  service:
+    port: 6379
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Internal ZooKeeper StatefulSet
+# -----------------------------------------------------------------------------
+zookeeper:
+  enabled: true
+  image:
+    repository: zookeeper
+    tag: "3.7.0"
+    digest: sha256:d33adde3fb52aecddefe47aba950ed882c6c3d2dcc7bd1785b516d0448a781f9
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    size: 10Gi
+    storageClass: ""
+  service:
+    clientPort: 2181
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Internal Redpanda StatefulSet (used as Kafka replacement)
+# -----------------------------------------------------------------------------
+redpanda:
+  enabled: true
+  image:
+    repository: docker.io/redpandadata/redpanda
+    tag: "v25.1.9"
+    digest: sha256:b9d1b92f8549ac76be3dcfb1df5af7caa4a4172f3dbc969a507f6ad87435fd1a
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 3Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  persistence:
+    size: 50Gi
+    storageClass: ""
+  service:
+    kafkaPort: 9092
+    adminPort: 9644
+    pandaproxyPort: 8082
+    schemaRegistryPort: 8081
+    rpcPort: 33145
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Internal etcd StatefulSet (for PersonHog partition routing)
+# -----------------------------------------------------------------------------
+etcd:
+  enabled: true
+  image:
+    repository: quay.io/coreos/etcd
+    tag: "v3.6.8"
+    digest: sha256:ae5ec4c12fffa61e7f785abfae666c854f882f26a679067f29bada3e61a1bfc4
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    size: 10Gi
+    storageClass: ""
+  service:
+    clientPort: 2379
+    peerPort: 2380
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Internal Temporal deployment
+# -----------------------------------------------------------------------------
+temporal:
+  enabled: true
+  image:
+    repository: temporalio/auto-setup
+    tag: "1.26.2"
+    digest: sha256:2f9c8c3baf4dd796284b86bfd613d05e80193737a03e5ffa789aaae15fcb7206
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  service:
+    frontendPort: 7233
+    uiPort: 8080
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------------------------------------------------------------
+# Network policies
+# -----------------------------------------------------------------------------
+networkPolicy:
+  enabled: true
+  # -- CIDRs allowed to reach external PostgreSQL.
+  postgresqlCIDRs: []
+  postgresqlPort: 5432
+  # -- CIDRs allowed to reach external ClickHouse.
+  clickhouseCIDRs: []
+  # Both HTTP and native ports are allowed; ClickHouse migration waits on nativePort by default.
+  clickhousePorts:
+    - 8123
+    - 9000
+  # -- CIDRs allowed to reach external Kafka / Redpanda.
+  kafkaCIDRs: []
+  kafkaPort: 9092
+  # -- CIDRs allowed to reach external S3 / MinIO.
+  s3CIDRs: []
+  s3Port: 9000
+  # -- CIDRs allowed to reach external SMTP.
+  smtpCIDRs: []
+  smtpPort: 587
+  # -- Extra ingress rules allowed into the namespace.
+  extraIngress: []
+  # -- Extra egress rules allowed from the namespace.
+  extraEgress: []
+
+# -----------------------------------------------------------------------------
+# Monitoring
+# -----------------------------------------------------------------------------
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+
+# -----------------------------------------------------------------------------
+# Component-level configuration
+# -----------------------------------------------------------------------------
+components:
+  # -----------------------------------------------------------------------------
+  # PostHog web (Django + frontend)
+  # -----------------------------------------------------------------------------
+  web:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+      - -c
+      - export PROMETHEUS_MULTIPROC_DIR=$(mktemp -d) && exec python ./bin/granian_preload.py posthog.asgi:application
+    env:
+      - name: GRANIAN_INTERFACE
+        value: "asgi"
+      - name: GRANIAN_HOST
+        value: "0.0.0.0"
+      - name: GRANIAN_PORT
+        value: "8000"
+      - name: GRANIAN_WORKERS
+        value: "2"
+      - name: POSTHOG_GRANIAN_SHARED_SOCKET
+        value: "true"
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    service:
+      port: 8000
+    livenessProbe:
+      httpGet:
+        path: /_livez
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /_readyz?role=web
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+
+  # -----------------------------------------------------------------------------
+  # Celery worker with scheduler
+  # -----------------------------------------------------------------------------
+  worker:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - ./bin/docker-worker-celery
+      - --with-embedded-scheduler
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    livenessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - pgrep -f celery || exit 1
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - pgrep -f celery || exit 1
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      # Helm post-install hooks run only after regular workloads are ready.
+      - name: POSTHOG_SKIP_MIGRATION_CHECKS
+        value: "1"
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Temporal Django worker
+  # -----------------------------------------------------------------------------
+  temporalWorker:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - ./bin/temporal-django-worker
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    livenessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - pgrep -f temporal-django-worker || exit 1
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - pgrep -f temporal-django-worker || exit 1
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Capture service (Rust)
+  # -----------------------------------------------------------------------------
+  capture:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: ghcr.io/posthog/posthog/capture
+      tag: master
+      digest: sha256:4696b648e2cf55f79a1ebd6506b687ec681db1bd8edb8e2c925c0ed03aca3f2b
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+    service:
+      port: 3000
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: ADDRESS
+        value: "0.0.0.0:3000"
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+
+  # -----------------------------------------------------------------------------
+  # Feature flags service (Rust)
+  # -----------------------------------------------------------------------------
+  featureFlags:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: ghcr.io/posthog/posthog/feature-flags
+      tag: master
+      digest: sha256:65382a19dd4b1cf47192b2358ed9f0da3e01014b39f075669bc2dde6ae92de4c
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+    service:
+      port: 3001
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: ADDRESS
+        value: "0.0.0.0:3001"
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+
+  # -----------------------------------------------------------------------------
+  # HyperCache server (Rust)
+  # -----------------------------------------------------------------------------
+  hypercacheServer:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog/hypercache-server
+      tag: master
+      digest: sha256:c01739803a09243290b376972f7fba6bc0e9b47429c195406ab2dfa9eaecffbb
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+    service:
+      port: 3002
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Plugins service (Node.js CDP)
+  # -----------------------------------------------------------------------------
+  plugins:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog-node
+      tag: master
+      digest: sha256:98e6f9464bd67c4e09e2d80a2bd30e363bfc7b9e7f29d72bdf92ac97052f69f4
+      pullPolicy: IfNotPresent
+    command:
+      - node
+      - nodejs/dist/index.js
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+    service:
+      port: 6738
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: PLUGIN_SERVER_MODE
+        value: cdp_api
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Ingestion general (Node.js)
+  # -----------------------------------------------------------------------------
+  ingestionGeneral:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog-node
+      tag: master
+      digest: sha256:98e6f9464bd67c4e09e2d80a2bd30e363bfc7b9e7f29d72bdf92ac97052f69f4
+      pullPolicy: IfNotPresent
+    command:
+      - node
+      - nodejs/dist/index.js
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    env:
+      - name: PLUGIN_SERVER_MODE
+        value: ingestion-v2-combined
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Property definitions Rust service
+  # -----------------------------------------------------------------------------
+  propertyDefsRs:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog/property-defs-rs
+      tag: master
+      digest: sha256:3a0c3c76e7103b0ad4e9c444260a5f93b5122f60b96f1011e03a014a8b33e309
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    service:
+      port: 3301
+    livenessProbe:
+      httpGet:
+        path: /_liveness
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /_readiness
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: BIND_HOST
+        value: 0.0.0.0
+      - name: BIND_PORT
+        value: "3301"
+      - name: SKIP_WRITES
+        value: "false"
+      - name: SKIP_READS
+        value: "false"
+      - name: FILTER_MODE
+        value: opt-out
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Livestream service
+  # -----------------------------------------------------------------------------
+  livestream:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/posthog/posthog/livestream
+      tag: master
+      digest: sha256:b7b86566861db9c1abe71fc900198d32cf04dee173f4b3a506a161f62b73f710
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+    service:
+      port: 8080
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env:
+      - name: LIVESTREAM_MMDB_PATH
+        value: /GeoLite2-City.mmdb
+      - name: LIVESTREAM_CONSUMERS_EVENT_TOPIC
+        value: events_plugin_ingestion
+      - name: LIVESTREAM_CONSUMERS_EVENT_GROUP_ID
+        value: livestream
+      - name: LIVESTREAM_CONSUMERS_SESSION_RECORDING_ENABLED
+        value: "false"
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # Browserless Chromium (heatmaps / image exports)
+  # -----------------------------------------------------------------------------
+  browserless:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/browserless/chromium
+      tag: "v2.51.2"
+      digest: sha256:687a1a248c8a35364ec94bc977d83703af0c64c083243502e174996b48d9585b
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+    service:
+      port: 3000
+    livenessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    env: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # -----------------------------------------------------------------------------
+  # PersonHog pipeline (persons service)
+  # -----------------------------------------------------------------------------
+  personhog:
+    enabled: true
+    replicaCount: 1
+    images:
+      replica:
+        repository: ghcr.io/posthog/posthog/personhog-replica
+        tag: master
+        digest: sha256:97364381cbfb21bd89dd7e4ea453d87d505198b260dafb5f4103bd33af35c5d0
+        pullPolicy: IfNotPresent
+      router:
+        repository: ghcr.io/posthog/posthog/personhog-router
+        tag: master
+        digest: sha256:38412f8da8cd80058e475b74dc23a031fc5e9498b48df5f7b226d17b9827e306
+        pullPolicy: IfNotPresent
+      routerLeader:
+        repository: ghcr.io/posthog/posthog/personhog-router
+        tag: master
+        digest: sha256:38412f8da8cd80058e475b74dc23a031fc5e9498b48df5f7b226d17b9827e306
+        pullPolicy: IfNotPresent
+      leader:
+        repository: ghcr.io/posthog/posthog/personhog-leader
+        tag: master
+        digest: sha256:29ba73afcc810e39be1866e372891ab66b341278f7b36f4de39e122f48d2e131
+        pullPolicy: IfNotPresent
+      writer:
+        repository: ghcr.io/posthog/posthog/personhog-writer
+        tag: master
+        digest: sha256:d1d9f63a142f05742211251308238699e4cdd9ff671c847d5c2ea0e427e60d4f
+        pullPolicy: IfNotPresent
+      identity:
+        repository: ghcr.io/posthog/posthog/personhog-identity
+        tag: master
+        digest: sha256:bb29a69171d0b3faf9b1327436e245b4a6d5a6f116c52b91ec3d9cf1458fffd4
+        pullPolicy: IfNotPresent
+      publisher:
+        repository: ghcr.io/posthog/posthog/personhog-publisher
+        tag: master
+        digest: sha256:85a48cf76c26310c6c3e496b74daef83c89c5183e9c77a3f3eb38c01d44b1268
+        pullPolicy: IfNotPresent
+      changelogRelay:
+        repository: ghcr.io/posthog/posthog/personhog-changelog-relay
+        tag: master
+        digest: sha256:960904bc17b43c2bbcd4092f3e3281e811a50245a14bb325186d3ad89be828db
+        pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    services:
+      replicaPort: 50051
+      routerPort: 50052
+      routerLeaderPort: 50054
+      leaderPort: 50053
+      identityPort: 50055
+    env: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+# -----------------------------------------------------------------------------
+# Jobs
+# -----------------------------------------------------------------------------
+jobs:
+  migrate:
+    enabled: true
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - sh
+      - -c
+      - python manage.py migrate --noinput && python manage.py apply_persons_migrations --hobby
+    activeDeadlineSeconds: 3600
+    backoffLimit: 2
+    ttlSecondsAfterFinished: 86400
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+  clickhouseMigrate:
+    enabled: true
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        python - <<'PY'
+        import os
+        import socket
+        import time
+
+        deadline = time.monotonic() + 600
+        while True:
+            try:
+                with socket.create_connection((os.environ["CLICKHOUSE_HOST"], int(os.environ["CLICKHOUSE_MIGRATE_WAIT_PORT"])), timeout=5):
+                    print("ClickHouse native endpoint is ready")
+                    break
+            except OSError:
+                if time.monotonic() >= deadline:
+                    raise SystemExit("ClickHouse did not become ready within 600 seconds")
+                time.sleep(5)
+        PY
+        python manage.py migrate_clickhouse
+        python manage.py run_async_migrations
+    # -- Native ClickHouse port checked before running migrations.
+    waitPort: 9000
+    activeDeadlineSeconds: 3600
+    backoffLimit: 2
+    ttlSecondsAfterFinished: 86400
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+  asyncMigrationsCheck:
+    enabled: true
+    image:
+      repository: ghcr.io/posthog/posthog
+      tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+      digest: sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd
+      pullPolicy: IfNotPresent
+    command:
+      - python
+      - manage.py
+      - run_async_migrations
+      - --check
+    activeDeadlineSeconds: 1800
+    backoffLimit: 2
+    ttlSecondsAfterFinished: 86400
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+  kafkaInit:
+    enabled: true
+    image:
+      repository: docker.io/redpandadata/redpanda
+      tag: "v25.1.9"
+      digest: sha256:b9d1b92f8549ac76be3dcfb1df5af7caa4a4172f3dbc969a507f6ad87435fd1a
+      pullPolicy: IfNotPresent
+    activeDeadlineSeconds: 600
+    backoffLimit: 3
+    ttlSecondsAfterFinished: 3600
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  personhogEtcdInit:
+    enabled: true
+    image:
+      repository: quay.io/coreos/etcd
+      tag: "v3.6.8"
+      digest: sha256:ae5ec4c12fffa61e7f785abfae666c854f882f26a679067f29bada3e61a1bfc4
+      pullPolicy: IfNotPresent
+    activeDeadlineSeconds: 600
+    backoffLimit: 20
+    ttlSecondsAfterFinished: 3600
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  personhogTablesReady:
+    enabled: true
+    image:
+      repository: postgres
+      tag: "15.12-alpine"
+      digest: sha256:447b87ae50d90ffa617e059057e3807de3c7962d627bba41f1859980b2a65607
+      pullPolicy: IfNotPresent
+    activeDeadlineSeconds: 1800
+    backoffLimit: 10
+    ttlSecondsAfterFinished: 3600
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi

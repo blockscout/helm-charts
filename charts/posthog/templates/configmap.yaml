@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "posthog.fullname" . }}-kafka-topics
+  labels:
+    {{- include "posthog.labels" . | nindent 4 }}
+data:
+  topics.txt: |
+    events_plugin_ingestion
+    clickhouse_events_json
+    clickhouse_person_distinct_id
+    clickhouse_person_override
+    clickhouse_session_recording_events
+    clickhouse_session_recording_events_json
+    clickhouse_session_recording_kafka_json
+    session_recording_snapshot_item_events
+    clickhouse_events_json_v2
+    events_plugin_ingestion_v2
+    clickhouse_app_metrics
+    clickhouse_cohortpeople
+    clickhouse_feature_flag_cache
+    clickhouse_groups
+    clickhouse_infi_clickhouse_orm_migrations
+    clickhouse_metrics_ingestion
+    clickhouse_plugin_log_entries
+    clickhouse_stats
+    clickhouse_url
+    events_dead_letter_queue
+    ingestion-warnings
+    plugin_commands_to_run
+    scheduled_tasks
+    clickhouse_ai_events_json
+    ingestion-errortracking-main
+    log_entries
+    logs_ingestion
+    metrics_ingestion
+    person_distinct_id_overrides_updates
+    person_overrides_updates
+    snuba-generic-metrics
+    snuba-kafka-results
+    snuba-queries
+    snuba-transactions-notifications
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "posthog.fullname" . }}-temporal-dynamicconfig
+  labels:
+    {{- include "posthog.labels" . | nindent 4 }}
+data:
+  development-sql.yaml: |
+    # copied from upstream temporal dynamicconfig for postgres visibility
+    limit.maxIDLength:
+      - value: 255
+        constraints: {}
+    system.forceSearchAttributesCacheRefreshOnRead:
+      - value: true
+        constraints: {}
+    frontend.enableUpdateWorkflowExecution:
+      - value: true
+        constraints: {}
+    frontend.workerVersioningWorkflowAPIs:
+      - value: true
+        constraints: {}
+    worker.buildIdScavengeEnabled:
+      - value: true
+        constraints: {}

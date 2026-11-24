@@ -1,0 +1,111 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "posthog.fullname" . }}-zookeeper
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "zookeeper") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.zookeeper.service.clientPort }}
+      targetPort: client
+      protocol: TCP
+      name: client
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "zookeeper") | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "posthog.fullname" . }}-zookeeper
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "zookeeper") | nindent 4 }}
+spec:
+  serviceName: {{ include "posthog.fullname" . }}-zookeeper
+  replicas: {{ .Values.zookeeper.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "zookeeper") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "zookeeper") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: zookeeper
+          image: {{ include "posthog.image" (list . .Values.zookeeper.image) | quote }}
+          imagePullPolicy: {{ .Values.zookeeper.image.pullPolicy }}
+          ports:
+            - name: client
+              containerPort: 2181
+              protocol: TCP
+          env:
+            - name: ZOO_AUTOPURGE_PURGEINTERVAL
+              value: "1"
+            - name: ZOO_AUTOPURGE_SNAPRETAINCOUNT
+              value: "3"
+          livenessProbe:
+            exec:
+              command:
+                - zkServer.sh
+                - status
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - zkServer.sh
+                - status
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.zookeeper.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: datalog
+              mountPath: /datalog
+      {{- with .Values.zookeeper.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zookeeper.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zookeeper.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- if .Values.zookeeper.persistence.storageClass }}
+        storageClassName: {{ .Values.zookeeper.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.zookeeper.persistence.size }}
+    - metadata:
+        name: datalog
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- if .Values.zookeeper.persistence.storageClass }}
+        storageClassName: {{ .Values.zookeeper.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.zookeeper.persistence.size }}
+{{- end }}

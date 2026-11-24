@@ -1,0 +1,157 @@
+{{- if .Values.redpanda.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "posthog.fullname" . }}-redpanda
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "redpanda") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.redpanda.service.kafkaPort }}
+      targetPort: kafka
+      protocol: TCP
+      name: kafka
+    - port: {{ .Values.redpanda.service.adminPort }}
+      targetPort: admin
+      protocol: TCP
+      name: admin
+    - port: {{ .Values.redpanda.service.pandaproxyPort }}
+      targetPort: pandaproxy
+      protocol: TCP
+      name: pandaproxy
+    - port: {{ .Values.redpanda.service.schemaRegistryPort }}
+      targetPort: schema-registry
+      protocol: TCP
+      name: schema-registry
+    - port: {{ .Values.redpanda.service.rpcPort }}
+      targetPort: rpc
+      protocol: TCP
+      name: rpc
+  selector:
+    {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "redpanda") | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "posthog.fullname" . }}-redpanda
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "redpanda") | nindent 4 }}
+spec:
+  serviceName: {{ include "posthog.fullname" . }}-redpanda
+  replicas: {{ .Values.redpanda.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "redpanda") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "redpanda") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: redpanda
+          image: {{ include "posthog.image" (list . .Values.redpanda.image) | quote }}
+          imagePullPolicy: {{ .Values.redpanda.image.pullPolicy }}
+          command:
+            - rpk
+            - --config
+            - /var/lib/redpanda/data/redpanda.yaml
+            - redpanda
+            - start
+            - --kafka-addr
+            - internal://0.0.0.0:9092
+            - --advertise-kafka-addr
+            - internal://{{ include "posthog.fullname" . }}-redpanda:9092
+            - --pandaproxy-addr
+            - internal://0.0.0.0:8082
+            - --advertise-pandaproxy-addr
+            - internal://{{ include "posthog.fullname" . }}-redpanda:8082
+            - --schema-registry-addr
+            - internal://0.0.0.0:8081
+            - --rpc-addr
+            - {{ include "posthog.fullname" . }}-redpanda:33145
+            - --advertise-rpc-addr
+            - {{ include "posthog.fullname" . }}-redpanda:33145
+            - --mode
+            - dev-container
+            - --smp
+            - "1"
+            - --memory
+            - 3G
+            - --reserve-memory
+            - 500M
+            - --overprovisioned
+            - --set
+            - redpanda.empty_seed_starts_cluster=false
+            - --seeds
+            - {{ include "posthog.fullname" . }}-redpanda:33145
+            - --set
+            - redpanda.auto_create_topics_enabled=true
+          ports:
+            - name: kafka
+              containerPort: 9092
+              protocol: TCP
+            - name: admin
+              containerPort: 9644
+              protocol: TCP
+            - name: pandaproxy
+              containerPort: 8082
+              protocol: TCP
+            - name: schema-registry
+              containerPort: 8081
+              protocol: TCP
+            - name: rpc
+              containerPort: 33145
+              protocol: TCP
+          env:
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "true"
+          livenessProbe:
+            httpGet:
+              path: /v1/status/ready
+              port: admin
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /v1/status/ready
+              port: admin
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.redpanda.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/redpanda/data
+      {{- with .Values.redpanda.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.redpanda.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.redpanda.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- if .Values.redpanda.persistence.storageClass }}
+        storageClassName: {{ .Values.redpanda.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.redpanda.persistence.size }}
+{{- end }}
