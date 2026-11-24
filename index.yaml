@@ -2145,6 +2145,30 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/pganalyzer-0.2.1/pganalyzer-0.2.1.tgz
     version: 0.2.1
+  posthog:
+  - apiVersion: v2
+    appVersion: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+    created: "2026-11-24T14:47:18.528245643Z"
+    description: A Helm chart for deploying open-source self-hosted PostHog on Kubernetes.
+    digest: cb78e23c949ed8770a64491d9a2c4a5a1ed2ef95c16f1000245cccb206b1f463
+    home: https://posthog.com
+    icon: https://posthog.com/static/brand/logo-posthog-dark.svg
+    keywords:
+    - posthog
+    - analytics
+    - feature-flags
+    - product-analytics
+    kubeVersion: '>= 1.24-0'
+    maintainers:
+    - email: ops@blockscout.com
+      name: Blockscout Team
+    name: posthog
+    sources:
+    - https://github.com/blockscout/helm-charts/tree/main/charts/posthog
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/posthog-0.1.0/posthog-0.1.0.tgz
+    version: 0.1.0
   quicknode-marketplace-integration:
   - apiVersion: v2
     appVersion: v0.1.0
@@ -2580,4 +2604,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-11T11:38:03.970876392Z"
+generated: "2026-11-24T14:47:18.528607557Z"
