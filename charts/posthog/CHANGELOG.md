@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leave the OTLP endpoint unset when telemetry is disabled, including Rust workloads.
 - Send `X-Forwarded-Proto: https` with web health probes to avoid TLS redirects.
 - Increase ZooKeeper probe timeouts for the Java status command.
+- Raise the async migration check to 1 Gi request / 2 Gi limit to prevent OOM kills during Django startup.
 
 ## [0.1.0] - 2026-11-17
 
