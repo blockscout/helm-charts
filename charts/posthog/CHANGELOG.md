@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Send `X-Forwarded-Proto: https` with web health probes to avoid TLS redirects.
 - Increase ZooKeeper probe timeouts for the Java status command; cap its Java heap at 512 MB with a 1 Gi container limit to prevent repeated OOM kills.
 - Point Python CDP clients to the in-cluster plugins API instead of the upstream default hostname.
+- Skip the legacy npm GeoIP plugin preinstall during organization creation so an unreachable registry cannot block signup; the built-in GeoIP database remains enabled.
 - Raise the async migration check to 1 Gi request / 2 Gi limit to prevent OOM kills during Django startup.
 - Wire all named Node.js Kafka producer slots to the configured brokers and override the service-link Redis port with a numeric value.
 - Use the image-baked MaxMind database for feature flags.
