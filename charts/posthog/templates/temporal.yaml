@@ -60,6 +60,14 @@ spec:
                   key: {{ .Values.externalPostgresql.password.key | quote }}
             - name: POSTGRES_SEEDS
               value: {{ .Values.externalPostgresql.host | quote }}
+            - name: POSTGRES_TLS_ENABLED
+              value: {{ ne .Values.externalPostgresql.sslMode "disable" | quote }}
+            - name: POSTGRES_TLS_DISABLE_HOST_VERIFICATION
+              value: {{ not (hasPrefix "verify-" .Values.externalPostgresql.sslMode) | quote }}
+            - name: SQL_TLS_ENABLED
+              value: {{ ne .Values.externalPostgresql.sslMode "disable" | quote }}
+            - name: SQL_HOST_VERIFICATION
+              value: {{ eq .Values.externalPostgresql.sslMode "verify-full" | quote }}
             - name: DYNAMIC_CONFIG_FILE_PATH
               value: /etc/temporal/config/dynamicconfig/development-sql.yaml
             - name: ENABLE_ES

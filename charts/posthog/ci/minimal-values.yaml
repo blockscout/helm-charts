@@ -5,6 +5,8 @@ encryptionSaltKeys:
   existingSecret: posthog-secrets
 databaseUrl:
   existingSecret: posthog-database-url
+cyclotronDatabaseUrl:
+  existingSecret: posthog-database-url
 externalPostgresql:
   host: postgres.example.com
   user: posthog

@@ -5,6 +5,24 @@ All notable changes to this chart will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-25
+
+### Fixed
+- Bind Redpanda RPC to all pod interfaces instead of the Service ClusterIP.
+- Use the upstream `cdp-api` plugin server mode.
+- Leave the OTLP endpoint unset when telemetry is disabled, including Rust workloads.
+- Send `X-Forwarded-Proto: https` with web health probes to avoid TLS redirects.
+- Increase ZooKeeper probe timeouts for the Java status command; cap its Java heap at 512 MB with a 1 Gi container limit to prevent repeated OOM kills.
+- Point Python CDP clients to the in-cluster plugins API instead of the upstream default hostname.
+- Raise the async migration check to 1 Gi request / 2 Gi limit to prevent OOM kills during Django startup.
+- Wire all named Node.js Kafka producer slots to the configured brokers and override the service-link Redis port with a numeric value.
+- Use the image-baked MaxMind database for feature flags.
+- Enable PostgreSQL TLS for Temporal and pass separate host/port values to Python Temporal clients.
+- Raise the Celery worker to 2 Gi request / 4 Gi limit and limit prefork concurrency to two workers.
+- Preserve libpq `sslmode=require` semantics for Node.js PostgreSQL clients without changing Django's URL.
+- Provision the pinned GeoIP database for Node.js workloads and wire the remaining legacy Kafka endpoints.
+- Add the separate Cyclotron queue database migration Job using migrations pinned to the PostHog source revision.
+
 ## [0.1.0] - 2026-11-17
 
 ### Added

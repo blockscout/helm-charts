@@ -92,6 +92,11 @@ databaseUrl:
   existingSecret: ""
   key: "DATABASE_URL"
 
+# -- Pre-created secret containing the separate Cyclotron queue database URL.
+cyclotronDatabaseUrl:
+  existingSecret: ""
+  key: "CYCLOTRON_NODE_DATABASE_URL"
+
 # -- Common environment variables injected into every PostHog workload.
 extraEnv: []
 
@@ -326,13 +331,15 @@ zookeeper:
     digest: sha256:d33adde3fb52aecddefe47aba950ed882c6c3d2dcc7bd1785b516d0448a781f9
     pullPolicy: IfNotPresent
   replicaCount: 1
+  # The upstream image defaults to a 1000 MB Java heap, which exceeds a small container limit.
+  heapSize: 512
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1Gi
   persistence:
     size: 10Gi
     storageClass: ""
@@ -474,6 +481,7 @@ components:
   web:
     enabled: true
     replicaCount: 2
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -507,6 +515,9 @@ components:
       httpGet:
         path: /_livez
         port: http
+        httpHeaders:
+          - name: X-Forwarded-Proto
+            value: https
       initialDelaySeconds: 30
       periodSeconds: 10
       timeoutSeconds: 5
@@ -515,6 +526,9 @@ components:
       httpGet:
         path: /_readyz?role=web
         port: http
+        httpHeaders:
+          - name: X-Forwarded-Proto
+            value: https
       initialDelaySeconds: 5
       periodSeconds: 5
       timeoutSeconds: 3
@@ -532,6 +546,7 @@ components:
   worker:
     enabled: true
     replicaCount: 1
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -543,10 +558,10 @@ components:
     resources:
       requests:
         cpu: 500m
-        memory: 1Gi
+        memory: 2Gi
       limits:
         cpu: 2000m
-        memory: 2Gi
+        memory: 4Gi
     livenessProbe:
       exec:
         command:
@@ -571,6 +586,11 @@ components:
       # Helm post-install hooks run only after regular workloads are ready.
       - name: POSTHOG_SKIP_MIGRATION_CHECKS
         value: "1"
+      # Match the Hobby deployment: each prefork child loads Django.
+      - name: WEB_CONCURRENCY
+        value: "2"
+      - name: GC_FREEZE_BEFORE_POOL_FORK
+        value: "true"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -581,6 +601,7 @@ components:
   temporalWorker:
     enabled: true
     replicaCount: 1
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -701,6 +722,8 @@ components:
     env:
       - name: ADDRESS
         value: "0.0.0.0:3001"
+      - name: MAXMIND_DB_PATH
+        value: /app/share/GeoLite2-City.mmdb
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -761,6 +784,24 @@ components:
     command:
       - node
       - nodejs/dist/index.js
+    nodeLibpqCompat: true
+    initContainers:
+      - name: geoip-init
+        image: "ghcr.io/posthog/posthog@sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
+        command:
+          - sh
+          - -c
+          - cp /code/share/GeoLite2-City.mmdb /share/GeoLite2-City.mmdb && chmod 0644 /share/GeoLite2-City.mmdb && test -s /share/GeoLite2-City.mmdb
+        volumeMounts:
+          - name: geoip
+            mountPath: /share
     resources:
       requests:
         cpu: 250m
@@ -786,7 +827,17 @@ components:
       failureThreshold: 3
     env:
       - name: PLUGIN_SERVER_MODE
-        value: cdp_api
+        value: cdp-api
+      - name: MMDB_FILE_LOCATION
+        value: /share/GeoLite2-City.mmdb
+      - name: CDP_MMDB_ENABLED
+        value: "true"
+    volumeMounts:
+      - name: geoip
+        mountPath: /share
+    volumes:
+      - name: geoip
+        emptyDir: {}
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -805,6 +856,24 @@ components:
     command:
       - node
       - nodejs/dist/index.js
+    nodeLibpqCompat: true
+    initContainers:
+      - name: geoip-init
+        image: "ghcr.io/posthog/posthog@sha256:a693bf8425c977abcde44389e67ff1881079f7696f85576fbb4dfe0df0133ecd"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
+        command:
+          - sh
+          - -c
+          - cp /code/share/GeoLite2-City.mmdb /share/GeoLite2-City.mmdb && chmod 0644 /share/GeoLite2-City.mmdb && test -s /share/GeoLite2-City.mmdb
+        volumeMounts:
+          - name: geoip
+            mountPath: /share
     resources:
       requests:
         cpu: 500m
@@ -815,6 +884,16 @@ components:
     env:
       - name: PLUGIN_SERVER_MODE
         value: ingestion-v2-combined
+      - name: MMDB_FILE_LOCATION
+        value: /share/GeoLite2-City.mmdb
+      - name: CDP_MMDB_ENABLED
+        value: "true"
+    volumeMounts:
+      - name: geoip
+        mountPath: /share
+    volumes:
+      - name: geoip
+        emptyDir: {}
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -1105,11 +1184,43 @@ jobs:
     ttlSecondsAfterFinished: 86400
     resources:
       requests:
-        cpu: 250m
-        memory: 512Mi
-      limits:
-        cpu: 1000m
+        cpu: 500m
         memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+  cyclotronMigrate:
+    enabled: true
+    # The migration directory is downloaded separately because the SQLx tool image
+    # contains migrations from a newer upstream revision.
+    sourceRevision: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+    image:
+      repository: ghcr.io/posthog/posthog/sqlx-migrate
+      tag: master
+      digest: sha256:f24d083e9ef77f0b14c7797e6615b6bab653a488e1587284d536bbb89fb64507
+      pullPolicy: IfNotPresent
+    initImage:
+      repository: alpine
+      tag: "3.23"
+      digest: sha256:49340b346798875b5592e5d420241f2f9cfba5f47e62ebb1446a1b34734e898f
+      pullPolicy: IfNotPresent
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        sqlx database create -D "$CYCLOTRON_NODE_DATABASE_URL"
+        sqlx migrate run -D "$CYCLOTRON_NODE_DATABASE_URL" --source /opt/cyclotron-node-migrations/
+    activeDeadlineSeconds: 600
+    backoffLimit: 2
+    ttlSecondsAfterFinished: 86400
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
   kafkaInit:
     enabled: true
     image:

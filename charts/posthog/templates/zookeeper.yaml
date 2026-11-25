@@ -52,6 +52,8 @@ spec:
               value: "1"
             - name: ZOO_AUTOPURGE_SNAPRETAINCOUNT
               value: "3"
+            - name: ZK_SERVER_HEAP
+              value: {{ .Values.zookeeper.heapSize | quote }}
           livenessProbe:
             exec:
               command:
@@ -59,6 +61,7 @@ spec:
                 - status
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 5
           readinessProbe:
             exec:
               command:
@@ -66,6 +69,7 @@ spec:
                 - status
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
           resources:
             {{- toYaml .Values.zookeeper.resources | nindent 12 }}
           volumeMounts:

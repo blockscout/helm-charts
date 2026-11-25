@@ -76,7 +76,7 @@ spec:
             - --schema-registry-addr
             - internal://0.0.0.0:8081
             - --rpc-addr
-            - {{ include "posthog.fullname" . }}-redpanda:33145
+            - 0.0.0.0:33145
             - --advertise-rpc-addr
             - {{ include "posthog.fullname" . }}-redpanda:33145
             - --mode
