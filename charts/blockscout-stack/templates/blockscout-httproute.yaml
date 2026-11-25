@@ -1,0 +1,50 @@
+{{- if .Values.blockscout.enabled }}
+{{- if .Values.blockscout.gateway.enabled }}
+{{- $fullName := include "blockscout-stack.fullname" . -}}
+{{- $svcPort := .Values.blockscout.service.port -}}
+{{- if semverCompare ">=1.27-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: gateway.networking.k8s.io/v1
+{{- else -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+{{- end }}
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}-blockscout-httproute
+  labels:
+    {{- include "blockscout-stack.labels" . | nindent 4 }}
+  {{- with .Values.blockscout.gateway.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if and .Values.blockscout.gateway.gatewayRef.name .Values.blockscout.gateway.gatewayRef.namespace }}
+    - name: {{ .Values.blockscout.gateway.gatewayRef.name }}
+      namespace: {{ .Values.blockscout.gateway.gatewayRef.namespace }}
+    {{- else if .Values.blockscout.gateway.gatewayRef.name }}
+    - name: {{ .Values.blockscout.gateway.gatewayRef.name }}
+    {{- end }}
+  {{- if .Values.blockscout.gateway.hostnames }}
+  hostnames:
+    {{- range .Values.blockscout.gateway.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - matches:
+        {{- range .Values.blockscout.ingress.paths }}
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: PathExact
+            {{- else if eq .pathType "Prefix" }}
+            type: PathPrefix
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path | quote }}
+        {{- end }}
+      backendRefs:
+        - name: {{ $fullName }}-blockscout-svc
+          port: {{ $svcPort }}
+{{- end }}
+{{- end }}
