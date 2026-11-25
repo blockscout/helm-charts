@@ -331,13 +331,15 @@ zookeeper:
     digest: sha256:d33adde3fb52aecddefe47aba950ed882c6c3d2dcc7bd1785b516d0448a781f9
     pullPolicy: IfNotPresent
   replicaCount: 1
+  # The upstream image defaults to a 1000 MB Java heap, which exceeds a small container limit.
+  heapSize: 512
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1Gi
   persistence:
     size: 10Gi
     storageClass: ""
@@ -479,6 +481,7 @@ components:
   web:
     enabled: true
     replicaCount: 2
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -543,6 +546,7 @@ components:
   worker:
     enabled: true
     replicaCount: 1
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -597,6 +601,7 @@ components:
   temporalWorker:
     enabled: true
     replicaCount: 1
+    cdpApiClient: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4

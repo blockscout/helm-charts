@@ -52,6 +52,8 @@ spec:
               value: "1"
             - name: ZOO_AUTOPURGE_SNAPRETAINCOUNT
               value: "3"
+            - name: ZK_SERVER_HEAP
+              value: {{ .Values.zookeeper.heapSize | quote }}
           livenessProbe:
             exec:
               command:

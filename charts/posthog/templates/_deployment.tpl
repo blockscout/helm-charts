@@ -82,6 +82,10 @@ spec:
           {{- end }}
           env:
             {{- include "posthog.commonEnv" $root | nindent 12 }}
+            {{- if $component.cdpApiClient }}
+            - name: CDP_API_URL
+              value: {{ printf "http://%s-plugins:6738" $fullName | quote }}
+            {{- end }}
             {{- if $component.nodeLibpqCompat }}
             {{- include "posthog.nodeEnv" $root | nindent 12 }}
             {{- end }}
