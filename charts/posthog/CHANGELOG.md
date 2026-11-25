@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Send `X-Forwarded-Proto: https` with web health probes to avoid TLS redirects.
 - Increase ZooKeeper probe timeouts for the Java status command.
 - Raise the async migration check to 1 Gi request / 2 Gi limit to prevent OOM kills during Django startup.
+- Wire all named Node.js Kafka producer slots to the configured brokers and override the service-link Redis port with a numeric value.
+- Use the image-baked MaxMind database for feature flags.
+- Enable PostgreSQL TLS for Temporal and pass separate host/port values to Python Temporal clients.
+- Raise the Celery worker to 2 Gi request / 4 Gi limit after repeated startup OOM kills.
 
 ## [0.1.0] - 2026-11-17
 

@@ -549,10 +549,10 @@ components:
     resources:
       requests:
         cpu: 500m
-        memory: 1Gi
+        memory: 2Gi
       limits:
         cpu: 2000m
-        memory: 2Gi
+        memory: 4Gi
     livenessProbe:
       exec:
         command:
@@ -707,6 +707,8 @@ components:
     env:
       - name: ADDRESS
         value: "0.0.0.0:3001"
+      - name: MAXMIND_DB_PATH
+        value: /app/share/GeoLite2-City.mmdb
     nodeSelector: {}
     tolerations: []
     affinity: {}

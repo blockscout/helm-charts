@@ -114,6 +114,17 @@ Common environment variables shared by PostHog workloads.
   value: {{ $kafkaUrl | quote }}
 - name: KAFKA_HOSTS
   value: {{ $kafkaBrokers | quote }}
+# Named Node.js producer slots do not inherit KAFKA_HOSTS.
+- name: KAFKA_WARPSTREAM_INGESTION_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
+- name: KAFKA_WARPSTREAM_CYCLOTRON_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
+- name: KAFKA_WAREHOUSE_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
+- name: KAFKA_INGESTION_UPSTREAM_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
+- name: KAFKA_INGESTION_DOWNSTREAM_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
 {{- if .Values.externalKafka.enabled }}
 - name: KAFKA_SECURITY_PROTOCOL
   value: {{ .Values.externalKafka.securityProtocol | quote }}
@@ -134,6 +145,9 @@ Common environment variables shared by PostHog workloads.
 # Redis
 - name: REDIS_URL
   value: {{ $redisUrl | quote }}
+# Override the Kubernetes service-link variable, which contains a URL rather than a port number.
+- name: POSTHOG_REDIS_PORT
+  value: {{ .Values.redis.service.port | quote }}
 - name: CDP_REDIS_HOST
   value: {{ printf "%s-redis" $fullname | quote }}
 - name: CDP_REDIS_PORT
@@ -204,7 +218,9 @@ Common environment variables shared by PostHog workloads.
   value: {{ printf "http://%s-feature-flags:3001" $fullname | quote }}
 # Temporal
 - name: TEMPORAL_HOST
-  value: {{ printf "%s-temporal:7233" $fullname | quote }}
+  value: {{ printf "%s-temporal" $fullname | quote }}
+- name: TEMPORAL_PORT
+  value: "7233"
 - name: TEMPORAL_USE_SINGLE_TASK_QUEUE
   value: "true"
 # Browserless
