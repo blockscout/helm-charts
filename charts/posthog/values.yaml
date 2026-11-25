@@ -482,6 +482,7 @@ components:
     enabled: true
     replicaCount: 2
     cdpApiClient: true
+    disableLegacyPluginPreinstall: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -547,6 +548,7 @@ components:
     enabled: true
     replicaCount: 1
     cdpApiClient: true
+    disableLegacyPluginPreinstall: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
@@ -602,6 +604,7 @@ components:
     enabled: true
     replicaCount: 1
     cdpApiClient: true
+    disableLegacyPluginPreinstall: true
     image:
       repository: ghcr.io/posthog/posthog
       tag: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4

@@ -86,6 +86,10 @@ spec:
             - name: CDP_API_URL
               value: {{ printf "http://%s-plugins:6738" $fullName | quote }}
             {{- end }}
+            {{- if $component.disableLegacyPluginPreinstall }}
+            - name: PLUGINS_PREINSTALLED_URLS
+              value: ""
+            {{- end }}
             {{- if $component.nodeLibpqCompat }}
             {{- include "posthog.nodeEnv" $root | nindent 12 }}
             {{- end }}
