@@ -227,8 +227,6 @@ Common environment variables shared by PostHog workloads.
 # Logging / OTel
 - name: OTEL_SDK_DISABLED
   value: "true"
-- name: OTEL_EXPORTER_OTLP_ENDPOINT
-  value: ""
 # Livestream link shown in UI
 - name: LIVESTREAM_HOST
   value: {{ printf "%s/livestream" $siteUrl | quote }}

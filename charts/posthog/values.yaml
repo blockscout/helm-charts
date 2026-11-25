@@ -507,6 +507,9 @@ components:
       httpGet:
         path: /_livez
         port: http
+        httpHeaders:
+          - name: X-Forwarded-Proto
+            value: https
       initialDelaySeconds: 30
       periodSeconds: 10
       timeoutSeconds: 5
@@ -515,6 +518,9 @@ components:
       httpGet:
         path: /_readyz?role=web
         port: http
+        httpHeaders:
+          - name: X-Forwarded-Proto
+            value: https
       initialDelaySeconds: 5
       periodSeconds: 5
       timeoutSeconds: 3
@@ -786,7 +792,7 @@ components:
       failureThreshold: 3
     env:
       - name: PLUGIN_SERVER_MODE
-        value: cdp_api
+        value: cdp-api
     nodeSelector: {}
     tolerations: []
     affinity: {}

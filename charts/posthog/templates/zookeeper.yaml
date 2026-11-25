@@ -59,6 +59,7 @@ spec:
                 - status
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 5
           readinessProbe:
             exec:
               command:
@@ -66,6 +67,7 @@ spec:
                 - status
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
           resources:
             {{- toYaml .Values.zookeeper.resources | nindent 12 }}
           volumeMounts:
