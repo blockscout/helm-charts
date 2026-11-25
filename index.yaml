@@ -2148,6 +2148,29 @@ entries:
   posthog:
   - apiVersion: v2
     appVersion: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
+    created: "2026-11-25T21:54:17.914422997Z"
+    description: A Helm chart for deploying open-source self-hosted PostHog on Kubernetes.
+    digest: ad594c97e76efc94012353cf6aae25ff6d48bb7cddb73536718dfb45066f00f1
+    home: https://posthog.com
+    icon: https://posthog.com/static/brand/logo-posthog-dark.svg
+    keywords:
+    - posthog
+    - analytics
+    - feature-flags
+    - product-analytics
+    kubeVersion: '>= 1.24-0'
+    maintainers:
+    - email: ops@blockscout.com
+      name: Blockscout Team
+    name: posthog
+    sources:
+    - https://github.com/blockscout/helm-charts/tree/main/charts/posthog
+    type: application
+    urls:
+    - https://github.com/blockscout/helm-charts/releases/download/posthog-0.1.2/posthog-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 10651753c3d6a5d58b2a46f6c94b89b93e8dbbb4
     created: "2026-11-25T17:29:09.36268804Z"
     description: A Helm chart for deploying open-source self-hosted PostHog on Kubernetes.
     digest: 2cd20ceba4e737fe4bee579be7e10ab241f216a79be9610a17fb126e2ea90d15
@@ -2627,4 +2650,4 @@ entries:
     urls:
     - https://github.com/blockscout/helm-charts/releases/download/zilliqa-validators-indexer-0.1.0/zilliqa-validators-indexer-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-25T17:29:09.362879745Z"
+generated: "2026-11-25T21:54:17.914791222Z"
