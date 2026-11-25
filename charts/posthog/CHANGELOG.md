@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wire all named Node.js Kafka producer slots to the configured brokers and override the service-link Redis port with a numeric value.
 - Use the image-baked MaxMind database for feature flags.
 - Enable PostgreSQL TLS for Temporal and pass separate host/port values to Python Temporal clients.
-- Raise the Celery worker to 2 Gi request / 4 Gi limit after repeated startup OOM kills.
+- Raise the Celery worker to 2 Gi request / 4 Gi limit and limit prefork concurrency to two workers.
+- Preserve libpq `sslmode=require` semantics for Node.js PostgreSQL clients without changing Django's URL.
+- Provision the pinned GeoIP database for Node.js workloads and wire the remaining legacy Kafka endpoints.
+- Add the separate Cyclotron queue database migration Job using migrations pinned to the PostHog source revision.
 
 ## [0.1.0] - 2026-11-17
 

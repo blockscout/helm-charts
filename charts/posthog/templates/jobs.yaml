@@ -38,6 +38,77 @@ spec:
             {{- toYaml .Values.jobs.migrate.resources | nindent 12 }}
 {{- end }}
 ---
+{{- if .Values.jobs.cyclotronMigrate.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "posthog.fullname" . }}-cyclotron-migrate-{{ .Release.Revision }}
+  labels:
+    {{- include "posthog.componentLabels" (dict "root" . "component" "cyclotron-migrate") | nindent 4 }}
+  # A regular Job: workloads and the schema migration can start together without
+  # a Helm post-upgrade readiness deadlock. Revisioned names avoid immutable Jobs.
+spec:
+  activeDeadlineSeconds: {{ .Values.jobs.cyclotronMigrate.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.jobs.cyclotronMigrate.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.jobs.cyclotronMigrate.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "posthog.componentSelectorLabels" (dict "root" . "component" "cyclotron-migrate") | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "posthog.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      initContainers:
+        - name: fetch-migrations
+          image: {{ include "posthog.image" (list . .Values.jobs.cyclotronMigrate.initImage) | quote }}
+          imagePullPolicy: {{ .Values.jobs.cyclotronMigrate.initImage.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          env:
+            - name: SOURCE_REVISION
+              value: {{ .Values.jobs.cyclotronMigrate.sourceRevision | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              wget -qO /tmp/posthog.tar.gz "https://codeload.github.com/PostHog/posthog/tar.gz/${SOURCE_REVISION}"
+              tar -xzf /tmp/posthog.tar.gz -C /opt/cyclotron-node-migrations --strip-components=3 "posthog-${SOURCE_REVISION}/rust/cyclotron-node-migrations"
+              test -s /opt/cyclotron-node-migrations/20260303000001_initial_schema.sql
+          volumeMounts:
+            - name: migrations
+              mountPath: /opt/cyclotron-node-migrations
+      containers:
+        - name: cyclotron-migrate
+          image: {{ include "posthog.image" (list . .Values.jobs.cyclotronMigrate.image) | quote }}
+          imagePullPolicy: {{ .Values.jobs.cyclotronMigrate.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          command:
+            {{- toYaml .Values.jobs.cyclotronMigrate.command | nindent 12 }}
+          env:
+            - name: CYCLOTRON_NODE_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.cyclotronDatabaseUrl.existingSecret | required "cyclotronDatabaseUrl.existingSecret is required when jobs.cyclotronMigrate.enabled=true" | quote }}
+                  key: {{ .Values.cyclotronDatabaseUrl.key | quote }}
+          volumeMounts:
+            - name: migrations
+              mountPath: /opt/cyclotron-node-migrations
+              readOnly: true
+          resources:
+            {{- toYaml .Values.jobs.cyclotronMigrate.resources | nindent 12 }}
+      volumes:
+        - name: migrations
+          emptyDir: {}
+{{- end }}
+---
 {{- if .Values.jobs.clickhouseMigrate.enabled }}
 apiVersion: batch/v1
 kind: Job

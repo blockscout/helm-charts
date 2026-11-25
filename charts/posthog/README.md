@@ -29,7 +29,7 @@ The chart deploys the following groups of workloads:
 | **PersonHog pipeline** | `personhog-replica`, `personhog-router`, `personhog-router-leader`, `personhog-leader`, `personhog-writer`, `personhog-identity`, `personhog-publisher`, `personhog-changelog-relay` |
 | **Browser automation** | `browserless` |
 | **Internal stateful** | Redis 7, Valkey, ZooKeeper, Redpanda, etcd, Temporal |
-| **Init / migration jobs** | Kafka topic init, PersonHog etcd init, Django/ClickHouse migrations, async migrations check, PersonHog tables readiness |
+| **Init / migration jobs** | Kafka topic init, PersonHog etcd init, Django/ClickHouse/Cyclotron migrations, async migrations check, PersonHog tables readiness |
 
 `property-defs-rs` is a Kafka consumer and PostgreSQL writer. Its query API intentionally receives no production traffic upstream, so there is no `PROPERTY_DEFS_RPC_URL`; its Service exposes health and metrics endpoints. PersonHog etcd initialization Jobs include the Helm release revision in their names, so upgrades do not patch immutable Job pod templates.
 
@@ -47,7 +47,12 @@ The chart expects an external PostgreSQL cluster and a pre-created Kubernetes Se
 databaseUrl:
   existingSecret: posthog-app-secrets
   key: DATABASE_URL
+cyclotronDatabaseUrl:
+  existingSecret: posthog-app-secrets
+  key: CYCLOTRON_NODE_DATABASE_URL
 ```
+
+The Cyclotron URL must point to the separate `cyclotron_node` database. The chart runs its SQLx migrations from the pinned PostHog source revision; the SQLx image supplies only the migration tool. Node.js workloads append `uselibpqcompat=true` locally so that `sslmode=require` retains libpq semantics, while Django receives the original `DATABASE_URL`.
 
 The `externalPostgresql` block is used for Temporal and for the `personhog-tables-ready` init job:
 
@@ -63,8 +68,9 @@ externalPostgresql:
   sslMode: require
 ```
 
-Two PostgreSQL databases are required:
+The following PostgreSQL databases are required:
 - `posthog` for the application
+- `cyclotron_node` for the Node.js Cyclotron job queue
 - `temporal` + `temporal_visibility` for Temporal (if internal Temporal is used)
 
 ### ClickHouse
@@ -106,6 +112,7 @@ Create at least these secrets before installing:
 | Secret | Keys | Used by |
 |--------|------|---------|
 | `posthog-secrets` | `SECRET_KEY`, `ENCRYPTION_SALT_KEYS`, optionally `INTERNAL_REQUEST_TOKEN`, `INTERNAL_API_SECRET` | All core workloads |
+| `posthog-app-secrets` | `DATABASE_URL`, `CYCLOTRON_NODE_DATABASE_URL` | Application and Cyclotron database connections |
 | `posthog-postgres` | `password` | PostgreSQL connection, Temporal, init jobs |
 | `posthog-s3` | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Object storage |
 | `posthog-smtp` (optional) | `SMTP_PASSWORD` | Email invites / password reset |
@@ -137,6 +144,9 @@ internalRequestToken:
 databaseUrl:
   existingSecret: posthog-app-secrets
   key: DATABASE_URL
+cyclotronDatabaseUrl:
+  existingSecret: posthog-app-secrets
+  key: CYCLOTRON_NODE_DATABASE_URL
 
 externalPostgresql:
   host: postgres.example.com

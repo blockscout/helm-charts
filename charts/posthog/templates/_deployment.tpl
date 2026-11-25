@@ -40,10 +40,29 @@ spec:
       serviceAccountName: {{ include "posthog.serviceAccountName" $root }}
       securityContext:
         {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      {{- with $component.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ $name }}
           image: {{ include "posthog.image" (list $root $component.image) | quote }}
           imagePullPolicy: {{ $component.image.pullPolicy }}
+          {{- if $component.nodeLibpqCompat }}
+          command:
+            {{- include "posthog.nodeLibpqCommand" $root | nindent 12 }}
+          args:
+            - "--"
+            {{- if $component.command }}
+            {{- toYaml $component.command | nindent 12 }}
+            {{- else }}
+            - node
+            - nodejs/dist/index.js
+            {{- end }}
+            {{- with $component.args }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- else }}
           {{- with $component.command }}
           command:
             {{- toYaml . | nindent 12 }}
@@ -51,6 +70,7 @@ spec:
           {{- with $component.args }}
           args:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
           securityContext:
             {{- toYaml $root.Values.containerSecurityContext | nindent 12 }}
@@ -62,6 +82,9 @@ spec:
           {{- end }}
           env:
             {{- include "posthog.commonEnv" $root | nindent 12 }}
+            {{- if $component.nodeLibpqCompat }}
+            {{- include "posthog.nodeEnv" $root | nindent 12 }}
+            {{- end }}
             {{- with $component.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
