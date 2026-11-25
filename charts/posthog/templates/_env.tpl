@@ -261,6 +261,8 @@ Common environment variables shared by PostHog workloads.
       key: {{ .Values.cyclotronDatabaseUrl.key | quote }}
 - name: KAFKA_PRODUCER_METADATA_BROKER_LIST
   value: {{ $kafkaBrokers | quote }}
+- name: KAFKA_CDP_PRODUCER_METADATA_BROKER_LIST
+  value: {{ $kafkaBrokers | quote }}
 - name: KAFKA_CONSUMER_METADATA_BROKER_LIST
   value: {{ $kafkaBrokers | quote }}
 {{- end }}
