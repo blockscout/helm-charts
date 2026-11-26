@@ -108,6 +108,22 @@ Common environment variables shared by PostHog workloads.
   value: {{ .Values.externalClickhouse.secure | default false | quote }}
 - name: CLICKHOUSE_VERIFY
   value: {{ .Values.externalClickhouse.verify | default false | quote }}
+# Logs uses a separate ClickHouse client whose host defaults to localhost.
+- name: CLICKHOUSE_LOGS_CLUSTER_HOST
+  value: {{ $chHost | quote }}
+- name: CLICKHOUSE_LOGS_CLUSTER_PORT
+  value: "9000"
+- name: CLICKHOUSE_LOGS_CLUSTER_USER
+  value: {{ .Values.externalClickhouse.user | quote }}
+{{- if .Values.externalClickhouse.password.existingSecret }}
+- name: CLICKHOUSE_LOGS_CLUSTER_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalClickhouse.password.existingSecret | quote }}
+      key: {{ .Values.externalClickhouse.password.key | quote }}
+{{- end }}
+- name: CLICKHOUSE_LOGS_CLUSTER_SECURE
+  value: {{ .Values.externalClickhouse.secure | default false | quote }}
 {{- $kafkaUrl := include "posthog.kafka.url" . }}
 # Kafka / Redpanda
 - name: KAFKA_URL
